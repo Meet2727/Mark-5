@@ -256,6 +256,8 @@ width:100%;
 <div class="card" onclick="loadGame('doubledice')">🎲 Double Dice</div>
 <div class="card" onclick="loadGame('calculator')">🧮 Calculator</div>
 
+<div class="card" onclick="loadGame('car3d')">🏎 3D Racer</div>
+  
 </div>
 </div>
 
@@ -324,6 +326,14 @@ const menu=document.getElementById("menu");
 const game=document.getElementById("game");
 const title=document.getElementById("title");
 const content=document.getElementById("content");
+
+let carGameRunning=false;
+let playerX=0;
+let roadOffset=0;
+let obstacles=[];
+let score=0;
+
+  
   function loadGame(g){
 currentGame=g;
 menu.classList.remove("active");
@@ -547,7 +557,28 @@ if(g==="calculator"){
 title.innerHTML="🧮 Calculator";
 content.innerHTML=`<button onclick="calculatorGame()">OPEN</button><p id="out"></p>`;
 }
+  
+if(g==="car3d"){
+title.innerHTML="🏎 3D Racer";
+
+content.innerHTML=`
+<canvas id="race" width="800" height="500"
+style="
+width:100%;
+max-width:900px;
+background:#111;
+border:2px solid #00e5ff;
+border-radius:12px;
+"></canvas>
+
+<p id="out">Arrow Keys ← → Move</p>
+`;
+
+setTimeout(startCarGame,50);
 }
+  
+} /* Main } */
+
 
 /* ORIGINAL GAMES */
 
@@ -1124,6 +1155,196 @@ out.innerHTML=
 "❌ Invalid";
 
 }
+
+}
+  function startCarGame(){
+
+carGameRunning=true;
+
+const canvas=document.getElementById("race");
+
+if(!canvas) return;
+
+const ctx=canvas.getContext("2d");
+
+playerX=0;
+roadOffset=0;
+score=0;
+
+obstacles=[];
+
+for(let i=0;i<5;i++){
+
+obstacles.push({
+x:(Math.random()*2-1)*180,
+z:600+i*300
+});
+
+}
+
+document.onkeydown=(e)=>{
+
+if(!carGameRunning) return;
+
+if(e.key==="ArrowLeft"){
+playerX-=25;
+}
+
+if(e.key==="ArrowRight"){
+playerX+=25;
+}
+
+};
+
+function drawRoad(){
+
+ctx.fillStyle="#111";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+const horizon=120;
+
+for(let y=horizon;y<canvas.height;y++){
+
+let p=(y-horizon)/(canvas.height-horizon);
+
+let roadWidth=80+p*600;
+
+let center=canvas.width/2;
+
+ctx.fillStyle="#222";
+
+ctx.fillRect(
+center-roadWidth/2,
+y,
+roadWidth,
+2
+);
+
+ctx.fillStyle="#fff";
+
+if((y+roadOffset)%40<20){
+
+ctx.fillRect(
+center-3,
+y,
+6,
+8
+);
+
+}
+
+}
+
+}
+
+function drawPlayer(){
+
+ctx.save();
+
+ctx.translate(
+canvas.width/2+playerX,
+420
+);
+
+ctx.fillStyle="#00e5ff";
+
+ctx.beginPath();
+
+ctx.moveTo(0,-30);
+ctx.lineTo(-25,30);
+ctx.lineTo(25,30);
+
+ctx.closePath();
+ctx.fill();
+
+ctx.restore();
+
+}
+
+function drawObstacle(o){
+
+let scale=600/o.z;
+
+let x=
+canvas.width/2+
+o.x*scale;
+
+let y=
+120+
+(600-o.z)*0.7;
+
+let size=
+50*scale;
+
+ctx.fillStyle="#ff4444";
+
+ctx.fillRect(
+x-size/2,
+y-size,
+size,
+size
+);
+
+}
+
+function update(){
+
+if(!carGameRunning) return;
+
+roadOffset+=8;
+
+drawRoad();
+
+score++;
+
+for(let o of obstacles){
+
+o.z-=8;
+
+if(o.z<20){
+
+o.z=700;
+
+o.x=(Math.random()*2-1)*180;
+
+score+=100;
+
+}
+
+drawObstacle(o);
+
+let scale=600/o.z;
+
+let ox=o.x*scale;
+
+if(
+o.z<80 &&
+Math.abs(ox-playerX)<40
+){
+
+carGameRunning=false;
+
+document.getElementById("out")
+.innerHTML=
+"💥 Crash! Score: "+score;
+
+return;
+
+}
+
+}
+
+drawPlayer();
+
+document.getElementById("out")
+.innerHTML=
+"🏁 Score: "+score;
+
+requestAnimationFrame(update);
+
+}
+
+update();
 
 }
 
