@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AAA Cyber Game Engine</title>
+<title>AAA Game Engine v2 Pro</title>
 
 <style>
 body{
@@ -14,7 +14,7 @@ color:white;
 overflow:hidden;
 }
 
-/* 🌌 CYBER BACKGROUND PARTICLES */
+/* 🌌 PARTICLE ENGINE */
 #bg{
 position:fixed;
 width:100%;
@@ -22,69 +22,73 @@ height:100%;
 z-index:-2;
 }
 
-.particle{
+.p{
 position:absolute;
 width:6px;
 height:6px;
 border-radius:50%;
 background:#00e5ff;
 box-shadow:0 0 10px #00e5ff,0 0 25px #00e5ff;
-animation:float 10s linear infinite;
-opacity:0.8;
+animation:float 12s linear infinite;
+opacity:0.7;
 }
 
 @keyframes float{
 0%{transform:translateY(110vh) translateX(0);}
 50%{transform:translateY(50vh) translateX(40px);}
-100%{transform:translateY(-10vh) translateX(-40px);}
+100%{transform:translateY(-10vh) translateX(-30px);}
 }
 
 /* ENGINE UI */
-.engine{
-position:relative;
-z-index:2;
-padding:15px;
+.screen{
+position:absolute;
+width:100%;
+height:100%;
+display:none;
+padding:20px;
+box-sizing:border-box;
+}
+
+.active{
+display:block;
 }
 
 /* HEADER */
 header{
 display:flex;
 justify-content:space-between;
-align-items:center;
 padding:10px;
 background:#0f172a;
 border-bottom:1px solid #00e5ff;
 }
 
-/* GRID HUB */
+/* MENU CARDS */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:15px;
-padding:15px;
+margin-top:20px;
 }
 
-/* GAME CARD */
 .card{
 background:rgba(255,255,255,0.05);
 border:1px solid rgba(0,229,255,0.2);
-border-radius:14px;
+border-radius:12px;
 padding:12px;
-backdrop-filter:blur(12px);
-transition:0.3s;
 cursor:pointer;
+transition:0.3s;
+backdrop-filter:blur(10px);
 }
 
 .card:hover{
 transform:scale(1.06) rotateX(5deg);
 box-shadow:0 0 25px #00e5ff;
-border-color:#00e5ff;
 }
 
 /* BUTTONS */
 button{
-margin:4px;
 padding:8px 12px;
+margin:5px;
 border:none;
 border-radius:6px;
 cursor:pointer;
@@ -106,145 +110,192 @@ button:hover{transform:scale(1.1);}
 
 <div id="bg"></div>
 
-<div class="engine">
-
+<!-- 🧠 MENU -->
+<div id="menu" class="screen active">
 <header>
-<h2>⚡ AAA CYBER GAME ENGINE</h2>
-<button class="red" onclick="resetEngine()">RESET ENGINE</button>
+<h2>⚡ AAA GAME ENGINE v2 PRO</h2>
 </header>
 
 <div class="grid">
 
-<!-- 1 REACTION -->
-<div class="card">
-<h3>🎯 Reaction Engine</h3>
-<button class="green" onclick="reactionStart()">START</button>
-<button class="neon" onclick="reactionClick()">CLICK</button>
-<p id="r1">0 ms</p>
-</div>
-
-<!-- 2 CLICK -->
-<div class="card">
-<h3>🖱 Click Engine</h3>
-<button class="green" onclick="clickStart()">START</button>
-<button class="neon" onclick="clickHit()">CLICK</button>
-<p id="r2">0</p>
-</div>
-
-<!-- 3 MATH -->
-<div class="card">
-<h3>🧠 Math Engine</h3>
-<button class="purple" onclick="mathGame()">PLAY</button>
-<p id="r3"></p>
-</div>
-
-<!-- 4 TIMING -->
-<div class="card">
-<h3>⏱ Timing Engine</h3>
-<button class="yellow" onclick="timingStart()">START</button>
-<p id="r4"></p>
-</div>
-
-<!-- 5 AIM -->
-<div class="card">
-<h3>🎯 Aim Engine</h3>
-<button class="green" onclick="aim()">HIT</button>
-<p id="r5">0</p>
-</div>
-
-<!-- 6 DICE -->
-<div class="card">
-<h3>🎲 Dice Engine</h3>
-<button class="neon" onclick="dice()">ROLL</button>
-<p id="r6"></p>
-</div>
+<div class="card" onclick="loadGame('reaction')">🎯 Reaction</div>
+<div class="card" onclick="loadGame('click')">🖱 Click Speed</div>
+<div class="card" onclick="loadGame('math')">🧠 Math</div>
+<div class="card" onclick="loadGame('timing')">⏱ Timing</div>
+<div class="card" onclick="loadGame('aim')">🎯 Aim</div>
+<div class="card" onclick="loadGame('dice')">🎲 Dice</div>
+<div class="card" onclick="loadGame('memory')">🧩 Memory</div>
+<div class="card" onclick="loadGame('reflex')">⚡ Reflex</div>
 
 </div>
+</div>
 
+<!-- 🎮 GAME SCREEN -->
+<div id="game" class="screen">
+<header>
+<button class="red" onclick="backMenu()">⬅ MENU</button>
+<button class="neon" onclick="restartGame()">RESTART</button>
+</header>
+
+<h2 id="title">Game</h2>
+<div id="content"></div>
 </div>
 
 <script>
 
-/* 🌌 CYBER PARTICLE ENGINE */
+/* 🌌 PARTICLE ENGINE */
 let bg=document.getElementById("bg");
 
-for(let i=0;i<80;i++){
-let p=document.createElement("div");
-p.className="particle";
+for(let i=0;i<70;i++){
+let d=document.createElement("div");
+d.className="p";
 
-let size=3+Math.random()*6;
-p.style.width=size+"px";
-p.style.height=size+"px";
-p.style.left=Math.random()*100+"%";
-p.style.animationDuration=(5+Math.random()*10)+"s";
+d.style.left=Math.random()*100+"%";
+d.style.animationDuration=(6+Math.random()*10)+"s";
 
-bg.appendChild(p);
+bg.appendChild(d);
 }
 
 /* ENGINE STATE */
+let currentGame="";
 let score=0;
-let active=false;
 
-/* 1 REACTION */
-let rStart=0;
-function reactionStart(){
-r1.innerText="WAIT...";
+/* 🧠 SCENE SYSTEM */
+function loadGame(g){
+currentGame=g;
+menu.classList.remove("active");
+game.classList.add("active");
+
+renderGame(g);
+}
+
+/* BACK MENU */
+function backMenu(){
+game.classList.remove("active");
+menu.classList.add("active");
+}
+
+/* RESTART */
+function restartGame(){
+renderGame(currentGame);
+}
+
+/* 🎮 GAME RENDERER */
+function renderGame(g){
+score=0;
+
+if(g==="reaction"){
+title.innerText="🎯 Reaction Engine";
+content.innerHTML=`
+<button class="green" onclick="startReaction()">START</button>
+<button class="neon" onclick="reactionClick()">CLICK</button>
+<p id="out">Ready</p>`;
+}
+
+if(g==="click"){
+title.innerText="🖱 Click Engine";
+content.innerHTML=`
+<button class="green" onclick="startClick()">START</button>
+<button class="neon" onclick="clickHit()">CLICK</button>
+<p id="out">0</p>`;
+}
+
+if(g==="math"){
+title.innerText="🧠 Math Engine";
+content.innerHTML=`
+<button class="purple" onclick="mathGame()">PLAY</button>
+<p id="out"></p>`;
+}
+
+if(g==="timing"){
+title.innerText="⏱ Timing Engine";
+content.innerHTML=`
+<button class="yellow" onclick="timingGame()">START</button>
+<p id="out"></p>`;
+}
+
+if(g==="aim"){
+title.innerText="🎯 Aim Engine";
+content.innerHTML=`
+<button class="green" onclick="aimHit()">HIT</button>
+<p id="out">0</p>`;
+}
+
+if(g==="dice"){
+title.innerText="🎲 Dice Engine";
+content.innerHTML=`
+<button class="neon" onclick="diceRoll()">ROLL</button>
+<p id="out"></p>`;
+}
+
+if(g==="memory"){
+title.innerText="🧩 Memory Engine";
+content.innerHTML=`
+<button onclick="memoryGame()">START</button>
+<p id="out"></p>`;
+}
+
+if(g==="reflex"){
+title.innerText="⚡ Reflex Engine";
+content.innerHTML=`
+<button onclick="reflexGame()">START</button>
+<p id="out"></p>`;
+}
+}
+
+/* 🎮 GAME LOGIC */
+
+/* Reaction */
+let rt=0,ok=false;
+function startReaction(){
+out.innerText="WAIT...";
 setTimeout(()=>{
-rStart=Date.now();
-r1.innerText="CLICK NOW!";
-active=true;
+rt=Date.now();
+ok=true;
+out.innerText="CLICK!";
 },1000+Math.random()*2000);
 }
 function reactionClick(){
-if(!active)return;
-r1.innerText=(Date.now()-rStart)+" ms";
-active=false;
+if(!ok)return;
+out.innerText=Date.now()-rt+" ms";
+ok=false;
 }
 
-/* 2 CLICK */
-function clickStart(){
-score=0;
-r2.innerText=0;
-}
-function clickHit(){
-score++;
-r2.innerText=score;
-}
+/* Click */
+let c=0;
+function startClick(){c=0;out.innerText=0}
+function clickHit(){c++;out.innerText=c}
 
-/* 3 MATH */
+/* Math */
 function mathGame(){
 let a=Math.floor(Math.random()*10);
 let b=Math.floor(Math.random()*10);
-r3.innerText=`${a} + ${b} = ${a+b}`;
+out.innerText=`${a}+${b}=${a+b}`;
 }
 
-/* 4 TIMING */
-function timingStart(){
-r4.innerText="WAIT...";
+/* Timing */
+function timingGame(){
+out.innerText="WAIT...";
 setTimeout(()=>{
-r4.innerText="CLICK!";
+out.innerText="CLICK!";
 setTimeout(()=>{
-r4.innerText=Date.now()%1000+" ms (demo)";
+out.innerText=(Date.now()%1000)+" ms";
 },1000);
-},1000+Math.random()*2000);
+},1500);
 }
 
-/* 5 AIM */
-let aimScore=0;
-function aim(){
-aimScore++;
-r5.innerText=aimScore;
-}
+/* Aim */
+let a=0;
+function aimHit(){a++;out.innerText=a}
 
-/* 6 DICE */
-function dice(){
-r6.innerText=Math.floor(Math.random()*6)+1;
-}
+/* Dice */
+function diceRoll(){out.innerText=Math.floor(Math.random()*6)+1}
 
-/* RESET ENGINE */
-function resetEngine(){
-location.reload();
-}
+/* Memory */
+function memoryGame(){out.innerText="Remember: 7-2-9-4"}
+
+/* Reflex */
+function reflexGame(){out.innerText="CLICK NOW!"}
 
 </script>
 
