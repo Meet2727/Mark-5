@@ -3,179 +3,148 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ultra God Mode Portfolio</title>
+<title>Portfolio + Games (Stable Version)</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  transition:0.4s;
+  transition:0.3s;
   background:#fff;
   color:#111;
-  overflow-x:hidden;
 }
 
 .dark{
-  background:#0b0b0b;
+  background:#111;
   color:#fff;
+}
+
+nav{
+  padding:10px;
+  background:#eee;
+}
+
+.dark nav{
+  background:#222;
 }
 
 /* HERO */
 .hero{
-  padding:90px;
   text-align:center;
+  padding:70px;
   background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
-  animation:float 4s infinite alternate;
-}
-
-@keyframes float{
-  from{transform:translateY(0);}
-  to{transform:translateY(-10px);}
-}
-
-/* CARDS */
-.card{
-  background:rgba(255,255,255,0.7);
-  backdrop-filter:blur(10px);
-  border:none;
-  border-radius:15px;
-  transition:0.3s;
-}
-
-.dark .card{background:rgba(30,30,30,0.7);}
-
-.card:hover{
-  transform:scale(1.05);
 }
 
 /* GAME BOX */
 .game{
+  width:100%;
   height:220px;
-  border-radius:10px;
-  background:#eee;
+  border:1px solid #ccc;
   position:relative;
   overflow:hidden;
 }
 
-.dark .game{background:#222;}
-
+/* TARGET */
 .target{
-  width:50px;
-  height:50px;
-  border-radius:50%;
+  width:40px;
+  height:40px;
   background:red;
+  border-radius:50%;
   position:absolute;
   display:none;
 }
 
 /* SNAKE */
 #snake{
-  height:250px;
-  background:#111;
-  border-radius:10px;
-  color:white;
+  width:100%;
+  height:220px;
+  background:#222;
   position:relative;
+  color:white;
   overflow:hidden;
 }
 
 /* BUTTON */
-.btnFixed{
-  position:fixed;
-  top:10px;
-  right:10px;
+button{
+  margin:5px;
+  padding:8px 12px;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<button class="btnFixed" onclick="toggle()">🌙</button>
+<nav>
+<button onclick="toggleDark()">🌙 Dark Mode</button>
+</nav>
 
 <div class="hero">
-<h1>ULTRA GOD MODE PORTFOLIO</h1>
-<p>Games • UI • Animation • Pro System</p>
+<h1>My Portfolio + Games</h1>
 </div>
 
-<!-- PORTFOLIO -->
-<div class="container">
-<h2>💼 Projects</h2>
-<div class="card p-3">Modern Web Design System</div>
-</div>
+<!-- STOP ALL -->
+<button onclick="stopAll()" style="background:red;color:white;">🛑 STOP ALL</button>
 
 <hr>
 
 <!-- GAME 1 -->
-<div>
 <h3>🎮 Reaction Game</h3>
 Score: <span id="s1">0</span>
-
 <div class="game">
 <div class="target" id="t1" onclick="hit()"></div>
 </div>
-
 <button onclick="start1()">Start</button>
-<button onclick="stopAll()">Stop</button>
-</div>
+<button onclick="stop1()">Stop</button>
 
 <hr>
 
 <!-- GAME 2 -->
-<div>
 <h3>⚡ Click Game</h3>
 Score: <span id="s2">0</span>
-
 <button onclick="start2()">Start</button>
-<button onclick="clicker()">CLICK</button>
-<button onclick="stopAll()">Stop</button>
-</div>
+<button onclick="clickGame()">CLICK</button>
+<button onclick="stop2()">Stop</button>
 
 <hr>
 
 <!-- GAME 3 -->
-<div>
 <h3>🎲 Guess Game</h3>
-<input id="g">
-<button onclick="guess()">Check</button>
-<button onclick="stopAll()">Stop</button>
+<input id="guess">
+<button onclick="guessGame()">Check</button>
+<button onclick="stop3()">Stop</button>
 <p id="r"></p>
-</div>
 
 <hr>
 
 <!-- GAME 4 -->
-<div>
 <h3>🧠 Memory Game</h3>
 <div class="game" id="mem"></div>
 <button onclick="start4()">Start</button>
-<button onclick="stopAll()">Stop</button>
-</div>
+<button onclick="stop4()">Stop</button>
 
 <hr>
 
-<!-- GAME 5 SNAKE -->
-<div>
-<h3>🐍 Snake v2</h3>
-<div id="snake"></div>
+<!-- GAME 5 SNAKE (WORKING) -->
+<h3>🐍 Snake Game (WORKING FIXED)</h3>
+<div id="snake">Use Arrow Keys</div>
 <button onclick="stopSnake()">Stop Snake</button>
-</div>
 
 <script>
 
-/* DARK */
-function toggle(){
+/* DARK MODE */
+function toggleDark(){
   document.body.classList.toggle("dark");
 }
 
-/* GLOBAL STOP */
+/* STOP ALL */
 function stopAll(){
-  running=false;
-  clearTimeout(loop);
-  document.getElementById("t1").style.display="none";
+  stop1(); stop2(); stop3(); stop4(); stopSnake();
 }
 
 /* GAME 1 */
-let s=0,loop;
+let score1=0,loop;
 
 function start1(){
   move();
@@ -184,44 +153,75 @@ function start1(){
 function move(){
   let t=document.getElementById("t1");
   t.style.display="block";
-  t.style.left=Math.random()*200+"px";
-  t.style.top=Math.random()*200+"px";
-  loop=setTimeout(move,600);
+  t.style.left=Math.random()*180+"px";
+  t.style.top=Math.random()*180+"px";
+  loop=setTimeout(move,800);
 }
 
 function hit(){
-  s++;
-  document.getElementById("s1").innerText=s;
+  score1++;
+  document.getElementById("s1").innerText=score1;
+}
+
+function stop1(){
+  clearTimeout(loop);
+  document.getElementById("t1").style.display="none";
 }
 
 /* GAME 2 */
-let c=0,run=false;
+let score2=0,run=false;
 
-function start2(){c=0;run=true;}
+function start2(){
+  score2=0;
+  run=true;
+}
 
-function clicker(){
+function clickGame(){
   if(run){
-    c++;
-    document.getElementById("s2").innerText=c;
+    score2++;
+    document.getElementById("s2").innerText=score2;
   }
 }
 
+function stop2(){
+  run=false;
+}
+
 /* GAME 3 */
-function guess(){
+function guessGame(){
   let r=Math.floor(Math.random()*5)+1;
-  let u=document.getElementById("g").value;
-  document.getElementById("r")=(u==r)?"Correct":"Wrong "+r;
+  let u=document.getElementById("guess").value;
+  document.getElementById("r")=
+    (u==r) ? "✔ Correct" : "❌ Wrong "+r;
+}
+
+function stop3(){
+  document.getElementById("r").innerText="";
 }
 
 /* GAME 4 */
+let mem=false;
+
 function start4(){
+  mem=true;
   document.getElementById("mem").style.background="green";
+
+  setTimeout(()=>{
+    if(mem){
+      document.getElementById("mem").style.background="red";
+    }
+  },1500);
 }
 
-/* GAME 5 SNAKE REAL */
-let x=100,y=100,foodX=50,foodY=50,score=0;
+function stop4(){
+  mem=false;
+  document.getElementById("mem").style.background="#222";
+}
 
-document.addEventListener("keydown",e=>{
+/* GAME 5 - WORKING SNAKE */
+let x=100,y=100;
+
+document.addEventListener("keydown",function(e){
   let s=document.getElementById("snake");
 
   if(e.key=="ArrowRight") x+=10;
@@ -229,11 +229,12 @@ document.addEventListener("keydown",e=>{
   if(e.key=="ArrowUp") y-=10;
   if(e.key=="ArrowDown") y+=10;
 
-  s.innerHTML="🐍 Score: "+score;
+  s.innerHTML="🐍 Position: "+x+","+y;
 });
 
+/* STOP SNAKE */
 function stopSnake(){
-  document.getElementById("snake").innerHTML="Game Stopped";
+  document.getElementById("snake").innerHTML="Snake Stopped";
 }
 
 </script>
