@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Portfolio</title>
+<title>Pro Portfolio</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -12,13 +12,12 @@
 :root{
   --bg:#ffffff;
   --text:#111;
-  --card:#f8f9fa;
+  --card:#f6f6f6;
   --primary:#6c63ff;
-  --secondary:#00c6ff;
 }
 
 .dark{
-  --bg:#0e0e0e;
+  --bg:#0b0b0b;
   --text:#ffffff;
   --card:#1c1c1c;
 }
@@ -30,74 +29,75 @@ body{
   scroll-behavior:smooth;
 }
 
-/* NAVBAR */
+/* NAV */
 .navbar{
   background:var(--card)!important;
 }
 
 /* HERO */
 .hero{
-  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
-  padding:120px 20px;
-  text-align:center;
-  border-radius:0 0 50px 50px;
 }
 
-/* SECTION TITLE */
-.section-title{
-  text-align:center;
+.hero h1{
+  font-size:3rem;
   font-weight:bold;
-  margin:60px 0 30px;
 }
 
-/* CARDS */
+/* BUTTONS */
+.btn-glow{
+  box-shadow:0 0 20px rgba(255,255,255,0.3);
+}
+
+/* CARD */
 .card{
   background:var(--card);
   border:none;
+  transition:0.4s;
   border-radius:15px;
-  transition:0.3s;
 }
 
 .card:hover{
   transform:translateY(-10px);
-  box-shadow:0 10px 20px rgba(0,0,0,0.2);
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
 }
 
-/* SKILL BAR */
-.skill-bar{
+/* COUNTER */
+.counter{
+  font-size:40px;
+  font-weight:bold;
+}
+
+/* SKILLS */
+.skill{
   height:8px;
   background:#ddd;
   border-radius:10px;
   overflow:hidden;
 }
 
-.skill-fill{
+.skill div{
   height:100%;
   background:linear-gradient(90deg,#6c63ff,#00c6ff);
 }
 
-/* PROJECT IMAGE */
-.project img{
-  height:200px;
-  object-fit:cover;
-  border-radius:10px;
+/* SECTION */
+.section{
+  padding:70px 0;
 }
 
 /* FLOAT BUTTON */
-.toggle-btn{
+.toggle{
   position:fixed;
   top:15px;
   right:15px;
   z-index:999;
-}
-
-/* FOOTER */
-footer{
-  background:#000;
-  color:#fff;
-  padding:25px;
-  margin-top:50px;
 }
 
 /* ANIMATION */
@@ -111,17 +111,24 @@ footer{
   opacity:1;
   transform:translateY(0);
 }
+
+/* FOOTER */
+footer{
+  background:#000;
+  color:#fff;
+  padding:25px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- DARK MODE -->
-<button class="btn btn-dark toggle-btn" onclick="toggleDark()">🌙</button>
+<!-- DARK -->
+<button class="btn btn-dark toggle" onclick="toggleDark()">🌙</button>
 
-<!-- NAVBAR -->
+<!-- NAV -->
 <nav class="navbar navbar-expand-lg sticky-top px-3 shadow-sm">
-  <a class="navbar-brand fw-bold" href="#">💻 My Portfolio</a>
+  <a class="navbar-brand fw-bold">⚡ Developer</a>
   <div class="ms-auto">
     <a href="#about" class="mx-2">About</a>
     <a href="#skills" class="mx-2">Skills</a>
@@ -131,65 +138,84 @@ footer{
 </nav>
 
 <!-- HERO -->
-<section class="hero fade">
-  <h1>Hi, I'm a Web Developer 👋</h1>
-  <p>I build modern, responsive websites and web apps</p>
-  <a href="#projects" class="btn btn-light btn-lg mt-3">View My Work</a>
+<section class="hero">
+  <div>
+    <h1>I am <span id="typing"></span></h1>
+    <p>Freelance Web Developer | UI Designer | Creator</p>
+
+    <a href="#projects" class="btn btn-light btn-lg btn-glow mt-3">View Work</a>
+    <a href="#" class="btn btn-outline-light btn-lg mt-3">Download CV</a>
+  </div>
+</section>
+
+<!-- COUNTERS -->
+<section class="section container text-center fade">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="counter" id="c1">0</div>
+      <p>Projects</p>
+    </div>
+    <div class="col-md-4">
+      <div class="counter" id="c2">0</div>
+      <p>Clients</p>
+    </div>
+    <div class="col-md-4">
+      <div class="counter" id="c3">0</div>
+      <p>Experience</p>
+    </div>
+  </div>
 </section>
 
 <!-- ABOUT -->
-<section class="container section-title fade" id="about">
-  <h2>About Me</h2>
-  <p class="mt-3">
-    I am a passionate developer who loves creating modern websites using HTML, CSS, JavaScript and Bootstrap.
-    I focus on clean UI, performance and user experience.
+<section class="section container fade" id="about">
+  <h2 class="text-center mb-4">About Me</h2>
+  <p class="text-center">
+    I am a professional web developer who builds modern, fast and responsive websites.
+    I specialize in HTML, CSS, JavaScript and Bootstrap.
   </p>
 </section>
 
 <!-- SKILLS -->
-<section class="container fade" id="skills">
-  <h2 class="section-title">Skills</h2>
+<section class="section container fade" id="skills">
+  <h2 class="text-center mb-4">Skills</h2>
 
   <p>HTML</p>
-  <div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div>
+  <div class="skill"><div style="width:95%"></div></div>
 
   <p class="mt-3">CSS</p>
-  <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
+  <div class="skill"><div style="width:90%"></div></div>
 
   <p class="mt-3">JavaScript</p>
-  <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
+  <div class="skill"><div style="width:85%"></div></div>
 
   <p class="mt-3">Bootstrap</p>
-  <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
+  <div class="skill"><div style="width:90%"></div></div>
 </section>
 
 <!-- PROJECTS -->
-<section class="container fade" id="projects">
-  <h2 class="section-title">Projects</h2>
+<section class="section container fade" id="projects">
+  <h2 class="text-center mb-4">Projects</h2>
 
   <div class="row g-4">
 
-    <div class="col-md-4 project">
+    <div class="col-md-4">
       <div class="card p-3">
-        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
-        <h5 class="mt-3">Website Design</h5>
-        <p>Modern responsive website UI</p>
+        <h5>Landing Page</h5>
+        <p>Modern responsive landing page design.</p>
       </div>
     </div>
 
-    <div class="col-md-4 project">
+    <div class="col-md-4">
       <div class="card p-3">
-        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c">
-        <h5 class="mt-3">Dashboard UI</h5>
-        <p>Admin dashboard design system</p>
+        <h5>Portfolio UI</h5>
+        <p>Clean developer portfolio interface.</p>
       </div>
     </div>
 
-    <div class="col-md-4 project">
+    <div class="col-md-4">
       <div class="card p-3">
-        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3">
-        <h5 class="mt-3">App Interface</h5>
-        <p>Mobile app UI design concept</p>
+        <h5>Business Website</h5>
+        <p>Full responsive business website.</p>
       </div>
     </div>
 
@@ -197,13 +223,13 @@ footer{
 </section>
 
 <!-- CONTACT -->
-<section class="container fade" id="contact">
-  <h2 class="section-title">Contact Me</h2>
+<section class="section container fade" id="contact">
+  <h2 class="text-center mb-4">Contact Me</h2>
 
   <form onsubmit="send(event)" class="row g-3">
 
     <div class="col-md-6">
-      <input class="form-control" placeholder="Your Name" required>
+      <input class="form-control" placeholder="Name" required>
     </div>
 
     <div class="col-md-6">
@@ -221,14 +247,12 @@ footer{
   </form>
 </section>
 
-<!-- FOOTER -->
 <footer class="text-center">
-  <h5>My Portfolio</h5>
-  <p>© 2026 All Rights Reserved</p>
+  <p>© 2026 Developer Portfolio</p>
 </footer>
 
 <script>
-/* DARK MODE */
+/* DARK */
 function toggleDark(){
   document.body.classList.toggle("dark");
   localStorage.setItem("dark", document.body.classList.contains("dark"));
@@ -237,22 +261,44 @@ if(localStorage.getItem("dark")==="true"){
   document.body.classList.add("dark");
 }
 
+/* TYPE EFFECT */
+const text=["a Developer","a Designer","a Freelancer"];
+let i=0, j=0, current="";
+function type(){
+  current=text[i];
+  document.getElementById("typing").innerHTML=current.slice(0,j++);
+  if(j>current.length){i=(i+1)%text.length;j=0;}
+  setTimeout(type,150);
+}
+type();
+
+/* COUNTERS */
+function count(id,end){
+  let e=document.getElementById(id);
+  let i=0;
+  let t=setInterval(()=>{
+    if(i>=end) clearInterval(t);
+    else e.innerText=i++;
+  },20);
+}
+
+count("c1", 50);
+count("c2", 20);
+count("c3", 2);
+
+/* SCROLL */
+const obs=new IntersectionObserver(e=>{
+  e.forEach(x=>{
+    if(x.isIntersecting)x.target.classList.add("show");
+  });
+});
+document.querySelectorAll(".fade").forEach(e=>obs.observe(e));
+
 /* FORM */
 function send(e){
   e.preventDefault();
-  alert("Message Sent Successfully!");
+  alert("Message Sent!");
 }
-
-/* SCROLL ANIMATION */
-const obs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add("show");
-    }
-  });
-});
-
-document.querySelectorAll(".fade").forEach(el=>obs.observe(el));
 </script>
 
 </body>
