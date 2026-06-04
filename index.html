@@ -3,73 +3,116 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portfolio + Games (Stable Version)</title>
+<title>Pro Portfolio</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  transition:0.3s;
   background:#fff;
   color:#111;
+  transition:0.3s;
 }
 
 .dark{
-  background:#111;
+  background:#0f0f0f;
   color:#fff;
 }
 
+/* NAV */
 nav{
-  padding:10px;
-  background:#eee;
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+  background:#f1f1f1;
+  position:sticky;
+  top:0;
 }
 
-.dark nav{
-  background:#222;
+.dark nav{background:#1c1c1c;}
+
+button{
+  padding:8px 12px;
+  cursor:pointer;
 }
 
 /* HERO */
 .hero{
   text-align:center;
-  padding:70px;
+  padding:80px 20px;
   background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
 }
 
-/* GAME BOX */
-.game{
-  width:100%;
-  height:220px;
-  border:1px solid #ccc;
-  position:relative;
+/* SECTIONS */
+section{
+  padding:50px 20px;
+  max-width:1000px;
+  margin:auto;
+}
+
+/* CARDS */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:15px;
+}
+
+.card{
+  background:#f5f5f5;
+  padding:15px;
+  border-radius:10px;
+  transition:0.3s;
+}
+
+.dark .card{background:#1f1f1f;}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+/* SKILLS */
+.skill{
+  margin:10px 0;
+}
+
+.bar{
+  height:8px;
+  background:#ddd;
+  border-radius:10px;
   overflow:hidden;
 }
 
-/* TARGET */
-.target{
-  width:40px;
-  height:40px;
-  background:red;
-  border-radius:50%;
-  position:absolute;
-  display:none;
+.fill{
+  height:8px;
+  background:#6c63ff;
+}
+
+/* GAME BOX */
+.game{
+  height:180px;
+  border:1px solid #ccc;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
 }
 
 /* SNAKE */
 #snake{
-  width:100%;
-  height:220px;
+  height:200px;
   background:#222;
-  position:relative;
   color:white;
-  overflow:hidden;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* BUTTON */
-button{
-  margin:5px;
-  padding:8px 12px;
-  cursor:pointer;
+/* CONTACT */
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin:5px 0;
 }
 </style>
 </head>
@@ -77,151 +120,149 @@ button{
 <body>
 
 <nav>
-<button onclick="toggleDark()">🌙 Dark Mode</button>
+<h3>My Portfolio</h3>
+<button onclick="toggleDark()">🌙</button>
 </nav>
 
 <div class="hero">
-<h1>My Portfolio + Games</h1>
+<h1>Hi, I'm Developer</h1>
+<p>Frontend Developer | UI Designer | Game Builder</p>
 </div>
 
-<!-- STOP ALL -->
-<button onclick="stopAll()" style="background:red;color:white;">🛑 STOP ALL</button>
+<!-- ABOUT -->
+<section>
+<h2>About Me</h2>
+<p>I build modern websites using HTML, CSS, JS. I also create mini games and interactive UI systems.</p>
+</section>
 
-<hr>
+<!-- SKILLS -->
+<section>
+<h2>Skills</h2>
 
-<!-- GAME 1 -->
-<h3>🎮 Reaction Game</h3>
+<div class="skill">HTML<div class="bar"><div class="fill" style="width:95%"></div></div></div>
+<div class="skill">CSS<div class="bar"><div class="fill" style="width:85%"></div></div></div>
+<div class="skill">JavaScript<div class="bar"><div class="fill" style="width:80%"></div></div></div>
+
+</section>
+
+<!-- PROJECTS -->
+<section>
+<h2>Projects</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Portfolio Website</h3>
+<p>Modern responsive portfolio design.</p>
+</div>
+
+<div class="card">
+<h3>Game System</h3>
+<p>Built multiple mini browser games.</p>
+</div>
+
+<div class="card">
+<h3>UI Dashboard</h3>
+<p>Clean admin dashboard layout.</p>
+</div>
+
+</div>
+</section>
+
+<!-- GAMES -->
+<section>
+<h2>Mini Games</h2>
+
+<button onclick="stopAll()">🛑 STOP ALL</button>
+
+<h3>Reaction Game</h3>
 Score: <span id="s1">0</span>
-<div class="game">
-<div class="target" id="t1" onclick="hit()"></div>
-</div>
+<div class="game" onclick="hit()"></div>
 <button onclick="start1()">Start</button>
-<button onclick="stop1()">Stop</button>
 
 <hr>
 
-<!-- GAME 2 -->
-<h3>⚡ Click Game</h3>
+<h3>Click Game</h3>
 Score: <span id="s2">0</span>
 <button onclick="start2()">Start</button>
 <button onclick="clickGame()">CLICK</button>
-<button onclick="stop2()">Stop</button>
 
 <hr>
 
-<!-- GAME 3 -->
-<h3>🎲 Guess Game</h3>
-<input id="guess">
-<button onclick="guessGame()">Check</button>
-<button onclick="stop3()">Stop</button>
+<h3>Guess Game</h3>
+<input id="g">
+<button onclick="guess()">Check</button>
 <p id="r"></p>
 
 <hr>
 
-<!-- GAME 4 -->
-<h3>🧠 Memory Game</h3>
-<div class="game" id="mem"></div>
-<button onclick="start4()">Start</button>
-<button onclick="stop4()">Stop</button>
-
-<hr>
-
-<!-- GAME 5 SNAKE (WORKING) -->
-<h3>🐍 Snake Game (WORKING FIXED)</h3>
+<h3>Snake Game</h3>
 <div id="snake">Use Arrow Keys</div>
 <button onclick="stopSnake()">Stop Snake</button>
 
+</section>
+
+<!-- CONTACT -->
+<section>
+<h2>Contact</h2>
+<input placeholder="Name">
+<input placeholder="Email">
+<textarea placeholder="Message"></textarea>
+<button>Send</button>
+</section>
+
 <script>
 
-/* DARK MODE */
+/* DARK */
 function toggleDark(){
   document.body.classList.toggle("dark");
 }
 
 /* STOP ALL */
 function stopAll(){
-  stop1(); stop2(); stop3(); stop4(); stopSnake();
+  run=false;
+  clearInterval(loop);
 }
 
 /* GAME 1 */
-let score1=0,loop;
+let s=0,loop;
 
 function start1(){
-  move();
-}
-
-function move(){
-  let t=document.getElementById("t1");
-  t.style.display="block";
-  t.style.left=Math.random()*180+"px";
-  t.style.top=Math.random()*180+"px";
-  loop=setTimeout(move,800);
+  loop=setInterval(()=>{
+    let box=document.querySelector(".game");
+    box.style.background="lightyellow";
+  },1000);
 }
 
 function hit(){
-  score1++;
-  document.getElementById("s1").innerText=score1;
-}
-
-function stop1(){
-  clearTimeout(loop);
-  document.getElementById("t1").style.display="none";
+  s++;
+  document.getElementById("s1").innerText=s;
 }
 
 /* GAME 2 */
-let score2=0,run=false;
+let c=0,run=false;
 
-function start2(){
-  score2=0;
-  run=true;
-}
+function start2(){c=0;run=true;}
 
 function clickGame(){
   if(run){
-    score2++;
-    document.getElementById("s2").innerText=score2;
+    c++;
+    document.getElementById("s2").innerText=c;
   }
 }
 
-function stop2(){
-  run=false;
-}
-
 /* GAME 3 */
-function guessGame(){
+function guess(){
   let r=Math.floor(Math.random()*5)+1;
-  let u=document.getElementById("guess").value;
+  let u=document.getElementById("g").value;
   document.getElementById("r")=
-    (u==r) ? "✔ Correct" : "❌ Wrong "+r;
+    (u==r)?"✔ Correct":"❌ "+r;
 }
 
-function stop3(){
-  document.getElementById("r").innerText="";
-}
+/* SNAKE (FIXED SIMPLE) */
+let x=0,y=0;
 
-/* GAME 4 */
-let mem=false;
-
-function start4(){
-  mem=true;
-  document.getElementById("mem").style.background="green";
-
-  setTimeout(()=>{
-    if(mem){
-      document.getElementById("mem").style.background="red";
-    }
-  },1500);
-}
-
-function stop4(){
-  mem=false;
-  document.getElementById("mem").style.background="#222";
-}
-
-/* GAME 5 - WORKING SNAKE */
-let x=100,y=100;
-
-document.addEventListener("keydown",function(e){
+document.addEventListener("keydown",e=>{
   let s=document.getElementById("snake");
 
   if(e.key=="ArrowRight") x+=10;
@@ -229,12 +270,12 @@ document.addEventListener("keydown",function(e){
   if(e.key=="ArrowUp") y-=10;
   if(e.key=="ArrowDown") y+=10;
 
-  s.innerHTML="🐍 Position: "+x+","+y;
+  s.innerHTML="🐍 "+x+","+y;
 });
 
 /* STOP SNAKE */
 function stopSnake(){
-  document.getElementById("snake").innerHTML="Snake Stopped";
+  document.getElementById("snake").innerHTML="Stopped";
 }
 
 </script>
