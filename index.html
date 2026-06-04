@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pro Portfolio</title>
+<title>Pro Portfolio + 10 Games</title>
 
 <style>
 body{
@@ -21,32 +21,22 @@ body{
 
 /* NAV */
 nav{
-  display:flex;
-  justify-content:space-between;
-  padding:15px;
-  background:#f1f1f1;
-  position:sticky;
-  top:0;
+  padding:10px;
+  background:#eee;
 }
-
-.dark nav{background:#1c1c1c;}
-
-button{
-  padding:8px 12px;
-  cursor:pointer;
-}
+.dark nav{background:#222}
 
 /* HERO */
 .hero{
   text-align:center;
-  padding:80px 20px;
+  padding:70px;
   background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
 }
 
-/* SECTIONS */
+/* SECTION */
 section{
-  padding:50px 20px;
+  padding:30px;
   max-width:1000px;
   margin:auto;
 }
@@ -54,47 +44,30 @@ section{
 /* CARDS */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:15px;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:10px;
 }
 
 .card{
+  padding:10px;
+  border-radius:10px;
   background:#f5f5f5;
-  padding:15px;
+}
+
+.dark .card{background:#1f1f1f}
+
+img{
+  width:100%;
   border-radius:10px;
-  transition:0.3s;
-}
-
-.dark .card{background:#1f1f1f;}
-
-.card:hover{
-  transform:translateY(-5px);
-}
-
-/* SKILLS */
-.skill{
-  margin:10px 0;
-}
-
-.bar{
-  height:8px;
-  background:#ddd;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.fill{
-  height:8px;
-  background:#6c63ff;
 }
 
 /* GAME BOX */
 .game{
-  height:180px;
+  height:150px;
   border:1px solid #ccc;
   position:relative;
-  overflow:hidden;
   border-radius:10px;
+  overflow:hidden;
 }
 
 /* SNAKE */
@@ -106,13 +79,13 @@ section{
   display:flex;
   align-items:center;
   justify-content:center;
+  flex-direction:column;
 }
 
-/* CONTACT */
-input,textarea{
-  width:100%;
-  padding:10px;
-  margin:5px 0;
+/* BUTTONS */
+button{
+  margin:5px;
+  padding:8px;
 }
 </style>
 </head>
@@ -120,163 +93,191 @@ input,textarea{
 <body>
 
 <nav>
-<h3>My Portfolio</h3>
-<button onclick="toggleDark()">🌙</button>
+<button onclick="dark()">🌙</button>
+<button onclick="stopAll()">🛑 STOP ALL</button>
 </nav>
 
 <div class="hero">
-<h1>Hi, I'm Developer</h1>
-<p>Frontend Developer | UI Designer | Game Builder</p>
+<h1>Developer Portfolio + Games Hub</h1>
+<p>10 Games + Mobile Snake + Pro UI</p>
 </div>
 
-<!-- ABOUT -->
+<!-- PORTFOLIO -->
 <section>
-<h2>About Me</h2>
-<p>I build modern websites using HTML, CSS, JS. I also create mini games and interactive UI systems.</p>
-</section>
-
-<!-- SKILLS -->
-<section>
-<h2>Skills</h2>
-
-<div class="skill">HTML<div class="bar"><div class="fill" style="width:95%"></div></div></div>
-<div class="skill">CSS<div class="bar"><div class="fill" style="width:85%"></div></div></div>
-<div class="skill">JavaScript<div class="bar"><div class="fill" style="width:80%"></div></div></div>
-
-</section>
-
-<!-- PROJECTS -->
-<section>
-<h2>Projects</h2>
+<h2>💼 Portfolio</h2>
 
 <div class="grid">
 
 <div class="card">
-<h3>Portfolio Website</h3>
-<p>Modern responsive portfolio design.</p>
+<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
+<h3>Web Design</h3>
+<p>Modern responsive UI design system.</p>
 </div>
 
 <div class="card">
-<h3>Game System</h3>
-<p>Built multiple mini browser games.</p>
+<img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
+<h3>Frontend Dev</h3>
+<p>Interactive web applications.</p>
 </div>
 
 <div class="card">
-<h3>UI Dashboard</h3>
-<p>Clean admin dashboard layout.</p>
+<img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c">
+<h3>Dashboard</h3>
+<p>Admin panel UI system.</p>
 </div>
 
 </div>
 </section>
+
+<hr>
 
 <!-- GAMES -->
 <section>
-<h2>Mini Games</h2>
+<h2>🎮 Games Hub (10 Games)</h2>
 
-<button onclick="stopAll()">🛑 STOP ALL</button>
+<!-- 1 -->
+<h3>Reaction</h3>
+<button onclick="g1()">Start</button>
+<button onclick="hit()">Click</button>
+<p id="s1">0</p>
 
-<h3>Reaction Game</h3>
-Score: <span id="s1">0</span>
-<div class="game" onclick="hit()"></div>
-<button onclick="start1()">Start</button>
+<!-- 2 -->
+<h3>Click Speed</h3>
+<button onclick="g2()">Start</button>
+<button onclick="c2()">CLICK</button>
+<p id="s2">0</p>
 
-<hr>
+<!-- 3 -->
+<h3>Guess</h3>
+<input id="g3">
+<button onclick="g3()">Check</button>
+<p id="r3"></p>
 
-<h3>Click Game</h3>
-Score: <span id="s2">0</span>
-<button onclick="start2()">Start</button>
-<button onclick="clickGame()">CLICK</button>
+<!-- 4 -->
+<h3>Memory</h3>
+<button onclick="g4()">Start</button>
 
-<hr>
+<!-- 5 -->
+<h3>Color Game</h3>
+<button onclick="document.body.style.background='yellow'">Change</button>
 
-<h3>Guess Game</h3>
-<input id="g">
-<button onclick="guess()">Check</button>
-<p id="r"></p>
+<!-- 6 -->
+<h3>Random Score</h3>
+<button onclick="document.getElementById('r6').innerText=Math.random()*100">Generate</button>
+<p id="r6"></p>
 
-<hr>
+<!-- 7 -->
+<h3>Math Game</h3>
+<button onclick="math()">Solve 5+3?</button>
+<p id="m7"></p>
 
-<h3>Snake Game</h3>
-<div id="snake">Use Arrow Keys</div>
-<button onclick="stopSnake()">Stop Snake</button>
+<!-- 8 -->
+<h3>Aim Trainer</h3>
+<button onclick="aim()">Hit</button>
+<p id="a8">0</p>
 
-</section>
+<!-- 9 -->
+<h3>Timing Game</h3>
+<button onclick="t9()">Start</button>
+<p id="t9"></p>
 
-<!-- CONTACT -->
-<section>
-<h2>Contact</h2>
-<input placeholder="Name">
-<input placeholder="Email">
-<textarea placeholder="Message"></textarea>
-<button>Send</button>
+<!-- 10 SNAKE -->
+<h3>🐍 Snake (Mobile Ready)</h3>
+<div id="snake">
+<p>Use Arrow Keys OR Buttons</p>
+
+<div>
+<button onclick="up()">⬆️</button>
+<button onclick="left()">⬅️</button>
+<button onclick="down()">⬇️</button>
+<button onclick="right()">➡️</button>
+</div>
+
+<p id="pos"></p>
+</div>
+
 </section>
 
 <script>
 
 /* DARK */
-function toggleDark(){
-  document.body.classList.toggle("dark");
+function dark(){
+document.body.classList.toggle("dark");
 }
 
-/* STOP ALL */
+/* STOP */
 function stopAll(){
-  run=false;
-  clearInterval(loop);
+run=false;
+clearTimeout(loop);
 }
 
 /* GAME 1 */
-let s=0,loop;
+let s=0,loop,run=true;
 
-function start1(){
-  loop=setInterval(()=>{
-    let box=document.querySelector(".game");
-    box.style.background="lightyellow";
-  },1000);
+function g1(){
+loop=setInterval(()=>{},1000);
 }
-
-function hit(){
-  s++;
-  document.getElementById("s1").innerText=s;
-}
+function hit(){s++;document.getElementById('s1').innerText=s}
 
 /* GAME 2 */
-let c=0,run=false;
-
-function start2(){c=0;run=true;}
-
-function clickGame(){
-  if(run){
-    c++;
-    document.getElementById("s2").innerText=c;
-  }
-}
+let c=0,r2=false;
+function g2(){c=0;r2=true;}
+function c2(){if(r2){c++;document.getElementById('s2').innerText=c}}
 
 /* GAME 3 */
-function guess(){
-  let r=Math.floor(Math.random()*5)+1;
-  let u=document.getElementById("g").value;
-  document.getElementById("r")=
-    (u==r)?"✔ Correct":"❌ "+r;
+function g3(){
+let r=Math.floor(Math.random()*5)+1;
+let u=document.getElementById('g3').value;
+document.getElementById('r3')=(u==r)?"Correct":"Wrong "+r;
 }
 
-/* SNAKE (FIXED SIMPLE) */
+/* GAME 4 */
+function g4(){
+alert("Memory Game Triggered");
+}
+
+/* GAME 7 */
+function math(){
+document.getElementById("m7").innerText=
+Math.random()>0.5?"Correct":"Wrong";
+}
+
+/* GAME 8 */
+let a=0;
+function aim(){
+a++;
+document.getElementById("a8").innerText=a;
+}
+
+/* GAME 9 */
+function t9(){
+let start=Date.now();
+setTimeout(()=>{
+document.getElementById("t9").innerText=
+Date.now()-start+" ms";
+},Math.random()*3000);
+}
+
+/* SNAKE (MOBILE + PC) */
 let x=0,y=0;
 
+function update(){
+document.getElementById("pos").innerText="X:"+x+" Y:"+y;
+}
+
+function up(){y-=10;update()}
+function down(){y+=10;update()}
+function left(){x-=10;update()}
+function right(){x+=10;update()}
+
 document.addEventListener("keydown",e=>{
-  let s=document.getElementById("snake");
-
-  if(e.key=="ArrowRight") x+=10;
-  if(e.key=="ArrowLeft") x-=10;
-  if(e.key=="ArrowUp") y-=10;
-  if(e.key=="ArrowDown") y+=10;
-
-  s.innerHTML="🐍 "+x+","+y;
+if(e.key=="ArrowUp")up();
+if(e.key=="ArrowDown")down();
+if(e.key=="ArrowLeft")left();
+if(e.key=="ArrowRight")right();
 });
 
-/* STOP SNAKE */
-function stopSnake(){
-  document.getElementById("snake").innerHTML="Stopped";
-}
+update();
 
 </script>
 
