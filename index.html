@@ -12,11 +12,41 @@ body{
   background:#fff;
   color:#111;
   transition:0.3s;
+  overflow-x:hidden;
 }
 
 .dark{
   background:#0f0f0f;
   color:#fff;
+}
+
+/* 3D BACKGROUND */
+.bg3d{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  perspective:800px;
+  z-index:-1;
+}
+
+.cube{
+  width:200px;
+  height:200px;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform-style:preserve-3d;
+  animation:spin 8s infinite linear;
+  background:linear-gradient(45deg,#6c63ff,#00c6ff);
+  opacity:0.2;
+  transform:translate(-50%,-50%);
+}
+
+@keyframes spin{
+  from{transform:translate(-50%,-50%) rotateX(0) rotateY(0);}
+  to{transform:translate(-50%,-50%) rotateX(360deg) rotateY(360deg);}
 }
 
 /* NAV */
@@ -53,7 +83,6 @@ section{
   border-radius:10px;
   background:#f5f5f5;
 }
-
 .dark .card{background:#1f1f1f}
 
 img{
@@ -62,27 +91,6 @@ img{
 }
 
 /* GAME BOX */
-.game{
-  height:150px;
-  border:1px solid #ccc;
-  position:relative;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-/* SNAKE */
-#snake{
-  height:200px;
-  background:#222;
-  color:white;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-}
-
-/* BUTTONS */
 button{
   margin:5px;
   padding:8px;
@@ -91,6 +99,8 @@ button{
 </head>
 
 <body>
+
+<div class="bg3d"><div class="cube"></div></div>
 
 <nav>
 <button onclick="dark()">🌙</button>
@@ -102,181 +112,161 @@ button{
 <p>10 Games + Mobile Snake + Pro UI</p>
 </div>
 
-<!-- PORTFOLIO -->
 <section>
 <h2>💼 Portfolio</h2>
 
 <div class="grid">
-
 <div class="card">
 <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
 <h3>Web Design</h3>
-<p>Modern responsive UI design system.</p>
 </div>
 
 <div class="card">
 <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
 <h3>Frontend Dev</h3>
-<p>Interactive web applications.</p>
 </div>
 
 <div class="card">
 <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c">
 <h3>Dashboard</h3>
-<p>Admin panel UI system.</p>
 </div>
-
 </div>
 </section>
 
 <hr>
 
-<!-- GAMES -->
 <section>
-<h2>🎮 Games Hub (10 Games)</h2>
+<h2>🎮 Games Hub</h2>
 
-<!-- 1 -->
 <h3>Reaction</h3>
 <button onclick="g1()">Start</button>
 <button onclick="hit()">Click</button>
 <p id="s1">0</p>
 
-<!-- 2 -->
 <h3>Click Speed</h3>
 <button onclick="g2()">Start</button>
 <button onclick="c2()">CLICK</button>
 <p id="s2">0</p>
 
-<!-- 3 -->
 <h3>Guess</h3>
 <input id="g3">
 <button onclick="g3()">Check</button>
 <p id="r3"></p>
 
-<!-- 4 -->
 <h3>Memory</h3>
-<button onclick="g4()">Start</button>
+<button onclick="alert('Memory Game')">Start</button>
 
-<!-- 5 -->
 <h3>Color Game</h3>
 <button onclick="document.body.style.background='yellow'">Change</button>
 
-<!-- 6 -->
 <h3>Random Score</h3>
 <button onclick="document.getElementById('r6').innerText=Math.random()*100">Generate</button>
 <p id="r6"></p>
 
-<!-- 7 -->
 <h3>Math Game</h3>
 <button onclick="math()">Solve 5+3?</button>
 <p id="m7"></p>
 
-<!-- 8 -->
 <h3>Aim Trainer</h3>
 <button onclick="aim()">Hit</button>
 <p id="a8">0</p>
 
-<!-- 9 -->
 <h3>Timing Game</h3>
 <button onclick="t9()">Start</button>
 <p id="t9"></p>
 
-<!-- 10 SNAKE -->
-<h3>🐍 Snake (Mobile Ready)</h3>
-<div id="snake">
-<p>Use Arrow Keys OR Buttons</p>
-
-<div>
+<h3>🐍 Snake</h3>
 <button onclick="up()">⬆️</button>
 <button onclick="left()">⬅️</button>
 <button onclick="down()">⬇️</button>
 <button onclick="right()">➡️</button>
-</div>
-
 <p id="pos"></p>
-</div>
 
 </section>
 
 <script>
+
+let intervals = [];
+let timeouts = [];
+
+function registerInterval(id){ intervals.push(id); }
+function registerTimeout(id){ timeouts.push(id); }
 
 /* DARK */
 function dark(){
 document.body.classList.toggle("dark");
 }
 
-/* STOP */
+/* STOP ALL */
 function stopAll(){
-run=false;
-clearTimeout(loop);
+intervals.forEach(clearInterval);
+timeouts.forEach(clearTimeout);
+intervals = [];
+timeouts = [];
+
+s=0;c=0;a=0;
+
+document.getElementById('s1').innerText=0;
+document.getElementById('s2').innerText=0;
+document.getElementById('a8').innerText=0;
+document.getElementById('r3').innerText="";
+document.getElementById('t9').innerText="";
 }
 
 /* GAME 1 */
-let s=0,loop,run=true;
-
+let s=0;
 function g1(){
-loop=setInterval(()=>{},1000);
+let id=setInterval(()=>{},1000);
+registerInterval(id);
 }
 function hit(){s++;document.getElementById('s1').innerText=s}
 
 /* GAME 2 */
-let c=0,r2=false;
-function g2(){c=0;r2=true;}
-function c2(){if(r2){c++;document.getElementById('s2').innerText=c}}
+let c=0;
+function g2(){c=0;document.getElementById('s2').innerText=0}
+function c2(){c++;document.getElementById('s2').innerText=c}
 
 /* GAME 3 */
 function g3(){
 let r=Math.floor(Math.random()*5)+1;
 let u=document.getElementById('g3').value;
-document.getElementById('r3')=(u==r)?"Correct":"Wrong "+r;
+document.getElementById('r3').innerText=
+(u==r)?"Correct":"Wrong Answer "+r;
 }
 
-/* GAME 4 */
-function g4(){
-alert("Memory Game Triggered");
-}
-
-/* GAME 7 */
+/* MATH */
 function math(){
 document.getElementById("m7").innerText=
 Math.random()>0.5?"Correct":"Wrong";
 }
 
-/* GAME 8 */
+/* AIM */
 let a=0;
 function aim(){
 a++;
 document.getElementById("a8").innerText=a;
 }
 
-/* GAME 9 */
+/* TIMING */
 function t9(){
 let start=Date.now();
-setTimeout(()=>{
+let id=setTimeout(()=>{
 document.getElementById("t9").innerText=
 Date.now()-start+" ms";
 },Math.random()*3000);
+
+registerTimeout(id);
 }
 
-/* SNAKE (MOBILE + PC) */
+/* SNAKE */
 let x=0,y=0;
-
 function update(){
 document.getElementById("pos").innerText="X:"+x+" Y:"+y;
 }
-
 function up(){y-=10;update()}
 function down(){y+=10;update()}
 function left(){x-=10;update()}
 function right(){x+=10;update()}
-
-document.addEventListener("keydown",e=>{
-if(e.key=="ArrowUp")up();
-if(e.key=="ArrowDown")down();
-if(e.key=="ArrowLeft")left();
-if(e.key=="ArrowRight")right();
-});
-
 update();
 
 </script>
