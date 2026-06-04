@@ -7,82 +7,73 @@
 
 <style>
 body{
-  margin:0;
-  font-family:Arial;
-  background:#0b0f1a;
-  color:white;
-  overflow-x:hidden;
+margin:0;
+font-family:Arial;
+background:#0b0f1a;
+color:white;
+overflow-x:hidden;
 }
 
-/* 🌌 FLOATING BACKGROUND */
+/* BACKGROUND */
 .bg{
-  position:fixed;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  z-index:-1;
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
 }
-
 .p{
-  position:absolute;
-  width:6px;
-  height:6px;
-  background:#00c6ff;
-  border-radius:50%;
-  animation:float 10s linear infinite;
-  opacity:0.6;
+position:absolute;
+width:5px;
+height:5px;
+background:#00c6ff;
+border-radius:50%;
+animation:float 10s linear infinite;
+opacity:0.6;
 }
-
 @keyframes float{
-  from{transform:translateY(100vh);}
-  to{transform:translateY(-10vh);}
+from{transform:translateY(100vh);}
+to{transform:translateY(-10vh);}
 }
 
-/* NAV */
-nav{
-  padding:10px;
-  background:#111827;
-  display:flex;
-  justify-content:space-between;
+/* HEADER */
+header{
+background:#111827;
+padding:10px;
+display:flex;
+justify-content:space-between;
 }
 
 /* HERO */
 .hero{
-  text-align:center;
-  padding:50px;
-  background:linear-gradient(135deg,#6c63ff,#00c6ff);
+text-align:center;
+padding:40px;
+background:linear-gradient(135deg,#6c63ff,#00c6ff);
 }
 
 /* GRID */
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:15px;
-  padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:15px;
+padding:15px;
 }
 
-/* GAME CARD */
+/* CARD */
 .card{
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
-  padding:15px;
-  transition:0.3s;
-}
-.card:hover{
-  transform:scale(1.03);
-  box-shadow:0 0 20px #00c6ff;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.1);
+border-radius:12px;
+padding:12px;
 }
 
 /* BUTTONS */
 button{
-  margin:4px;
-  padding:8px 12px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
+margin:4px;
+padding:8px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
 }
 
 .red{background:#ff4d4d;color:white;}
@@ -91,6 +82,13 @@ button{
 .purple{background:#9b59b6;color:white;}
 .yellow{background:#f1c40f;}
 .dark{background:#222;color:white;}
+
+/* SNAKE */
+canvas{
+background:#000;
+border:2px solid #00c6ff;
+margin-top:10px;
+}
 </style>
 </head>
 
@@ -98,100 +96,69 @@ button{
 
 <div class="bg" id="bg"></div>
 
-<nav>
+<header>
 <button class="dark" onclick="stopAll()">🛑 STOP ALL</button>
-<button class="blue" onclick="alert('Arcade Hub Ready 🚀')">INFO</button>
-</nav>
+</header>
 
 <div class="hero">
-<h1>🎮 ARCADE PRO GAME HUB</h1>
-<p>Next Level JavaScript Game Engine</p>
+<h1>🎮 ARCADE PRO HUB</h1>
+<p>Fixed + Real Games + Snake</p>
 </div>
 
 <div class="grid">
 
-<!-- GAME 1 -->
+<!-- REACTION -->
 <div class="card">
 <h3>Reaction Game</h3>
-<button class="green" onclick="g1()">Start</button>
-<button class="red" onclick="stop1()">Stop</button>
-<button class="blue" onclick="hit()">Hit</button>
+<button class="green" onclick="startReaction()">Start</button>
+<button class="blue" onclick="clickReaction()">Click</button>
+<button class="red" onclick="stopReaction()">Stop</button>
 <p id="s1">0</p>
 </div>
 
-<!-- GAME 2 -->
+<!-- CLICK SPEED -->
 <div class="card">
 <h3>Click Speed</h3>
-<button class="green" onclick="g2()">Start</button>
-<button class="red" onclick="stop2()">Stop</button>
-<button class="blue" onclick="c2()">Click</button>
+<button class="green" onclick="startClick()">Start</button>
+<button class="blue" onclick="clickSpeed()">Click</button>
+<button class="red" onclick="stopClick()">Stop</button>
 <p id="s2">0</p>
 </div>
 
-<!-- GAME 3 -->
-<div class="card">
-<h3>Guess Game</h3>
-<input id="g3">
-<button class="purple" onclick="g3()">Check</button>
-<button class="red" onclick="stop3()">Stop</button>
-<p id="r3"></p>
-</div>
-
-<!-- GAME 4 -->
-<div class="card">
-<h3>Color Burst</h3>
-<button class="yellow" onclick="document.body.style.background=randomColor()">Change</button>
-<button class="red" onclick="stop4()">Reset</button>
-</div>
-
-<!-- GAME 5 -->
-<div class="card">
-<h3>Random Score</h3>
-<button class="blue" onclick="score()">Generate</button>
-<button class="red" onclick="stop5()">Stop</button>
-<p id="r6"></p>
-</div>
-
-<!-- GAME 6 -->
+<!-- MATH -->
 <div class="card">
 <h3>Math Game</h3>
-<button class="purple" onclick="math()">Solve</button>
-<button class="red" onclick="stop6()">Stop</button>
+<button class="purple" onclick="mathGame()">Start</button>
+<button class="red" onclick="stopMath()">Stop</button>
 <p id="m7"></p>
 </div>
 
-<!-- GAME 7 -->
-<div class="card">
-<h3>Aim Trainer</h3>
-<button class="green" onclick="aim()">Hit</button>
-<button class="red" onclick="stop7()">Stop</button>
-<p id="a8">0</p>
-</div>
-
-<!-- GAME 8 -->
+<!-- TIMING -->
 <div class="card">
 <h3>Timing Game</h3>
-<button class="blue" onclick="t9()">Start</button>
-<button class="red" onclick="stop8()">Stop</button>
+<button class="blue" onclick="startTiming()">Start</button>
+<button class="red" onclick="stopTiming()">Stop</button>
 <p id="t9"></p>
 </div>
 
-<!-- GAME 9 -->
+<!-- SNAKE -->
 <div class="card">
-<h3>Snake Move</h3>
+<h3>🐍 Snake Game</h3>
 <button onclick="up()">⬆️</button>
 <button onclick="down()">⬇️</button>
 <button onclick="left()">⬅️</button>
 <button onclick="right()">➡️</button>
-<button class="red" onclick="stop9()">Reset</button>
-<p id="pos"></p>
+<button class="red" onclick="resetSnake()">Reset</button>
+<br>
+<canvas id="game" width="200" height="200"></canvas>
+<p id="score">Score: 0</p>
 </div>
 
 </div>
 
 <script>
 
-/* FLOATING DOTS */
+/* BACKGROUND DOTS */
 let bg=document.getElementById("bg");
 for(let i=0;i<30;i++){
 let d=document.createElement("div");
@@ -201,79 +168,164 @@ d.style.animationDuration=(5+Math.random()*10)+"s";
 bg.appendChild(d);
 }
 
-/* GLOBAL STATE */
-let intervals=[],timeouts=[];
-function regI(i){intervals.push(i)}
-function regT(t){timeouts.push(t)}
-
 /* STOP ALL */
 function stopAll(){
-intervals.forEach(clearInterval);
-timeouts.forEach(clearTimeout);
-intervals=[];
-timeouts=[];
 location.reload();
 }
 
-/* GAME 1 */
-let s=0,g1Run=false;
-function g1(){g1Run=true;}
-function hit(){if(g1Run){s++;s1.innerText=s}}
-function stop1(){g1Run=false;s=0;s1.innerText=0}
+/* ================= REACTION GAME ================= */
+let reactionReady=false;
+let reactionStart=0;
+let reactionTimer;
 
-/* GAME 2 */
-let c=0,g2Run=false;
-function g2(){g2Run=true;c=0;s2.innerText=0}
-function c2(){if(g2Run){c++;s2.innerText=c}}
-function stop2(){g2Run=false;c=0;s2.innerText=0}
-
-/* GAME 3 */
-function g3(){
-let r=Math.floor(Math.random()*5)+1;
-r3.innerText=(g3.value==r)?"Correct":"Wrong "+r;
-}
-function stop3(){r3.innerText=""}
-
-/* GAME 4 */
-function stop4(){document.body.style.background="#0b0f1a"}
-
-/* GAME 5 */
-function score(){r6.innerText=Math.floor(Math.random()*100)}
-function stop5(){r6.innerText=""}
-
-/* GAME 6 */
-function math(){
-m7.innerText=Math.random()>0.5?"Correct":"Wrong";
-}
-function stop6(){m7.innerText=""}
-
-/* GAME 7 */
-let a=0;
-function aim(){a++;a8.innerText=a}
-function stop7(){a=0;a8.innerText=0}
-
-/* GAME 8 */
-function t9(){
-let s=Date.now();
-setTimeout(()=>t9.innerText=Date.now()-s+" ms",Math.random()*3000);
-}
-function stop8(){t9.innerText=""}
-
-/* GAME 9 */
-let x=0,y=0;
-function update(){pos.innerText="X:"+x+" Y:"+y}
-function up(){y-=10;update()}
-function down(){y+=10;update()}
-function left(){x-=10;update()}
-function right(){x+=10;update()}
-function stop9(){x=0;y=0;update()}
-
-/* COLOR */
-function randomColor(){
-return `hsl(${Math.random()*360},80%,50%)`;
+function startReaction(){
+s1.innerText="Wait...";
+reactionTimer=setTimeout(()=>{
+reactionReady=true;
+reactionStart=Date.now();
+s1.innerText="CLICK NOW!";
+},Math.random()*3000+1000);
 }
 
-update();
+function clickReaction(){
+if(!reactionReady){
+s1.innerText="Too Early ❌";
+return;
+}
+let t=Date.now()-reactionStart;
+s1.innerText=t+" ms";
+reactionReady=false;
+}
+
+function stopReaction(){
+clearTimeout(reactionTimer);
+reactionReady=false;
+s1.innerText=0;
+}
+
+/* ================= CLICK SPEED ================= */
+let clickActive=false;
+let c=0;
+
+function startClick(){
+clickActive=true;
+c=0;
+s2.innerText=0;
+}
+
+function clickSpeed(){
+if(clickActive){
+c++;
+s2.innerText=c;
+}
+}
+
+function stopClick(){
+clickActive=false;
+c=0;
+s2.innerText=0;
+}
+
+/* ================= MATH GAME ================= */
+let answer=0;
+
+function mathGame(){
+let a=Math.floor(Math.random()*10);
+let b=Math.floor(Math.random()*10);
+answer=a+b;
+
+let u=prompt(`${a} + ${b} = ?`);
+
+m7.innerText=(u==answer)?"Correct 🎉":"Wrong ❌ Answer:"+answer;
+}
+
+function stopMath(){
+m7.innerText="";
+}
+
+/* ================= TIMING GAME ================= */
+let timingStart=0;
+let timingTimer;
+
+function startTiming(){
+t9.innerText="Wait...";
+timingTimer=setTimeout(()=>{
+timingStart=Date.now();
+t9.innerText="CLICK NOW!";
+},Math.random()*3000+1000);
+}
+
+function stopTiming(){
+if(!timingStart){
+t9.innerText="Stopped";
+return;
+}
+let t=Date.now()-timingStart;
+t9.innerText=t+" ms";
+timingStart=0;
+clearTimeout(timingTimer);
+}
+
+/* ================= SNAKE GAME ================= */
+let canvas=document.getElementById("game");
+let ctx=canvas.getContext("2d");
+
+let grid=20;
+let snake=[{x:5,y:5}];
+let food={x:10,y:10};
+let dx=1,dy=0;
+let score=0;
+
+function draw(){
+ctx.fillStyle="black";
+ctx.fillRect(0,0,200,200);
+
+ctx.fillStyle="red";
+ctx.fillRect(food.x*grid,food.y*grid,grid,grid);
+
+ctx.fillStyle="lime";
+snake.forEach(s=>{
+ctx.fillRect(s.x*grid,s.y*grid,grid,grid);
+});
+}
+
+function update(){
+let head={x:snake[0].x+dx,y:snake[0].y+dy};
+
+if(head.x<0||head.y<0||head.x>=10||head.y>=10){
+resetSnake();
+return;
+}
+
+snake.unshift(head);
+
+if(head.x===food.x && head.y===food.y){
+score++;
+food={x:Math.floor(Math.random()*10),y:Math.floor(Math.random()*10)};
+document.getElementById("score").innerText="Score: "+score;
+}else{
+snake.pop();
+}
+
+draw();
+}
+
+setInterval(update,200);
+
+function up(){dx=0;dy=-1}
+function down(){dx=0;dy=1}
+function left(){dx=-1;dy=0}
+function right(){dx=1;dy=0}
+
+function resetSnake(){
+snake=[{x:5,y:5}];
+dx=1;dy=0;
+score=0;
+document.getElementById("score").innerText="Score: 0";
+food={x:10,y:10};
+}
+
+draw();
 
 </script>
 
