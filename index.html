@@ -12,38 +12,32 @@ body{
   background:#fff;
   color:#111;
   transition:0.3s;
-  overflow-x:hidden;
 }
 
+/* DARK */
 .dark{
   background:#0f0f0f;
   color:#fff;
 }
 
-/* 3D BACKGROUND */
+/* 3D BG */
 .bg3d{
   position:fixed;
-  top:0;
-  left:0;
   width:100%;
   height:100%;
-  perspective:800px;
   z-index:-1;
 }
-
 .cube{
-  width:200px;
-  height:200px;
+  width:180px;
+  height:180px;
+  background:linear-gradient(45deg,#6c63ff,#00c6ff);
   position:absolute;
   top:50%;
   left:50%;
-  transform-style:preserve-3d;
-  animation:spin 8s infinite linear;
-  background:linear-gradient(45deg,#6c63ff,#00c6ff);
-  opacity:0.2;
   transform:translate(-50%,-50%);
+  animation:spin 8s linear infinite;
+  opacity:0.2;
 }
-
 @keyframes spin{
   from{transform:translate(-50%,-50%) rotateX(0) rotateY(0);}
   to{transform:translate(-50%,-50%) rotateX(360deg) rotateY(360deg);}
@@ -59,42 +53,51 @@ nav{
 /* HERO */
 .hero{
   text-align:center;
-  padding:70px;
+  padding:60px;
   background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
 }
 
 /* SECTION */
 section{
-  padding:30px;
-  max-width:1000px;
+  padding:25px;
+  max-width:900px;
   margin:auto;
 }
 
-/* CARDS */
+/* CARD */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:10px;
 }
-
 .card{
+  background:#f5f5f5;
   padding:10px;
   border-radius:10px;
-  background:#f5f5f5;
 }
 .dark .card{background:#1f1f1f}
 
-img{
-  width:100%;
-  border-radius:10px;
-}
-
-/* GAME BOX */
+/* GLOBAL BUTTON */
 button{
   margin:5px;
-  padding:8px;
+  padding:8px 12px;
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+  font-weight:bold;
 }
+
+/* GAME BUTTON THEMES */
+.btn-red{background:#ff4d4d;color:white;}
+.btn-green{background:#2ecc71;color:white;}
+.btn-blue{background:#3498db;color:white;}
+.btn-purple{background:#9b59b6;color:white;}
+.btn-orange{background:#f39c12;color:white;}
+.btn-dark{background:#333;color:white;}
+.btn-pink{background:#ff66a3;color:white;}
+.btn-cyan{background:#00c6ff;color:white;}
+.btn-yellow{background:#f1c40f;color:black;}
 </style>
 </head>
 
@@ -103,94 +106,91 @@ button{
 <div class="bg3d"><div class="cube"></div></div>
 
 <nav>
-<button onclick="dark()">🌙</button>
-<button onclick="stopAll()">🛑 STOP ALL</button>
+<button onclick="dark()" class="btn-dark">🌙 Dark</button>
+<button onclick="stopAll()" class="btn-red">🛑 STOP ALL</button>
 </nav>
 
 <div class="hero">
 <h1>Developer Portfolio + Games Hub</h1>
-<p>10 Games + Mobile Snake + Pro UI</p>
+<p>10 Games + Individual Stop Buttons + 3D UI</p>
 </div>
-
-<section>
-<h2>💼 Portfolio</h2>
-
-<div class="grid">
-<div class="card">
-<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
-<h3>Web Design</h3>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
-<h3>Frontend Dev</h3>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c">
-<h3>Dashboard</h3>
-</div>
-</div>
-</section>
-
-<hr>
 
 <section>
 <h2>🎮 Games Hub</h2>
 
-<h3>Reaction</h3>
-<button onclick="g1()">Start</button>
-<button onclick="hit()">Click</button>
+<!-- GAME 1 -->
+<h3>Reaction Game</h3>
+<button class="btn-green" onclick="g1()">Start</button>
+<button class="btn-red" onclick="stop1()">STOP</button>
+<button class="btn-blue" onclick="hit()">Click</button>
 <p id="s1">0</p>
 
+<!-- GAME 2 -->
 <h3>Click Speed</h3>
-<button onclick="g2()">Start</button>
-<button onclick="c2()">CLICK</button>
+<button class="btn-green" onclick="g2()">Start</button>
+<button class="btn-red" onclick="stop2()">STOP</button>
+<button class="btn-blue" onclick="c2()">CLICK</button>
 <p id="s2">0</p>
 
-<h3>Guess</h3>
+<!-- GAME 3 -->
+<h3>Guess Game</h3>
 <input id="g3">
-<button onclick="g3()">Check</button>
+<button class="btn-purple" onclick="g3()">Check</button>
+<button class="btn-red" onclick="stop3()">STOP</button>
 <p id="r3"></p>
 
+<!-- GAME 4 -->
 <h3>Memory</h3>
-<button onclick="alert('Memory Game')">Start</button>
+<button class="btn-orange" onclick="alert('Memory Game')">Start</button>
+<button class="btn-red" onclick="stop4()">STOP</button>
 
+<!-- GAME 5 -->
 <h3>Color Game</h3>
-<button onclick="document.body.style.background='yellow'">Change</button>
+<button class="btn-pink" onclick="document.body.style.background='yellow'">Change</button>
+<button class="btn-red" onclick="stop5()">STOP</button>
 
+<!-- GAME 6 -->
 <h3>Random Score</h3>
-<button onclick="document.getElementById('r6').innerText=Math.random()*100">Generate</button>
+<button class="btn-cyan" onclick="document.getElementById('r6').innerText=Math.random()*100">Generate</button>
+<button class="btn-red" onclick="stop6()">STOP</button>
 <p id="r6"></p>
 
+<!-- GAME 7 -->
 <h3>Math Game</h3>
-<button onclick="math()">Solve 5+3?</button>
+<button class="btn-yellow" onclick="math()">Solve</button>
+<button class="btn-red" onclick="stop7()">STOP</button>
 <p id="m7"></p>
 
+<!-- GAME 8 -->
 <h3>Aim Trainer</h3>
-<button onclick="aim()">Hit</button>
+<button class="btn-green" onclick="aim()">Hit</button>
+<button class="btn-red" onclick="stop8()">STOP</button>
 <p id="a8">0</p>
 
+<!-- GAME 9 -->
 <h3>Timing Game</h3>
-<button onclick="t9()">Start</button>
+<button class="btn-blue" onclick="t9()">Start</button>
+<button class="btn-red" onclick="stop9()">STOP</button>
 <p id="t9"></p>
 
+<!-- GAME 10 -->
 <h3>🐍 Snake</h3>
-<button onclick="up()">⬆️</button>
-<button onclick="left()">⬅️</button>
-<button onclick="down()">⬇️</button>
-<button onclick="right()">➡️</button>
+<button class="btn-green" onclick="up()">⬆️</button>
+<button class="btn-green" onclick="down()">⬇️</button>
+<button class="btn-green" onclick="left()">⬅️</button>
+<button class="btn-green" onclick="right()">➡️</button>
+<button class="btn-red" onclick="stop10()">STOP</button>
 <p id="pos"></p>
 
 </section>
 
 <script>
 
-let intervals = [];
-let timeouts = [];
+let intervals=[];
+let timeouts=[];
 
-function registerInterval(id){ intervals.push(id); }
-function registerTimeout(id){ timeouts.push(id); }
+function regI(i){intervals.push(i)}
+function regT(t){timeouts.push(t)}
 
 /* DARK */
 function dark(){
@@ -201,11 +201,10 @@ document.body.classList.toggle("dark");
 function stopAll(){
 intervals.forEach(clearInterval);
 timeouts.forEach(clearTimeout);
-intervals = [];
-timeouts = [];
+intervals=[];
+timeouts=[];
 
 s=0;c=0;a=0;
-
 document.getElementById('s1').innerText=0;
 document.getElementById('s2').innerText=0;
 document.getElementById('a8').innerText=0;
@@ -213,52 +212,65 @@ document.getElementById('r3').innerText="";
 document.getElementById('t9').innerText="";
 }
 
+/* GAME STATES */
+let s=0,c=0,a=0;
+
 /* GAME 1 */
-let s=0;
-function g1(){
-let id=setInterval(()=>{},1000);
-registerInterval(id);
-}
-function hit(){s++;document.getElementById('s1').innerText=s}
+let g1Run=false;
+function g1(){g1Run=true;}
+function hit(){if(g1Run){s++;document.getElementById('s1').innerText=s}}
+function stop1(){g1Run=false;s=0;document.getElementById('s1').innerText=0}
 
 /* GAME 2 */
-let c=0;
-function g2(){c=0;document.getElementById('s2').innerText=0}
-function c2(){c++;document.getElementById('s2').innerText=c}
+let g2Run=false;
+function g2(){g2Run=true;c=0;document.getElementById('s2').innerText=0}
+function c2(){if(g2Run){c++;document.getElementById('s2').innerText=c}}
+function stop2(){g2Run=false;c=0;document.getElementById('s2').innerText=0}
 
 /* GAME 3 */
 function g3(){
 let r=Math.floor(Math.random()*5)+1;
 let u=document.getElementById('g3').value;
 document.getElementById('r3').innerText=
-(u==r)?"Correct":"Wrong Answer "+r;
+(u==r)?"Correct":"Wrong "+r;
 }
+function stop3(){document.getElementById('r3').innerText=""}
 
-/* MATH */
+/* GAME 4 */
+function stop4(){alert("Memory reset")}
+
+/* GAME 5 */
+function stop5(){document.body.style.background=""}
+
+/* GAME 6 */
+function stop6(){document.getElementById('r6').innerText=""}
+
+/* GAME 7 */
 function math(){
 document.getElementById("m7").innerText=
 Math.random()>0.5?"Correct":"Wrong";
 }
+function stop7(){document.getElementById("m7").innerText=""}
 
-/* AIM */
-let a=0;
+/* GAME 8 */
 function aim(){
 a++;
 document.getElementById("a8").innerText=a;
 }
+function stop8(){a=0;document.getElementById("a8").innerText=0}
 
-/* TIMING */
+/* GAME 9 */
 function t9(){
 let start=Date.now();
 let id=setTimeout(()=>{
 document.getElementById("t9").innerText=
 Date.now()-start+" ms";
 },Math.random()*3000);
-
-registerTimeout(id);
+regT(id);
 }
+function stop9(){document.getElementById('t9').innerText=""}
 
-/* SNAKE */
+/* GAME 10 */
 let x=0,y=0;
 function update(){
 document.getElementById("pos").innerText="X:"+x+" Y:"+y;
@@ -267,6 +279,8 @@ function up(){y-=10;update()}
 function down(){y+=10;update()}
 function left(){x-=10;update()}
 function right(){x+=10;update()}
+function stop10(){x=0;y=0;update()}
+
 update();
 
 </script>
