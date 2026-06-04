@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Elite Portfolio</title>
+<title>Master Portfolio</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -17,8 +17,8 @@
 }
 
 .dark{
-  --bg:#0c0c0c;
-  --text:#fff;
+  --bg:#0a0a0a;
+  --text:#ffffff;
   --card:#1c1c1c;
 }
 
@@ -32,15 +32,23 @@ body{
 /* NAV */
 .navbar{
   background:var(--card)!important;
+  backdrop-filter:blur(10px);
 }
 
 /* HERO */
 .hero{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
   background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
-  padding:100px 20px;
-  text-align:center;
-  border-radius:0 0 40px 40px;
+}
+
+/* SECTION */
+.section{
+  padding:70px 0;
 }
 
 /* CARD */
@@ -52,15 +60,46 @@ body{
 }
 
 .card:hover{
-  transform:scale(1.05);
+  transform:translateY(-10px);
 }
 
-/* IMAGES */
-.img-box img{
+/* GALLERY */
+.gallery img{
   width:100%;
   height:220px;
   object-fit:cover;
   border-radius:12px;
+  transition:0.3s;
+}
+
+.gallery img:hover{
+  transform:scale(1.05);
+}
+
+/* COUNTER */
+.counter{
+  font-size:40px;
+  font-weight:bold;
+}
+
+/* GAME */
+.game-box{
+  text-align:center;
+  position:relative;
+  height:300px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.target{
+  width:70px;
+  height:70px;
+  background:red;
+  border-radius:50%;
+  position:absolute;
+  display:none;
+  cursor:pointer;
 }
 
 /* BUTTON */
@@ -71,28 +110,11 @@ body{
   z-index:999;
 }
 
-/* GAME */
-.game-box{
-  text-align:center;
-  padding:30px;
-}
-
-.target{
-  width:80px;
-  height:80px;
-  background:red;
-  border-radius:50%;
-  position:absolute;
-  display:none;
-  cursor:pointer;
-}
-
 /* FOOTER */
 footer{
   background:#000;
   color:#fff;
   padding:25px;
-  margin-top:40px;
 }
 </style>
 </head>
@@ -104,46 +126,37 @@ footer{
 
 <!-- NAV -->
 <nav class="navbar navbar-expand-lg sticky-top px-3 shadow-sm">
-  <a class="navbar-brand fw-bold">🚀 My Portfolio</a>
+  <a class="navbar-brand fw-bold">🚀 Master Portfolio</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <h1>Hi, I'm a Web Developer</h1>
-  <p>Modern Websites • UI Design • Creative Developer</p>
+  <div>
+    <h1>I am <span id="typing"></span></h1>
+    <p>Web Developer • Designer • Freelancer</p>
+    <a href="#projects" class="btn btn-light btn-lg mt-3">View Work</a>
+  </div>
+</section>
+
+<!-- COUNTERS -->
+<section class="section container text-center">
+  <div class="row">
+    <div class="col-md-4"><div class="counter" id="c1">0</div><p>Projects</p></div>
+    <div class="col-md-4"><div class="counter" id="c2">0</div><p>Clients</p></div>
+    <div class="col-md-4"><div class="counter" id="c3">0</div><p>Experience</p></div>
+  </div>
 </section>
 
 <!-- ABOUT -->
-<div class="container my-5">
+<section class="section container">
 <h2 class="text-center">About Me</h2>
 <p class="text-center">
-I am a passionate developer building modern websites with HTML, CSS, JS.
+I build modern websites, apps and UI designs with clean code and creative ideas.
 </p>
-</div>
-
-<!-- GALLERY IMAGES -->
-<div class="container my-5">
-<h2 class="text-center mb-4">Gallery</h2>
-
-<div class="row g-3 img-box">
-
-<div class="col-md-4">
-<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
-</div>
-
-<div class="col-md-4">
-<img src="https://images.unsplash.com/photo-1503437313881-503a91226402">
-</div>
-
-<div class="col-md-4">
-<img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
-</div>
-
-</div>
-</div>
+</section>
 
 <!-- SKILLS -->
-<div class="container my-5">
+<section class="section container">
 <h2 class="text-center">Skills</h2>
 
 <p>HTML</p>
@@ -153,52 +166,88 @@ I am a passionate developer building modern websites with HTML, CSS, JS.
 <div class="progress"><div class="progress-bar" style="width:90%"></div></div>
 
 <p class="mt-3">JavaScript</p>
-<div class="progress"><div class="progress-bar" style="width:80%"></div></div>
-</div>
+<div class="progress"><div class="progress-bar" style="width:85%"></div></div>
+</section>
 
-<!-- GAME SECTION -->
-<div class="container my-5">
-<h2 class="text-center">🎮 Mini Game (Click Challenge)</h2>
+<!-- PROJECTS -->
+<section class="section container" id="projects">
+<h2 class="text-center">Projects</h2>
 
-<div class="game-box">
-  <p>Click the red circle as fast as you can!</p>
-  <h4>Score: <span id="score">0</span></h4>
+<div class="row g-4">
 
-  <div class="position-relative" style="height:300px;border:1px solid #ccc;">
-    <div class="target" id="target" onclick="hit()"></div>
-  </div>
-
-  <button class="btn btn-primary mt-3" onclick="startGame()">Start Game</button>
+<div class="col-md-4">
+<div class="card p-3">
+<img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085" class="img-fluid rounded">
+<h5 class="mt-2">Website Design</h5>
 </div>
 </div>
+
+<div class="col-md-4">
+<div class="card p-3">
+<img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c" class="img-fluid rounded">
+<h5 class="mt-2">Dashboard UI</h5>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3">
+<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" class="img-fluid rounded">
+<h5 class="mt-2">App UI</h5>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- GALLERY -->
+<section class="section container">
+<h2 class="text-center">Gallery</h2>
+
+<div class="row g-3 gallery">
+
+<div class="col-md-4"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70"></div>
+<div class="col-md-4"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f"></div>
+<div class="col-md-4"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d"></div>
+
+</div>
+</section>
+
+<!-- GAME -->
+<section class="section container">
+<h2 class="text-center">🎮 Reaction Game</h2>
+
+<p class="text-center">Click the red circle fast!</p>
+<h4 class="text-center">Score: <span id="score">0</span></h4>
+
+<div class="game-box mt-3">
+  <div class="target" id="target" onclick="hit()"></div>
+</div>
+
+<div class="text-center mt-3">
+<button class="btn btn-primary" onclick="startGame()">Start Game</button>
+</div>
+</section>
 
 <!-- CONTACT -->
-<div class="container my-5">
+<section class="section container">
 <h2 class="text-center">Contact</h2>
 
 <form onsubmit="send(event)" class="row g-3">
 
-<div class="col-md-6">
-<input class="form-control" placeholder="Name" required>
-</div>
+<div class="col-md-6"><input class="form-control" placeholder="Name" required></div>
+<div class="col-md-6"><input class="form-control" placeholder="Email" required></div>
 
-<div class="col-md-6">
-<input class="form-control" placeholder="Email" required>
-</div>
-
-<div class="col-12">
-<textarea class="form-control" placeholder="Message"></textarea>
-</div>
+<div class="col-12"><textarea class="form-control" placeholder="Message"></textarea></div>
 
 <div class="col-12 text-center">
-<button class="btn btn-success btn-lg">Send</button>
+<button class="btn btn-success btn-lg">Send Message</button>
 </div>
 
 </form>
-</div>
+</section>
 
 <footer class="text-center">
-<p>© 2026 Elite Portfolio</p>
+<p>© 2026 Master Portfolio</p>
 </footer>
 
 <script>
@@ -212,36 +261,53 @@ if(localStorage.getItem("dark")==="true"){
   document.body.classList.add("dark");
 }
 
-/* GAME LOGIC */
-let score=0;
-let gameActive=false;
+/* TYPING */
+const words=["Developer","Designer","Freelancer"];
+let i=0,j=0;
+function type(){
+  document.getElementById("typing").innerHTML=words[i].slice(0,j++);
+  if(j>words[i].length){i=(i+1)%words.length;j=0;}
+  setTimeout(type,150);
+}
+type();
 
+/* COUNTERS */
+function count(id,end){
+  let el=document.getElementById(id);
+  let c=0;
+  let t=setInterval(()=>{
+    if(c>=end) clearInterval(t);
+    else el.innerText=c++;
+  },20);
+}
+count("c1",120);
+count("c2",50);
+count("c3",5);
+
+/* GAME */
+let score=0;
 function startGame(){
   score=0;
   document.getElementById("score").innerText=score;
-  gameActive=true;
-  moveTarget();
+  move();
 }
 
-function moveTarget(){
-  if(!gameActive) return;
+function move(){
+  let t=document.getElementById("target");
+  t.style.display="block";
 
-  let target=document.getElementById("target");
   let x=Math.random()*250;
   let y=Math.random()*250;
 
-  target.style.left=x+"px";
-  target.style.top=y+"px";
-  target.style.display="block";
+  t.style.left=x+"px";
+  t.style.top=y+"px";
 
-  setTimeout(moveTarget,1000);
+  setTimeout(move,900);
 }
 
 function hit(){
-  if(gameActive){
-    score++;
-    document.getElementById("score").innerText=score;
-  }
+  score++;
+  document.getElementById("score").innerText=score;
 }
 
 /* FORM */
@@ -249,6 +315,7 @@ function send(e){
   e.preventDefault();
   alert("Message Sent Successfully!");
 }
+
 </script>
 
 </body>
