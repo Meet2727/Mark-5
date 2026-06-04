@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pro Portfolio</title>
+<title>Elite Portfolio</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -12,13 +12,13 @@
 :root{
   --bg:#ffffff;
   --text:#111;
-  --card:#f6f6f6;
+  --card:#f5f5f5;
   --primary:#6c63ff;
 }
 
 .dark{
-  --bg:#0b0b0b;
-  --text:#ffffff;
+  --bg:#0c0c0c;
+  --text:#fff;
   --card:#1c1c1c;
 }
 
@@ -36,63 +36,34 @@ body{
 
 /* HERO */
 .hero{
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
   background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
-}
-
-.hero h1{
-  font-size:3rem;
-  font-weight:bold;
-}
-
-/* BUTTONS */
-.btn-glow{
-  box-shadow:0 0 20px rgba(255,255,255,0.3);
+  padding:100px 20px;
+  text-align:center;
+  border-radius:0 0 40px 40px;
 }
 
 /* CARD */
 .card{
   background:var(--card);
   border:none;
-  transition:0.4s;
   border-radius:15px;
+  transition:0.3s;
 }
 
 .card:hover{
-  transform:translateY(-10px);
-  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  transform:scale(1.05);
 }
 
-/* COUNTER */
-.counter{
-  font-size:40px;
-  font-weight:bold;
+/* IMAGES */
+.img-box img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  border-radius:12px;
 }
 
-/* SKILLS */
-.skill{
-  height:8px;
-  background:#ddd;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.skill div{
-  height:100%;
-  background:linear-gradient(90deg,#6c63ff,#00c6ff);
-}
-
-/* SECTION */
-.section{
-  padding:70px 0;
-}
-
-/* FLOAT BUTTON */
+/* BUTTON */
 .toggle{
   position:fixed;
   top:15px;
@@ -100,16 +71,20 @@ body{
   z-index:999;
 }
 
-/* ANIMATION */
-.fade{
-  opacity:0;
-  transform:translateY(40px);
-  transition:1s;
+/* GAME */
+.game-box{
+  text-align:center;
+  padding:30px;
 }
 
-.fade.show{
-  opacity:1;
-  transform:translateY(0);
+.target{
+  width:80px;
+  height:80px;
+  background:red;
+  border-radius:50%;
+  position:absolute;
+  display:none;
+  cursor:pointer;
 }
 
 /* FOOTER */
@@ -117,142 +92,118 @@ footer{
   background:#000;
   color:#fff;
   padding:25px;
+  margin-top:40px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- DARK -->
+<!-- DARK MODE -->
 <button class="btn btn-dark toggle" onclick="toggleDark()">🌙</button>
 
 <!-- NAV -->
 <nav class="navbar navbar-expand-lg sticky-top px-3 shadow-sm">
-  <a class="navbar-brand fw-bold">⚡ Developer</a>
-  <div class="ms-auto">
-    <a href="#about" class="mx-2">About</a>
-    <a href="#skills" class="mx-2">Skills</a>
-    <a href="#projects" class="mx-2">Projects</a>
-    <a href="#contact" class="mx-2">Contact</a>
-  </div>
+  <a class="navbar-brand fw-bold">🚀 My Portfolio</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div>
-    <h1>I am <span id="typing"></span></h1>
-    <p>Freelance Web Developer | UI Designer | Creator</p>
-
-    <a href="#projects" class="btn btn-light btn-lg btn-glow mt-3">View Work</a>
-    <a href="#" class="btn btn-outline-light btn-lg mt-3">Download CV</a>
-  </div>
-</section>
-
-<!-- COUNTERS -->
-<section class="section container text-center fade">
-  <div class="row">
-    <div class="col-md-4">
-      <div class="counter" id="c1">0</div>
-      <p>Projects</p>
-    </div>
-    <div class="col-md-4">
-      <div class="counter" id="c2">0</div>
-      <p>Clients</p>
-    </div>
-    <div class="col-md-4">
-      <div class="counter" id="c3">0</div>
-      <p>Experience</p>
-    </div>
-  </div>
+  <h1>Hi, I'm a Web Developer</h1>
+  <p>Modern Websites • UI Design • Creative Developer</p>
 </section>
 
 <!-- ABOUT -->
-<section class="section container fade" id="about">
-  <h2 class="text-center mb-4">About Me</h2>
-  <p class="text-center">
-    I am a professional web developer who builds modern, fast and responsive websites.
-    I specialize in HTML, CSS, JavaScript and Bootstrap.
-  </p>
-</section>
+<div class="container my-5">
+<h2 class="text-center">About Me</h2>
+<p class="text-center">
+I am a passionate developer building modern websites with HTML, CSS, JS.
+</p>
+</div>
+
+<!-- GALLERY IMAGES -->
+<div class="container my-5">
+<h2 class="text-center mb-4">Gallery</h2>
+
+<div class="row g-3 img-box">
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
+</div>
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1503437313881-503a91226402">
+</div>
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
+</div>
+
+</div>
+</div>
 
 <!-- SKILLS -->
-<section class="section container fade" id="skills">
-  <h2 class="text-center mb-4">Skills</h2>
+<div class="container my-5">
+<h2 class="text-center">Skills</h2>
 
-  <p>HTML</p>
-  <div class="skill"><div style="width:95%"></div></div>
+<p>HTML</p>
+<div class="progress"><div class="progress-bar" style="width:95%"></div></div>
 
-  <p class="mt-3">CSS</p>
-  <div class="skill"><div style="width:90%"></div></div>
+<p class="mt-3">CSS</p>
+<div class="progress"><div class="progress-bar" style="width:90%"></div></div>
 
-  <p class="mt-3">JavaScript</p>
-  <div class="skill"><div style="width:85%"></div></div>
+<p class="mt-3">JavaScript</p>
+<div class="progress"><div class="progress-bar" style="width:80%"></div></div>
+</div>
 
-  <p class="mt-3">Bootstrap</p>
-  <div class="skill"><div style="width:90%"></div></div>
-</section>
+<!-- GAME SECTION -->
+<div class="container my-5">
+<h2 class="text-center">🎮 Mini Game (Click Challenge)</h2>
 
-<!-- PROJECTS -->
-<section class="section container fade" id="projects">
-  <h2 class="text-center mb-4">Projects</h2>
+<div class="game-box">
+  <p>Click the red circle as fast as you can!</p>
+  <h4>Score: <span id="score">0</span></h4>
 
-  <div class="row g-4">
-
-    <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Landing Page</h5>
-        <p>Modern responsive landing page design.</p>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Portfolio UI</h5>
-        <p>Clean developer portfolio interface.</p>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Business Website</h5>
-        <p>Full responsive business website.</p>
-      </div>
-    </div>
-
+  <div class="position-relative" style="height:300px;border:1px solid #ccc;">
+    <div class="target" id="target" onclick="hit()"></div>
   </div>
-</section>
+
+  <button class="btn btn-primary mt-3" onclick="startGame()">Start Game</button>
+</div>
+</div>
 
 <!-- CONTACT -->
-<section class="section container fade" id="contact">
-  <h2 class="text-center mb-4">Contact Me</h2>
+<div class="container my-5">
+<h2 class="text-center">Contact</h2>
 
-  <form onsubmit="send(event)" class="row g-3">
+<form onsubmit="send(event)" class="row g-3">
 
-    <div class="col-md-6">
-      <input class="form-control" placeholder="Name" required>
-    </div>
+<div class="col-md-6">
+<input class="form-control" placeholder="Name" required>
+</div>
 
-    <div class="col-md-6">
-      <input class="form-control" placeholder="Email" required>
-    </div>
+<div class="col-md-6">
+<input class="form-control" placeholder="Email" required>
+</div>
 
-    <div class="col-12">
-      <textarea class="form-control" rows="4" placeholder="Message"></textarea>
-    </div>
+<div class="col-12">
+<textarea class="form-control" placeholder="Message"></textarea>
+</div>
 
-    <div class="col-12 text-center">
-      <button class="btn btn-primary btn-lg">Send Message</button>
-    </div>
+<div class="col-12 text-center">
+<button class="btn btn-success btn-lg">Send</button>
+</div>
 
-  </form>
-</section>
+</form>
+</div>
 
 <footer class="text-center">
-  <p>© 2026 Developer Portfolio</p>
+<p>© 2026 Elite Portfolio</p>
 </footer>
 
 <script>
-/* DARK */
+
+/* DARK MODE */
 function toggleDark(){
   document.body.classList.toggle("dark");
   localStorage.setItem("dark", document.body.classList.contains("dark"));
@@ -261,43 +212,42 @@ if(localStorage.getItem("dark")==="true"){
   document.body.classList.add("dark");
 }
 
-/* TYPE EFFECT */
-const text=["a Developer","a Designer","a Freelancer"];
-let i=0, j=0, current="";
-function type(){
-  current=text[i];
-  document.getElementById("typing").innerHTML=current.slice(0,j++);
-  if(j>current.length){i=(i+1)%text.length;j=0;}
-  setTimeout(type,150);
-}
-type();
+/* GAME LOGIC */
+let score=0;
+let gameActive=false;
 
-/* COUNTERS */
-function count(id,end){
-  let e=document.getElementById(id);
-  let i=0;
-  let t=setInterval(()=>{
-    if(i>=end) clearInterval(t);
-    else e.innerText=i++;
-  },20);
+function startGame(){
+  score=0;
+  document.getElementById("score").innerText=score;
+  gameActive=true;
+  moveTarget();
 }
 
-count("c1", 50);
-count("c2", 20);
-count("c3", 2);
+function moveTarget(){
+  if(!gameActive) return;
 
-/* SCROLL */
-const obs=new IntersectionObserver(e=>{
-  e.forEach(x=>{
-    if(x.isIntersecting)x.target.classList.add("show");
-  });
-});
-document.querySelectorAll(".fade").forEach(e=>obs.observe(e));
+  let target=document.getElementById("target");
+  let x=Math.random()*250;
+  let y=Math.random()*250;
+
+  target.style.left=x+"px";
+  target.style.top=y+"px";
+  target.style.display="block";
+
+  setTimeout(moveTarget,1000);
+}
+
+function hit(){
+  if(gameActive){
+    score++;
+    document.getElementById("score").innerText=score;
+  }
+}
 
 /* FORM */
 function send(e){
   e.preventDefault();
-  alert("Message Sent!");
+  alert("Message Sent Successfully!");
 }
 </script>
 
