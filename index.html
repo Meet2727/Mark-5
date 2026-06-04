@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Master Portfolio + Games</title>
+<title>Portfolio + Games Pro</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -24,33 +24,27 @@ body{
   background:var(--bg);
   color:var(--text);
   transition:0.4s;
-  scroll-behavior:smooth;
 }
 
-/* NAV */
-.navbar{
-  background:var(--card)!important;
-}
+.navbar{background:var(--card)!important;}
 
-/* HERO */
 .hero{
   background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
-  padding:90px 20px;
+  padding:80px;
   text-align:center;
 }
 
-/* CARD */
 .card{
   background:var(--card);
   border:none;
-  border-radius:12px;
+  border-radius:10px;
 }
 
-/* GAME BOX */
+/* GAME */
 .game-box{
-  border:1px solid #ccc;
   height:250px;
+  border:1px solid #ccc;
   position:relative;
   overflow:hidden;
   border-radius:10px;
@@ -63,187 +57,158 @@ body{
   border-radius:50%;
   position:absolute;
   display:none;
+  cursor:pointer;
 }
 
-/* BUTTON */
 .toggle{
   position:fixed;
-  top:15px;
-  right:15px;
+  top:10px;
+  right:10px;
   z-index:999;
-}
-
-/* IMAGE */
-img{
-  border-radius:10px;
-}
-
-/* FOOTER */
-footer{
-  background:#000;
-  color:#fff;
-  padding:20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- DARK MODE BUTTON -->
+<!-- DARK -->
 <button class="btn btn-dark toggle" onclick="toggleDark()">🌙</button>
 
-<!-- NAV -->
-<nav class="navbar navbar-expand-lg px-3">
-  <a class="navbar-brand fw-bold">🚀 My Portfolio</a>
+<nav class="navbar px-3">
+  <h5>🚀 Portfolio + Games</h5>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <h1>Welcome to My Portfolio</h1>
-  <p>Developer • Designer • Creator</p>
-</section>
-
-<!-- ABOUT -->
-<div class="container my-4">
-<h2 class="text-center">About Me</h2>
-<p class="text-center">
-I am a web developer building modern websites and games using HTML, CSS, JS.
-</p>
+<div class="hero">
+  <h1>Welcome Developer</h1>
 </div>
 
-<!-- GALLERY -->
-<div class="container my-4">
-<h2 class="text-center">Gallery</h2>
-<div class="row g-3">
-
-<div class="col-md-4">
-<img class="w-100" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
-</div>
-
-<div class="col-md-4">
-<img class="w-100" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
-</div>
-
-<div class="col-md-4">
-<img class="w-100" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70">
-</div>
-
-</div>
-</div>
-
-<!-- SKILLS -->
-<div class="container my-4">
-<h2 class="text-center">Skills</h2>
-
-<p>HTML</p>
-<div class="progress"><div class="progress-bar" style="width:95%"></div></div>
-
-<p>CSS</p>
-<div class="progress"><div class="progress-bar" style="width:90%"></div></div>
-
-<p>JavaScript</p>
-<div class="progress"><div class="progress-bar" style="width:80%"></div></div>
+<!-- STOP BUTTON -->
+<div class="container text-center my-3">
+<button class="btn btn-danger" onclick="stopAllGames()">🛑 STOP ALL GAMES</button>
 </div>
 
 <!-- GAME 1 -->
-<div class="container my-5">
-<h2 class="text-center">🎮 Reaction Game</h2>
-<h4 class="text-center">Score: <span id="score">0</span></h4>
+<div class="container my-4">
+<h4>🎮 Reaction Game</h4>
+<h5>Score: <span id="score">0</span></h5>
 
-<div class="game-box mt-3">
+<div class="game-box">
   <div class="target" id="target" onclick="hit()"></div>
 </div>
 
-<div class="text-center mt-3">
-<button class="btn btn-primary" onclick="startGame()">Start Game</button>
-</div>
+<button class="btn btn-primary mt-2" onclick="startGame()">Start</button>
 </div>
 
 <!-- GAME 2 -->
-<div class="container my-5">
-<h2 class="text-center">⚡ Click Speed Game</h2>
-<h4 class="text-center">Score: <span id="clickScore">0</span></h4>
+<div class="container my-4">
+<h4>⚡ Click Speed Game</h4>
+<h5>Score: <span id="clickScore">0</span></h5>
 
-<div class="text-center">
-<button class="btn btn-danger" onclick="startClickGame()">Start 5 Sec</button>
-<button class="btn btn-success mt-2" onclick="clickBtn()">CLICK</button>
-</div>
+<button class="btn btn-success" onclick="startClickGame()">Start 5s</button>
+<button class="btn btn-warning" onclick="clickBtn()">CLICK</button>
 </div>
 
 <!-- GAME 3 -->
-<div class="container my-5">
-<h2 class="text-center">🎲 Guess Number</h2>
+<div class="container my-4">
+<h4>🎲 Guess Number</h4>
 
-<div class="text-center">
-<input id="guess" class="form-control w-50 mx-auto" placeholder="Enter 1-5">
+<input id="guess" class="form-control w-50" placeholder="1-5">
 <button class="btn btn-primary mt-2" onclick="checkGuess()">Check</button>
+
 <h5 id="result"></h5>
 </div>
+
+<!-- GAME 4 (NEW) -->
+<div class="container my-4">
+<h4>🧠 Memory Game</h4>
+<p>Click button when color turns green!</p>
+
+<div id="memBox" style="height:100px;background:gray;border-radius:10px;"></div>
+<button class="btn btn-dark mt-2" onclick="startMemory()">Start</button>
+<button class="btn btn-success mt-2" onclick="pressMemory()">CLICK</button>
+
+<h5 id="memResult"></h5>
 </div>
 
-<!-- FOOTER -->
-<footer class="text-center">
-<p>© 2026 Portfolio + Games</p>
-</footer>
+<!-- GAME 5 (NEW) -->
+<div class="container my-4">
+<h4>🎯 Random Score Game</h4>
+<button class="btn btn-primary" onclick="randomScore()">Generate Score</button>
+<h3 id="randScore"></h3>
+</div>
 
 <script>
 
 /* DARK MODE */
 function toggleDark(){
   document.body.classList.toggle("dark");
-  localStorage.setItem("theme", document.body.classList.contains("dark"));
 }
 
-if(localStorage.getItem("theme")==="true"){
-  document.body.classList.add("dark");
+/* STOP ALL GAMES */
+let gameActive = true;
+let clickRunning = false;
+let memoryActive = false;
+let targetInterval;
+
+/* STOP BUTTON */
+function stopAllGames(){
+
+  gameActive = false;
+  clickRunning = false;
+  memoryActive = false;
+
+  clearInterval(targetInterval);
+
+  document.getElementById("target").style.display="none";
+
+  alert("🛑 All Games Stopped");
 }
 
 /* GAME 1 */
 let score=0;
+
 function startGame(){
+  gameActive = true;
   score=0;
   document.getElementById("score").innerText=score;
+
   move();
 }
 
 function move(){
+  if(!gameActive) return;
+
   let t=document.getElementById("target");
   t.style.display="block";
 
-  let x=Math.random()*200;
-  let y=Math.random()*200;
+  t.style.left=Math.random()*200+"px";
+  t.style.top=Math.random()*200+"px";
 
-  t.style.left=x+"px";
-  t.style.top=y+"px";
-
-  setTimeout(move,1000);
+  targetInterval = setTimeout(move,900);
 }
 
 function hit(){
-  score++;
-  document.getElementById("score").innerText=score;
+  if(gameActive){
+    score++;
+    document.getElementById("score").innerText=score;
+  }
 }
 
 /* GAME 2 */
 let clickScore=0;
-let running=false;
-let timer;
-
 function startClickGame(){
   clickScore=0;
-  document.getElementById("clickScore").innerText=clickScore;
-  running=true;
+  clickRunning=true;
 
-  clearTimeout(timer);
-
-  timer=setTimeout(()=>{
-    running=false;
-    alert("Time Over! Score: "+clickScore);
+  setTimeout(()=>{
+    clickRunning=false;
+    alert("Time Over: "+clickScore);
   },5000);
 }
 
 function clickBtn(){
-  if(running){
+  if(clickRunning){
     clickScore++;
     document.getElementById("clickScore").innerText=clickScore;
   }
@@ -251,14 +216,45 @@ function clickBtn(){
 
 /* GAME 3 */
 function checkGuess(){
-  let user=document.getElementById("guess").value;
-  let rand=Math.floor(Math.random()*5)+1;
+  let u=document.getElementById("guess").value;
+  let r=Math.floor(Math.random()*5)+1;
 
-  if(user==rand){
-    document.getElementById("result").innerText="🎉 Correct!";
+  document.getElementById("result").innerText =
+  (u==r) ? "🎉 Correct!" : "❌ Wrong: "+r;
+}
+
+/* GAME 4 MEMORY */
+let greenTime;
+
+function startMemory(){
+  memoryActive=true;
+  document.getElementById("memResult").innerText="Wait for GREEN...";
+
+  document.getElementById("memBox").style.background="red";
+
+  setTimeout(()=>{
+    if(memoryActive){
+      document.getElementById("memBox").style.background="green";
+      greenTime=Date.now();
+    }
+  },Math.random()*3000+1000);
+}
+
+function pressMemory(){
+  if(!memoryActive) return;
+
+  if(document.getElementById("memBox").style.background=="green"){
+    let reaction=Date.now()-greenTime;
+    document.getElementById("memResult").innerText="⚡ Reaction: "+reaction+" ms";
   } else {
-    document.getElementById("result").innerText="❌ Wrong! Number: "+rand;
+    document.getElementById("memResult").innerText="❌ Too early!";
   }
+}
+
+/* GAME 5 */
+function randomScore(){
+  let score=Math.floor(Math.random()*100);
+  document.getElementById("randScore").innerText="Score: "+score;
 }
 
 </script>
