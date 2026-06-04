@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Futuristic Neon Arcade Hub</title>
+<title>AAA Cyber Game Engine</title>
 
 <style>
 body{
@@ -11,69 +11,74 @@ margin:0;
 font-family:Arial;
 background:#050714;
 color:white;
-overflow-x:hidden;
+overflow:hidden;
 }
 
-/* 🌌 MOVING 3D GLOWING DOT BALLS */
-.bg{
+/* 🌌 CYBER BACKGROUND PARTICLES */
+#bg{
 position:fixed;
 width:100%;
 height:100%;
 z-index:-2;
-overflow:hidden;
 }
 
-.ball{
+.particle{
 position:absolute;
+width:6px;
+height:6px;
 border-radius:50%;
-background:radial-gradient(circle, #00e5ff, transparent);
-box-shadow:0 0 20px #00e5ff,0 0 40px #00e5ff;
-animation:move 12s linear infinite;
-opacity:0.7;
+background:#00e5ff;
+box-shadow:0 0 10px #00e5ff,0 0 25px #00e5ff;
+animation:float 10s linear infinite;
+opacity:0.8;
 }
 
-@keyframes move{
+@keyframes float{
 0%{transform:translateY(110vh) translateX(0);}
-50%{transform:translateY(50vh) translateX(50px);}
-100%{transform:translateY(-10vh) translateX(-30px);}
+50%{transform:translateY(50vh) translateX(40px);}
+100%{transform:translateY(-10vh) translateX(-40px);}
+}
+
+/* ENGINE UI */
+.engine{
+position:relative;
+z-index:2;
+padding:15px;
 }
 
 /* HEADER */
 header{
-padding:10px;
-background:#0f172a;
 display:flex;
 justify-content:space-between;
+align-items:center;
+padding:10px;
+background:#0f172a;
+border-bottom:1px solid #00e5ff;
 }
 
-/* HERO */
-.hero{
-text-align:center;
-padding:40px;
-background:linear-gradient(135deg,#6c63ff,#00c6ff);
-}
-
-/* GRID */
+/* GRID HUB */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 gap:15px;
 padding:15px;
 }
 
-/* CARD */
+/* GAME CARD */
 .card{
 background:rgba(255,255,255,0.05);
-border:1px solid rgba(255,255,255,0.1);
+border:1px solid rgba(0,229,255,0.2);
 border-radius:14px;
 padding:12px;
-backdrop-filter:blur(10px);
+backdrop-filter:blur(12px);
 transition:0.3s;
+cursor:pointer;
 }
 
 .card:hover{
-transform:scale(1.05) rotateX(5deg);
+transform:scale(1.06) rotateX(5deg);
 box-shadow:0 0 25px #00e5ff;
+border-color:#00e5ff;
 }
 
 /* BUTTONS */
@@ -89,190 +94,156 @@ transition:0.2s;
 
 button:hover{transform:scale(1.1);}
 
+.neon{background:#00e5ff;color:black;}
 .red{background:#ff4d4d;color:white;}
 .green{background:#2ecc71;}
-.blue{background:#3498db;color:white;}
 .purple{background:#9b59b6;color:white;}
 .yellow{background:#f1c40f;color:black;}
-.cyan{background:#00e5ff;color:black;}
-.orange{background:#ff8c00;color:white;}
-.pink{background:#ff66a3;color:white;}
 </style>
 </head>
 
 <body>
 
-<div class="bg" id="bg"></div>
+<div id="bg"></div>
+
+<div class="engine">
 
 <header>
-<h3>🎮 FUTURISTIC NEON ARCADE HUB</h3>
+<h2>⚡ AAA CYBER GAME ENGINE</h2>
+<button class="red" onclick="resetEngine()">RESET ENGINE</button>
 </header>
-
-<div class="hero">
-<h1>🔥 12 GAME ARCADE SYSTEM</h1>
-<p>Glowing 3D Background + Futuristic UI</p>
-</div>
 
 <div class="grid">
 
-<!-- 1 Reaction -->
+<!-- 1 REACTION -->
 <div class="card">
-<h3>1️⃣ Reaction</h3>
-<button class="green" onclick="reaction()">Start</button>
-<p id="g1">0</p>
+<h3>🎯 Reaction Engine</h3>
+<button class="green" onclick="reactionStart()">START</button>
+<button class="neon" onclick="reactionClick()">CLICK</button>
+<p id="r1">0 ms</p>
 </div>
 
-<!-- 2 Click -->
+<!-- 2 CLICK -->
 <div class="card">
-<h3>2️⃣ Click Speed</h3>
-<button class="blue" onclick="clickGame()">Click</button>
-<p id="g2">0</p>
+<h3>🖱 Click Engine</h3>
+<button class="green" onclick="clickStart()">START</button>
+<button class="neon" onclick="clickHit()">CLICK</button>
+<p id="r2">0</p>
 </div>
 
-<!-- 3 Math -->
+<!-- 3 MATH -->
 <div class="card">
-<h3>3️⃣ Math</h3>
-<button class="purple" onclick="math()">Play</button>
-<p id="g3"></p>
+<h3>🧠 Math Engine</h3>
+<button class="purple" onclick="mathGame()">PLAY</button>
+<p id="r3"></p>
 </div>
 
-<!-- 4 Guess -->
+<!-- 4 TIMING -->
 <div class="card">
-<h3>4️⃣ Guess</h3>
-<input id="in">
-<button class="yellow" onclick="guess()">Check</button>
-<p id="g4"></p>
+<h3>⏱ Timing Engine</h3>
+<button class="yellow" onclick="timingStart()">START</button>
+<p id="r4"></p>
 </div>
 
-<!-- 5 Random -->
+<!-- 5 AIM -->
 <div class="card">
-<h3>5️⃣ Random</h3>
-<button class="orange" onclick="random()">Generate</button>
-<p id="g5"></p>
+<h3>🎯 Aim Engine</h3>
+<button class="green" onclick="aim()">HIT</button>
+<p id="r5">0</p>
 </div>
 
-<!-- 6 Aim -->
+<!-- 6 DICE -->
 <div class="card">
-<h3>6️⃣ Aim</h3>
-<button class="green" onclick="aim()">Hit</button>
-<p id="g6">0</p>
+<h3>🎲 Dice Engine</h3>
+<button class="neon" onclick="dice()">ROLL</button>
+<p id="r6"></p>
 </div>
 
-<!-- 7 Timing -->
-<div class="card">
-<h3>7️⃣ Timing</h3>
-<button class="cyan" onclick="timing()">Start</button>
-<p id="g7"></p>
-</div>
-
-<!-- 8 Color -->
-<div class="card">
-<h3>8️⃣ Color</h3>
-<button class="pink" onclick="color()">Change</button>
-</div>
-
-<!-- 9 Memory -->
-<div class="card">
-<h3>9️⃣ Memory</h3>
-<button onclick="memory()">Start</button>
-<p id="g9"></p>
-</div>
-
-<!-- 10 Reflex -->
-<div class="card">
-<h3>🔟 Reflex</h3>
-<button onclick="reflex()">Play</button>
-<p id="g10"></p>
-</div>
-
-<!-- 11 Dice -->
-<div class="card">
-<h3>1️⃣1️⃣ Dice</h3>
-<button class="blue" onclick="dice()">Roll</button>
-<p id="g11"></p>
-</div>
-
-<!-- 12 Snake -->
-<div class="card">
-<h3>1️⃣2️⃣ Snake (Simple)</h3>
-<button onclick="snake()">Move</button>
-<p id="g12">X0 Y0</p>
 </div>
 
 </div>
 
 <script>
 
-/* 🌌 MOVING GLASS BALLS */
+/* 🌌 CYBER PARTICLE ENGINE */
 let bg=document.getElementById("bg");
 
-for(let i=0;i<70;i++){
-let b=document.createElement("div");
-b.className="ball";
+for(let i=0;i<80;i++){
+let p=document.createElement("div");
+p.className="particle";
 
-let s=5+Math.random()*10;
-b.style.width=s+"px";
-b.style.height=s+"px";
+let size=3+Math.random()*6;
+p.style.width=size+"px";
+p.style.height=size+"px";
+p.style.left=Math.random()*100+"%";
+p.style.animationDuration=(5+Math.random()*10)+"s";
 
-b.style.left=Math.random()*100+"%";
-b.style.animationDuration=(6+Math.random()*10)+"s";
-
-bg.appendChild(b);
+bg.appendChild(p);
 }
 
-/* 1 Reaction */
-function reaction(){
-let t=Date.now();
-setTimeout(()=>g1.innerText=Date.now()-t+" ms",Math.random()*2000);
+/* ENGINE STATE */
+let score=0;
+let active=false;
+
+/* 1 REACTION */
+let rStart=0;
+function reactionStart(){
+r1.innerText="WAIT...";
+setTimeout(()=>{
+rStart=Date.now();
+r1.innerText="CLICK NOW!";
+active=true;
+},1000+Math.random()*2000);
+}
+function reactionClick(){
+if(!active)return;
+r1.innerText=(Date.now()-rStart)+" ms";
+active=false;
 }
 
-/* 2 Click */
-let c=0;
-function clickGame(){c++;g2.innerText=c}
+/* 2 CLICK */
+function clickStart(){
+score=0;
+r2.innerText=0;
+}
+function clickHit(){
+score++;
+r2.innerText=score;
+}
 
-/* 3 Math */
-function math(){
+/* 3 MATH */
+function mathGame(){
 let a=Math.floor(Math.random()*10);
 let b=Math.floor(Math.random()*10);
-g3.innerText=a+"+"+b+"="+(a+b);
+r3.innerText=`${a} + ${b} = ${a+b}`;
 }
 
-/* 4 Guess */
-function guess(){
-g4.innerText=(in.value==Math.floor(Math.random()*5))?"Correct":"Wrong";
+/* 4 TIMING */
+function timingStart(){
+r4.innerText="WAIT...";
+setTimeout(()=>{
+r4.innerText="CLICK!";
+setTimeout(()=>{
+r4.innerText=Date.now()%1000+" ms (demo)";
+},1000);
+},1000+Math.random()*2000);
 }
 
-/* 5 Random */
-function random(){g5.innerText=Math.floor(Math.random()*100)}
-
-/* 6 Aim */
-let a=0;
-function aim(){a++;g6.innerText=a}
-
-/* 7 Timing */
-function timing(){
-let t=Date.now();
-setTimeout(()=>g7.innerText=Date.now()-t+" ms",1000+Math.random()*2000);
+/* 5 AIM */
+let aimScore=0;
+function aim(){
+aimScore++;
+r5.innerText=aimScore;
 }
 
-/* 8 Color */
-function color(){
-document.body.style.background=`hsl(${Math.random()*360},70%,10%)`;
+/* 6 DICE */
+function dice(){
+r6.innerText=Math.floor(Math.random()*6)+1;
 }
 
-/* 9 Memory */
-function memory(){g9.innerText="Remember 1234"}
-/* 10 Reflex */
-function reflex(){g10.innerText="CLICK!"}
-
-/* 11 Dice */
-function dice(){g11.innerText=Math.floor(Math.random()*6)+1}
-
-/* 12 Snake */
-let x=0,y=0;
-function snake(){
-x++;y++;
-g12.innerText="X"+x+" Y"+y;
+/* RESET ENGINE */
+function resetEngine(){
+location.reload();
 }
 
 </script>
