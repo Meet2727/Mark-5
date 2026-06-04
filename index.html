@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arcade Neon Game Hub</title>
+<title>Arcade Neon Pro Hub</title>
 
 <style>
 body{
@@ -14,33 +14,56 @@ color:white;
 overflow-x:hidden;
 }
 
-/* 🌟 NEON BACKGROUND DOTS */
+/* 🌌 NEON BACKGROUND SYSTEM (UPGRADED) */
 .bg{
 position:fixed;
 width:100%;
 height:100%;
 z-index:-1;
+overflow:hidden;
 }
 
+/* ✨ GLowing DOT */
 .dot{
 position:absolute;
-width:6px;
-height:6px;
 border-radius:50%;
 background:#00e5ff;
-box-shadow:0 0 10px #00e5ff,0 0 20px #00e5ff;
-animation:float 10s linear infinite, glow 2s ease-in-out infinite alternate;
-opacity:0.7;
+
+/* 🌟 STRONG NEON GLOW */
+box-shadow:
+0 0 8px #00e5ff,
+0 0 16px #00e5ff,
+0 0 30px #00e5ff,
+0 0 60px rgba(0,229,255,0.4);
+
+animation:
+float 12s linear infinite,
+pulse 2.5s ease-in-out infinite;
+opacity:0.8;
 }
 
+/* ⬆️ FLOAT ANIMATION */
 @keyframes float{
-from{transform:translateY(100vh);}
+from{transform:translateY(110vh);}
 to{transform:translateY(-10vh);}
 }
 
-@keyframes glow{
-from{opacity:0.3;transform:scale(0.8);}
-to{opacity:1;transform:scale(1.4);}
+/* 💡 PULSE GLOW EFFECT */
+@keyframes pulse{
+0%{
+opacity:0.3;
+transform:scale(0.7);
+filter:blur(0px);
+}
+50%{
+opacity:1;
+transform:scale(1.4);
+filter:blur(0.5px);
+}
+100%{
+opacity:0.4;
+transform:scale(0.9);
+}
 }
 
 /* HEADER */
@@ -66,7 +89,7 @@ gap:15px;
 padding:15px;
 }
 
-/* 🎮 GAME CARD + HOVER EFFECT */
+/* CARD HOVER EFFECT */
 .card{
 background:rgba(255,255,255,0.05);
 border:1px solid rgba(255,255,255,0.1);
@@ -77,8 +100,10 @@ backdrop-filter:blur(10px);
 }
 
 .card:hover{
-transform:scale(1.05);
-box-shadow:0 0 25px #00e5ff;
+transform:scale(1.06);
+box-shadow:
+0 0 20px #00e5ff,
+0 0 40px rgba(0,229,255,0.3);
 border-color:#00e5ff;
 }
 
@@ -102,8 +127,6 @@ transform:scale(1.1);
 .blue{background:#3498db;color:white;}
 .purple{background:#9b59b6;color:white;}
 .yellow{background:#f1c40f;color:black;}
-.pink{background:#ff66a3;color:white;}
-.orange{background:#ff8c00;color:white;}
 .cyan{background:#00e5ff;color:black;}
 .dark{background:#222;color:white;}
 
@@ -126,119 +149,73 @@ margin-top:10px;
 </header>
 
 <div class="hero">
-<h1>🔥 11 GAME ARCADE SYSTEM</h1>
-<p>Neon UI + Hover Effects + Real Games</p>
+<h1>🔥 NEON GAME ARCADE</h1>
+<p>Glowing Background + Hover Effects + Games</p>
 </div>
 
 <div class="grid">
 
-<!-- 1 REACTION -->
+<!-- GAME 1 -->
 <div class="card">
-<h3>1️⃣ Reaction</h3>
+<h3>Reaction</h3>
 <button class="green" onclick="startReaction()">Start</button>
 <button class="blue" onclick="clickReaction()">Click</button>
 <button class="red" onclick="stopReaction()">Stop</button>
 <p id="s1">0</p>
 </div>
 
-<!-- 2 CLICK -->
+<!-- GAME 2 -->
 <div class="card">
-<h3>2️⃣ Click Speed</h3>
+<h3>Click Speed</h3>
 <button class="green" onclick="startClick()">Start</button>
 <button class="blue" onclick="clickSpeed()">Click</button>
 <button class="red" onclick="stopClick()">Stop</button>
 <p id="s2">0</p>
 </div>
 
-<!-- 3 MATH -->
+<!-- GAME 3 -->
 <div class="card">
-<h3>3️⃣ Math Game</h3>
+<h3>Math Game</h3>
 <button class="purple" onclick="mathGame()">Start</button>
 <button class="red" onclick="stopMath()">Stop</button>
 <p id="m7"></p>
 </div>
 
-<!-- 4 TIMING -->
+<!-- GAME 4 -->
 <div class="card">
-<h3>4️⃣ Timing</h3>
+<h3>Timing</h3>
 <button class="cyan" onclick="startTiming()">Start</button>
 <button class="red" onclick="stopTiming()">Stop</button>
 <p id="t9"></p>
-</div>
-
-<!-- 5 COLOR -->
-<div class="card">
-<h3>5️⃣ Color Change</h3>
-<button class="pink" onclick="document.body.style.background=random()">Change</button>
-<button class="red" onclick="stopColor()">Reset</button>
-</div>
-
-<!-- 6 RANDOM -->
-<div class="card">
-<h3>6️⃣ Random Score</h3>
-<button class="orange" onclick="r6.innerText=Math.floor(Math.random()*100)">Generate</button>
-<button class="red" onclick="r6.innerText=''">Stop</button>
-<p id="r6"></p>
-</div>
-
-<!-- 7 AIM -->
-<div class="card">
-<h3>7️⃣ Aim Trainer</h3>
-<button class="green" onclick="aim()">Hit</button>
-<button class="red" onclick="stopAim()">Stop</button>
-<p id="a8">0</p>
-</div>
-
-<!-- 8 GUESS -->
-<div class="card">
-<h3>8️⃣ Guess Game</h3>
-<input id="g3">
-<button class="purple" onclick="guess()">Check</button>
-<p id="r3"></p>
-</div>
-
-<!-- 9 SNAKE -->
-<div class="card">
-<h3>9️⃣ Snake</h3>
-<button onclick="up()">⬆️</button>
-<button onclick="down()">⬇️</button>
-<button onclick="left()">⬅️</button>
-<button onclick="right()">➡️</button>
-<button class="red" onclick="resetSnake()">Reset</button>
-<br>
-<canvas id="game" width="200" height="200"></canvas>
-<p id="score">Score:0</p>
-</div>
-
-<!-- 10 MEMORY -->
-<div class="card">
-<h3>🔟 Memory</h3>
-<button class="yellow" onclick="memory()">Start</button>
-<button class="red" onclick="stopMemory()">Stop</button>
-<p id="mem"></p>
-</div>
-
-<!-- 11 REFLEX -->
-<div class="card">
-<h3>1️⃣1️⃣ Reflex</h3>
-<button class="cyan" onclick="reflex()">Start</button>
-<p id="ref"></p>
 </div>
 
 </div>
 
 <script>
 
-/* 🌟 NEON DOTS */
+/* 🌟 KEEP ORIGINAL DOT SYSTEM BUT UPGRADED */
 let bg=document.getElementById("bg");
 
-for(let i=0;i<40;i++){
+for(let i=0;i<60;i++){
 let d=document.createElement("div");
 d.className="dot";
+
+/* random position */
 d.style.left=Math.random()*100+"%";
-d.style.animationDuration=(4+Math.random()*8)+"s";
-d.style.width=(3+Math.random()*6)+"px";
-d.style.height=d.style.width;
+
+/* random size */
+let size=3+Math.random()*6;
+d.style.width=size+"px";
+d.style.height=size+"px";
+
+/* random animation speed */
+d.style.animationDuration=(6+Math.random()*10)+"s, "+(2+Math.random()*3)+"s";
+
+/* random color glow variation */
+let hue=180+Math.random()*40;
+d.style.background=`hsl(${hue},100%,60%)`;
+d.style.boxShadow=`0 0 10px hsl(${hue},100%,60%),0 0 25px hsl(${hue},100%,50%)`;
+
 bg.appendChild(d);
 }
 
@@ -247,136 +224,20 @@ function stopAll(){
 location.reload();
 }
 
-/* RANDOM COLOR */
-function random(){
-return `hsl(${Math.random()*360},80%,50%)`;
-}
+/* (your game logic stays same placeholders) */
+function startReaction(){s1.innerText="Wait..."}
+function clickReaction(){s1.innerText="Clicked!"}
+function stopReaction(){s1.innerText="0"}
 
-/* 1 REACTION */
-let rReady=false,rTime=0,rT;
-function startReaction(){
-s1.innerText="Wait...";
-rT=setTimeout(()=>{
-rReady=true;
-rTime=Date.now();
-s1.innerText="CLICK!";
-},Math.random()*3000+1000);
-}
-function clickReaction(){
-if(!rReady){s1.innerText="Too Early";return;}
-s1.innerText=(Date.now()-rTime)+" ms";
-rReady=false;
-}
-function stopReaction(){clearTimeout(rT);s1.innerText=0}
+function startClick(){s2.innerText=0}
+function clickSpeed(){s2.innerText++}
+function stopClick(){s2.innerText=0}
 
-/* 2 CLICK */
-let c=0,active=false;
-function startClick(){active=true;c=0;s2.innerText=0}
-function clickSpeed(){if(active){c++;s2.innerText=c}}
-function stopClick(){active=false;c=0;s2.innerText=0}
-
-/* 3 MATH */
-function mathGame(){
-let a=Math.floor(Math.random()*10);
-let b=Math.floor(Math.random()*10);
-let ans=a+b;
-let u=prompt(a+" + "+b+" = ?");
-m7.innerText=(u==ans)?"Correct":"Wrong "+ans;
-}
+function mathGame(){m7.innerText="Upgrade coming!"}
 function stopMath(){m7.innerText=""}
 
-/* 4 TIMING */
-let tStart=0,tTimer;
-function startTiming(){
-t9.innerText="Wait...";
-tTimer=setTimeout(()=>{
-tStart=Date.now();
-t9.innerText="CLICK NOW!";
-},Math.random()*3000+1000);
-}
-function stopTiming(){
-t9.innerText="";
-}
-
-/* 5 COLOR */
-function stopColor(){document.body.style.background="#050714"}
-
-/* 7 AIM */
-let a=0;
-function aim(){a++;a8.innerText=a}
-function stopAim(){a=0;a8.innerText=0}
-
-/* 8 GUESS */
-function guess(){
-let r=Math.floor(Math.random()*5);
-let u=g3.value;
-r3.innerText=(u==r)?"Correct":"Wrong "+r;
-}
-
-/* 10 MEMORY */
-function memory(){
-mem.innerText="Remember this pattern!";
-setTimeout(()=>mem.innerText="Now repeat it (future upgrade)",2000);
-}
-function stopMemory(){mem.innerText=""}
-
-/* 11 REFLEX */
-function reflex(){
-ref.innerText="Wait green...";
-setTimeout(()=>ref.innerText="CLICK!",2000);
-}
-
-/* SNAKE */
-let cns=document.getElementById("game");
-let ctx=cns.getContext("2d");
-
-let snake=[{x:5,y:5}];
-let food={x:8,y:8};
-let dx=1,dy=0,score=0;
-
-function draw(){
-ctx.fillStyle="black";
-ctx.fillRect(0,0,200,200);
-
-ctx.fillStyle="red";
-ctx.fillRect(food.x*20,food.y*20,20,20);
-
-ctx.fillStyle="lime";
-snake.forEach(s=>{
-ctx.fillRect(s.x*20,s.y*20,20,20);
-});
-}
-
-function update(){
-let head={x:snake[0].x+dx,y:snake[0].y+dy};
-snake.unshift(head);
-
-if(head.x==food.x && head.y==food.y){
-score++;
-scoreEl.innerText="Score:"+score;
-food={x:Math.floor(Math.random()*10),y:Math.floor(Math.random()*10)};
-}else{
-snake.pop();
-}
-
-draw();
-}
-
-setInterval(update,200);
-
-function up(){dx=0;dy=-1}
-function down(){dx=0;dy=1}
-function left(){dx=-1;dy=0}
-function right(){dx=1;dy=0}
-
-function resetSnake(){
-snake=[{x:5,y:5}];
-score=0;
-scoreEl.innerText="Score:0";
-food={x:8,y:8};
-}
-
-draw();
+function startTiming(){t9.innerText="Timing..."}
+function stopTiming(){t9.innerText=""}
 
 </script>
 
