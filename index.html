@@ -3,100 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ultimate Portfolio + Games</title>
+<title>GOD MODE Portfolio + Games</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-:root{
-  --bg:#ffffff;
-  --text:#111;
-  --card:#f5f5f5;
-}
-
-.dark{
-  --bg:#0b0b0b;
-  --text:#fff;
-  --card:#1c1c1c;
-}
-
 body{
-  background:var(--bg);
-  color:var(--text);
+  margin:0;
+  font-family:Arial;
   transition:0.4s;
-  scroll-behavior:smooth;
+  background:#fff;
+  color:#111;
+  overflow-x:hidden;
+}
+
+/* DARK MODE */
+.dark{
+  background:#0b0b0b;
+  color:#fff;
 }
 
 /* NAV */
-.navbar{background:var(--card)!important;}
+nav{
+  background:rgba(0,0,0,0.05);
+  padding:10px;
+  position:sticky;
+  top:0;
+}
 
 /* HERO */
 .hero{
+  text-align:center;
+  padding:100px 20px;
   background:linear-gradient(135deg,#6c63ff,#00c6ff);
   color:white;
-  text-align:center;
-  padding:90px 20px;
-  animation:fadeDown 1s ease;
+  animation:float 3s infinite alternate;
 }
 
-/* ANIMATION */
-@keyframes fadeDown{
-  from{opacity:0;transform:translateY(-30px);}
-  to{opacity:1;transform:translateY(0);}
+@keyframes float{
+  from{transform:translateY(0px);}
+  to{transform:translateY(-10px);}
 }
 
 /* CARDS */
 .card{
-  background:var(--card);
   border:none;
-  border-radius:12px;
+  border-radius:15px;
   transition:0.3s;
+  background:rgba(255,255,255,0.8);
+  backdrop-filter:blur(10px);
+}
+
+.dark .card{
+  background:rgba(30,30,30,0.8);
 }
 
 .card:hover{
-  transform:translateY(-10px);
-}
-
-/* GALLERY */
-img{
-  width:100%;
-  border-radius:10px;
-  transition:0.3s;
-}
-
-img:hover{
   transform:scale(1.05);
 }
 
 /* GAME BOX */
 .game{
-  border:1px solid #ccc;
   height:220px;
+  border-radius:10px;
+  background:#eee;
   position:relative;
   overflow:hidden;
-  border-radius:10px;
+}
+
+.dark .game{
+  background:#222;
 }
 
 /* TARGET */
 .target{
   width:50px;
   height:50px;
-  background:red;
   border-radius:50%;
+  background:red;
   position:absolute;
   display:none;
-  cursor:pointer;
 }
 
 /* SNAKE */
-#snakeBox{
+#snake{
   width:100%;
   height:250px;
   background:#222;
   position:relative;
-  overflow:hidden;
-  border-radius:10px;
   color:white;
+  border-radius:10px;
 }
 
 /* BUTTON */
@@ -111,114 +107,94 @@ img:hover{
 
 <body>
 
-<!-- DARK -->
-<button class="btn btn-dark toggle" onclick="toggleDark()">🌙</button>
+<button class="btn btn-dark toggle" onclick="dark()">🌙</button>
 
-<!-- NAV -->
-<nav class="navbar px-3 shadow">
-<h5>🚀 Ultimate Portfolio</h5>
+<nav>
+<h4>🚀 GOD MODE PORTFOLIO</h4>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-<h1>Hi, I'm Developer</h1>
-<p>Portfolio + Games + Animation</p>
-</section>
+<div class="hero">
+<h1>Developer Portfolio</h1>
+<p>Games + Animation + Pro UI</p>
+</div>
 
 <!-- PORTFOLIO -->
 <div class="container my-5">
-<h2 class="text-center">💼 Portfolio</h2>
+<h2>💼 Portfolio</h2>
 
 <div class="row g-3">
-
-<div class="col-md-4">
-<div class="card p-2">
-<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
-<h6 class="mt-2">Web Design</h6>
-</div>
-</div>
-
-<div class="col-md-4">
-<div class="card p-2">
-<img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
-<h6 class="mt-2">Coding UI</h6>
-</div>
-</div>
-
-<div class="col-md-4">
-<div class="card p-2">
-<img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c">
-<h6 class="mt-2">Dashboard</h6>
-</div>
-</div>
-
+<div class="col-md-4"><div class="card p-2"><img class="w-100" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f"><h6>Web Design</h6></div></div>
+<div class="col-md-4"><div class="card p-2"><img class="w-100" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085"><h6>UI Dev</h6></div></div>
+<div class="col-md-4"><div class="card p-2"><img class="w-100" src="https://images.unsplash.com/photo-1555066931-4365d14bab8c"><h6>Dashboard</h6></div></div>
 </div>
 </div>
 
 <!-- GAME 1 -->
 <div class="container my-5">
 <h3>🎮 Reaction Game</h3>
-<h5>Score: <span id="score">0</span></h5>
+<h5>Score: <span id="s1">0</span></h5>
 
 <div class="game">
 <div class="target" id="t1" onclick="hit()"></div>
 </div>
 
-<button class="btn btn-primary mt-2" onclick="start1()">Start</button>
-<button class="btn btn-danger mt-2" onclick="stop1()">Stop</button>
+<button onclick="start1()" class="btn btn-primary">Start</button>
+<button onclick="stopAll()" class="btn btn-danger">Stop</button>
 </div>
 
 <!-- GAME 2 -->
 <div class="container my-5">
 <h3>⚡ Click Game</h3>
-<h5>Score: <span id="cscore">0</span></h5>
+<h5>Score: <span id="s2">0</span></h5>
 
-<button class="btn btn-success" onclick="start2()">Start</button>
-<button class="btn btn-warning" onclick="clickBtn()">CLICK</button>
-<button class="btn btn-danger" onclick="stop2()">Stop</button>
+<button onclick="start2()" class="btn btn-success">Start</button>
+<button onclick="click1()" class="btn btn-warning">CLICK</button>
+<button onclick="stopAll()" class="btn btn-danger">Stop</button>
 </div>
 
 <!-- GAME 3 -->
 <div class="container my-5">
 <h3>🎲 Guess Game</h3>
-
 <input id="g" class="form-control w-50">
-<button class="btn btn-primary mt-2" onclick="guess()">Check</button>
-<button class="btn btn-danger mt-2" onclick="stop3()">Stop</button>
-
-<h5 id="res"></h5>
+<button onclick="guess()" class="btn btn-primary mt-2">Check</button>
+<button onclick="stopAll()" class="btn btn-danger mt-2">Stop</button>
+<h5 id="r"></h5>
 </div>
 
 <!-- GAME 4 -->
 <div class="container my-5">
 <h3>🧠 Memory Game</h3>
-
-<div id="mem" class="game"></div>
-
-<button class="btn btn-success mt-2" onclick="start4()">Start</button>
-<button class="btn btn-danger mt-2" onclick="stop4()">Stop</button>
-
-<h5 id="mres"></h5>
+<div class="game" id="mem"></div>
+<button onclick="start4()" class="btn btn-success">Start</button>
+<button onclick="stopAll()" class="btn btn-danger">Stop</button>
+<h5 id="m"></h5>
 </div>
 
 <!-- GAME 5 SNAKE -->
 <div class="container my-5">
-<h3>🐍 Snake Game (Simple)</h3>
-
-<div id="snakeBox">Use Arrow Keys</div>
-
-<button class="btn btn-danger mt-2" onclick="stopSnake()">Stop Snake</button>
+<h3>🐍 Snake Game</h3>
+<div id="snake"></div>
+<button onclick="stopSnake()" class="btn btn-danger">Stop Snake</button>
 </div>
 
 <script>
 
 /* DARK */
-function toggleDark(){
+function dark(){
   document.body.classList.toggle("dark");
 }
 
+/* STOP ALL */
+function stopAll(){
+  running=false;
+  clearTimeout(loop);
+  document.getElementById("t1").style.display="none";
+  alert("All stopped");
+}
+
 /* GAME 1 */
-let s=0, tInt;
+let s=0,loop;
 
 function start1(){
   move();
@@ -229,84 +205,55 @@ function move(){
   t.style.display="block";
   t.style.left=Math.random()*200+"px";
   t.style.top=Math.random()*200+"px";
-
-  tInt=setTimeout(move,900);
+  loop=setTimeout(move,700);
 }
 
 function hit(){
   s++;
-  document.getElementById("score").innerText=s;
-}
-
-function stop1(){
-  clearTimeout(tInt);
-  document.getElementById("t1").style.display="none";
+  document.getElementById("s1").innerText=s;
 }
 
 /* GAME 2 */
-let cs=0, run=false;
+let c=0,run=false;
 
-function start2(){cs=0;run=true;}
+function start2(){c=0;run=true;}
 
-function clickBtn(){
+function click1(){
   if(run){
-    cs++;
-    document.getElementById("cscore").innerText=cs;
+    c++;
+    document.getElementById("s2").innerText=c;
   }
 }
-
-function stop2(){run=false;}
 
 /* GAME 3 */
 function guess(){
   let r=Math.floor(Math.random()*5)+1;
   let u=document.getElementById("g").value;
-
-  document.getElementById("res").innerText=
-  (u==r)?"✔ Correct":"❌ Wrong "+r;
-}
-
-function stop3(){
-  document.getElementById("res").innerText="";
+  document.getElementById("r")=(u==r)?"Correct":"Wrong "+r;
 }
 
 /* GAME 4 */
-let mem=false;
 function start4(){
-  mem=true;
-  document.getElementById("mres").innerText="Wait...";
-  setTimeout(()=>{
-    if(mem){
-      document.getElementById("mem").style.background="green";
-    }
-  },2000);
+  document.getElementById("mem").style.background="green";
 }
 
-function stop4(){
-  mem=false;
-  document.getElementById("mem").style.background="gray";
-  document.getElementById("mres").innerText="";
-}
+/* GAME 5 SNAKE (SIMPLE ENGINE) */
+let x=100,y=100;
 
-/* GAME 5 SNAKE */
-let x=50,y=50;
+document.addEventListener("keydown",e=>{
+  let s=document.getElementById("snake");
 
-document.addEventListener("keydown",moveSnake);
-
-function moveSnake(e){
-  let box=document.getElementById("snakeBox");
   if(e.key=="ArrowRight") x+=10;
   if(e.key=="ArrowLeft") x-=10;
   if(e.key=="ArrowUp") y-=10;
   if(e.key=="ArrowDown") y+=10;
 
-  box.innerHTML=`🐍`;
-  box.style.background="black";
-  box.style.color="white";
-}
+  s.innerHTML="🐍";
+});
 
+/* SNAKE STOP */
 function stopSnake(){
-  document.getElementById("snakeBox").innerHTML="Stopped";
+  document.getElementById("snake").innerHTML="STOPPED";
 }
 
 </script>
