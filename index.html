@@ -1,263 +1,172 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Car_wash_mark_5</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Royal Car Wash</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#ffffff;
+  --text:#111;
+  --card:#f8f9fa;
+  --primary:#0d6efd;
+}
+
+.dark{
+  --bg:#121212;
+  --text:#ffffff;
+  --card:#1e1e1e;
+  --primary:#4dabf7;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  transition:0.4s;
+}
+
+.navbar{
+  background:var(--card) !important;
+}
+
+.hero{
+  background:linear-gradient(135deg,#0d6efd,#00c6ff);
+  color:white;
+  padding:90px 20px;
+  text-align:center;
+  border-radius:0 0 25px 25px;
+}
+
+.card{
+  background:var(--card);
+  color:var(--text);
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+}
+
+.section-title{
+  text-align:center;
+  margin:40px 0 20px;
+}
+
+.toggle-btn{
+  position:fixed;
+  top:15px;
+  right:15px;
+  z-index:999;
+}
+
+footer{
+  background:#000;
+  color:#fff;
+  padding:20px;
+  margin-top:40px;
+}
+</style>
 </head>
 
 <body>
-    <div class="container my-4">
-        <img src="cl.jpg" class="rounded mx-auto d-block" width="200" height="150" alt="...">
 
+<!-- Dark Mode Button -->
+<button class="btn btn-dark toggle-btn" onclick="toggleDark()">🌙</button>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg shadow-sm px-3">
+  <a class="navbar-brand fw-bold" href="#">ROYAL CAR WASH</a>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>Welcome to Royal Car Wash</h1>
+  <p>Premium Car Cleaning • Repair • Doorstep Service</p>
+  <a href="#contact" class="btn btn-light mt-3">Book Now</a>
+</div>
+
+<!-- Services -->
+<div class="container">
+  <h2 class="section-title">Our Services</h2>
+  <div class="row g-4">
+
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <h4>Car Wash</h4>
+        <p>Deep cleaning with modern equipment and safe chemicals.</p>
+      </div>
     </div>
 
-    <nav class="navbar navbar-expand-lg bg-light mx-5 my-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/Mark-4/"> CAR WASH_</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/Mark-4/index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Mark-4/index.html">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Mark-4/index.html">Pricing</a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="1.jpg" class="d-block w-100" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="3.jpg" class="d-block w-100" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="2.jpg" class="d-block w-100" alt="...">
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-
-            <p class="fs-4 my-4">
-                full service will usually include everything that's in the interim service plus extra checks and changes. It could include up to 80 checks on your car. A full service might include: Fuel filter replacement (for diesel cars) Air cleaner replacement.
-                we use auto wash is a facility used to clean the exterior, and in some cases the interior of motor vehicles. Car washes can be self-service, full-service (with attendants who wash the vehicle), or fully automated (possibly connected to a gas station).
-            </p>
-
-            <div class="d-grid col-2 mx-auto">
-                <button type="button" class="btn btn-primary btn-lg">read more</button>
-            </div>
-        </div>
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <h4>Car Repair</h4>
+        <p>Expert mechanics for all types of vehicle repairs.</p>
+      </div>
     </div>
 
-    <div class="accordion my-4" id="accordionExample">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                    aria-expanded="true" aria-controls="collapseOne">
-                    #1
-                </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <strong>Steps for Washing Your Car</strong> 
-                    Park the vehicle in the the shade. ...
-                    Rinse the car to remove loose dirt. ...
-                    Use two buckets, one for the cleaning solution and the other for clean water. ...
-                    Start at the top, and work your way down. ...
-                    Rinse, and dry the car. ...
-                    Feel the surface, consider using a clay bar if needed. ...
-                    Wax car.
-                </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingTwo">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    #2
-                </button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <strong>Car wash</strong> low cost....
-                </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingThree">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    #3
-                </button>
-            </h2>
-            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <strong>Car Service</strong> car srvice 24 /7 available now...
-                </div>
-            </div>
-        </div>
+    <div class="col-md-4">
+      <div class="card p-3 text-center">
+        <h4>Doorstep Service</h4>
+        <p>We come to your home and service your car anytime.</p>
+      </div>
     </div>
 
-    <h2 class="mx-4">Some saervice provide by us</h2>
+  </div>
+</div>
 
-    <div class="row g-0 bg-light position-relative">
+<!-- About -->
+<div class="container mt-5">
+  <h2 class="section-title">About Us</h2>
+  <p class="text-center">
+    Royal Car Wash is a premium car care service provider offering washing, detailing, and repair services.
+    We focus on quality, trust, and customer satisfaction.
+  </p>
+</div>
 
-        <div class="col-md-6 mb-md-0 p-md-4 my-4">
+<!-- Contact -->
+<div class="container mt-5" id="contact">
+  <h2 class="section-title">Contact Us</h2>
 
-            <img src="7.jpg" class="w-100" alt="...">
-        </div>
-        <div class="col-md-6 p-4 ps-md-0 my-4">
-            <h5 class="mt-0">Reparing</h5>
-            <p>We are the first company to introduce highly professionally & digitally multi brand car workshop.
-                Keeping up with the regular maintenance schedule can help by preventing costly repairs of the cooling system, transmission system, drivetrain and other components. Preventive car care reduces wear and tear of the engine and other components that extend the life of your vehicle.
-            </p>
-            <a href="#" class="stretched-link">Go Back</a>
-        </div>
-    </div>
-    <div class="row g-0 bg-light position-relative">
-        <div class="col-md-6 mb-md-0 p-md-4 my-4">
-            <img src="4.jpg" class="w-100" alt="...">
-        </div>
-        <div class="col-md-6 p-4 ps-md-0 my-4">
-            <h5 class="mt-0">
-                Looking for 24 Hours Car Repair & Services ?
-                </h5>
-            <p>We have tied up with TVS Auto Assit (India) Limited to ensure that you get immediate and hassle free service in the event of any car breakdown. Our network for road-side assistance is spread across the length and breadth of the country and covers cities, highways and hilly terrains across India.
-                repairing,car washing...</p>
-            <a href="#" class="stretched-link">Go Back</a>
-        </div>
+  <form class="row g-3">
+
+    <div class="col-md-6">
+      <input class="form-control" placeholder="Your Name">
     </div>
 
-    <div class="row g-0 bg-light position-relative">
-        <div class="col-md-6 mb-md-0 p-md-4 my-4">
-            <img src="5.jpg" class="w-100" alt="...">
-        </div>
-        <div class="col-md-6 p-4 ps-md-0 my-4">
-            <h5 class="mt-0">On door Service</h5>
-            <p>We know that time is a valuable resource for you and that is why we developed the Door to door service. With this service, we will handle all your vehicle-related operations, and you won’t have to move a finger for it.
-
-                We will come to pick up your car at a location and a time convenient to you, and we will drop it to the workshop on your behalf. Once the job is over, we will get back the door to your doorstep. All you have to do is to require for the Door-to-Door option when you book the service of your car. 24/7 ...</p>
-            <a href="#" class="stretched-link">Go Back</a>
-        </div>
+    <div class="col-md-6">
+      <input class="form-control" placeholder="Phone Number">
     </div>
 
-    <div class="row g-0 bg-light position-relative">
-        <div class="col-md-6 mb-md-0 p-md-4 my-4">
-            <img src="6.jpg" class="w-100" alt="...">
-        </div>
-        <div class="col-md-6 p-4 ps-md-0 my-4">
-            <h5 class="mt-0">Car Service</h5>
-            <p>This option is available for:
-
-                Delivery of the car when the contract starts, and return of the car when the contract ends
-                Routine maintenance
-                Irregular repairs
-                Tires and battery replacements
-                Your safety is our top priority. Hence, we have enhanced the sanitation measures for the door to door service, so that, you get the safest servicing experience whenever you book one.....</p>
-            <a href="#" class="stretched-link">Go Back</a>
-        </div>
-    </div>
-    <div class="position-relative">
-        <h2 class="position-absolute top-0 start-50 translate-middle my-4">Contact Us</h2>
-    </div>
-    <div class="container my-5">
-        <form class="row g-3">
-            <div class="col-md-6">
-                <label for="inputEmail4" class="form-label">Email</label>
-                <input type="email" class="form-control" id="inputEmail4">
-            </div>
-            <div class="col-md-6">
-                <label for="inputPassword4" class="form-label">Password</label>
-                <input type="password" class="form-control" id="inputPassword4">
-            </div>
-            <div class="col-12">
-                <label for="inputAddress" class="form-label">Name</label>
-                <input type="text" class="form-control" id="inputAddress" placeholder="Your Name">
-            </div>
-            <div class="col-12">
-                <label for="inputAddress2" class="form-label">Address</label>
-                <input type="text" class="form-control" id="inputAddress">
-            </div>
-            <div class="col-md-6">
-                <label for="inputCity" class="form-label">City</label>
-                <input type="text" class="form-control" id="inputCity">
-            </div>
-            <div class="col-md-4">
-                <label for="inputState" class="form-label">State</label>
-                <select id="inputState" class="form-select">
-                    <option selected>Gujarat</option>
-                    <option>Goa</option>
-                    <option>Maharashtra</option>
-                    <option>Punjab</option>
-                    <option>Kerala</option>
-                    <option>Rajasthan</option>
-                    <option>Assam</option>
-                    <option>Daman</option>
-                    <option>Madhapradesh</option>
-                    <option>...</option>
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label for="inputCity" class="form-label">Phone No</label>
-                <input type="text" class="form-control" id="inputCity">
-            </div>
-            <div class="col-md-6">
-                <label for="inputCity" class="form-label">Car Name</label>
-                <input type="text" class="form-control" id="inputCity">
-            </div>
-            <div class="col-md-6">
-                <label for="inputCity" class="form-label">Car No</label>
-                <input type="text" class="form-control" id="inputCity">
-            </div>
-            <div class="col-md-6">
-                <label for="inputCity" class="form-label">Type of Service you Want</label>
-                <input type="text" class="form-control" id="inputCity">
-            </div>
-
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </form>
+    <div class="col-12">
+      <input class="form-control" placeholder="Email">
     </div>
 
-    <footer class="container ">
-        <p class="float-end"> <a href="#">Back to top</a></p>
-        <p>© 2021–2022 Peace, Inc. · <a href="#">Privacy</a> · <a href="#"> Terms</a></p>
-      </footer>
+    <div class="col-12">
+      <textarea class="form-control" rows="4" placeholder="Message"></textarea>
+    </div>
 
+    <div class="col-12 text-center">
+      <button class="btn btn-primary">Send Message</button>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
-        crossorigin="anonymous"></script>
+  </form>
+</div>
+
+<!-- Footer -->
+<footer class="text-center">
+  <p>© 2026 Royal Car Wash | All Rights Reserved</p>
+</footer>
+
+<!-- Script -->
+<script>
+function toggleDark(){
+  document.body.classList.toggle("dark");
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
