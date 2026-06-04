@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Royal Car Wash</title>
+<title>My Portfolio</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -13,11 +13,13 @@
   --bg:#ffffff;
   --text:#111;
   --card:#f8f9fa;
+  --primary:#6c63ff;
+  --secondary:#00c6ff;
 }
 
 .dark{
   --bg:#0e0e0e;
-  --text:#fff;
+  --text:#ffffff;
   --card:#1c1c1c;
 }
 
@@ -28,183 +30,230 @@ body{
   scroll-behavior:smooth;
 }
 
-/* Navbar */
+/* NAVBAR */
 .navbar{
   background:var(--card)!important;
 }
 
-/* Hero */
+/* HERO */
 .hero{
-  background:linear-gradient(135deg,#0d6efd,#00c6ff);
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
   color:white;
-  padding:110px 20px;
+  padding:120px 20px;
   text-align:center;
-  border-radius:0 0 40px 40px;
+  border-radius:0 0 50px 50px;
 }
 
-/* Cards */
+/* SECTION TITLE */
+.section-title{
+  text-align:center;
+  font-weight:bold;
+  margin:60px 0 30px;
+}
+
+/* CARDS */
 .card{
   background:var(--card);
   border:none;
-  transition:0.3s;
   border-radius:15px;
+  transition:0.3s;
 }
 
 .card:hover{
-  transform:scale(1.03);
+  transform:translateY(-10px);
+  box-shadow:0 10px 20px rgba(0,0,0,0.2);
 }
 
-/* Gallery images */
-.gallery img{
-  height:220px;
+/* SKILL BAR */
+.skill-bar{
+  height:8px;
+  background:#ddd;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.skill-fill{
+  height:100%;
+  background:linear-gradient(90deg,#6c63ff,#00c6ff);
+}
+
+/* PROJECT IMAGE */
+.project img{
+  height:200px;
   object-fit:cover;
-  border-radius:12px;
+  border-radius:10px;
 }
 
-/* WhatsApp */
-.whatsapp{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  background:#25D366;
-  color:white;
-  font-size:26px;
-  padding:14px;
-  border-radius:50%;
-  z-index:999;
-}
-
-/* Dark button */
-.toggle{
+/* FLOAT BUTTON */
+.toggle-btn{
   position:fixed;
   top:15px;
   right:15px;
   z-index:999;
 }
 
-/* Footer */
+/* FOOTER */
 footer{
   background:#000;
   color:#fff;
   padding:25px;
+  margin-top:50px;
+}
+
+/* ANIMATION */
+.fade{
+  opacity:0;
+  transform:translateY(40px);
+  transition:1s;
+}
+
+.fade.show{
+  opacity:1;
+  transform:translateY(0);
 }
 </style>
 </head>
 
 <body>
 
-<!-- DARK TOGGLE -->
-<button class="btn btn-dark toggle" onclick="document.body.classList.toggle('dark')">🌙</button>
-
-<!-- WHATSAPP -->
-<a class="whatsapp" href="https://wa.me/919999999999" target="_blank">
-<i class="bi bi-whatsapp"></i>
-</a>
+<!-- DARK MODE -->
+<button class="btn btn-dark toggle-btn" onclick="toggleDark()">🌙</button>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg px-3 shadow-sm sticky-top">
-  <a class="navbar-brand fw-bold" href="#">🚗 Royal Car Wash</a>
+<nav class="navbar navbar-expand-lg sticky-top px-3 shadow-sm">
+  <a class="navbar-brand fw-bold" href="#">💻 My Portfolio</a>
+  <div class="ms-auto">
+    <a href="#about" class="mx-2">About</a>
+    <a href="#skills" class="mx-2">Skills</a>
+    <a href="#projects" class="mx-2">Projects</a>
+    <a href="#contact" class="mx-2">Contact</a>
+  </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <h1>Premium Car Wash Service</h1>
-  <p>Cleaning • Repair • Doorstep Service</p>
-  <a href="#booking" class="btn btn-light btn-lg mt-3">Book Now</a>
+<section class="hero fade">
+  <h1>Hi, I'm a Web Developer 👋</h1>
+  <p>I build modern, responsive websites and web apps</p>
+  <a href="#projects" class="btn btn-light btn-lg mt-3">View My Work</a>
 </section>
 
-<!-- SERVICES -->
-<div class="container my-5">
-<h2 class="text-center mb-4">Our Services</h2>
+<!-- ABOUT -->
+<section class="container section-title fade" id="about">
+  <h2>About Me</h2>
+  <p class="mt-3">
+    I am a passionate developer who loves creating modern websites using HTML, CSS, JavaScript and Bootstrap.
+    I focus on clean UI, performance and user experience.
+  </p>
+</section>
 
-<div class="row g-4">
+<!-- SKILLS -->
+<section class="container fade" id="skills">
+  <h2 class="section-title">Skills</h2>
 
-<div class="col-md-4">
-<div class="card p-3 text-center">
-<img src="https://images.unsplash.com/photo-1603386329225-868f9b1ee6f3" class="img-fluid rounded">
-<h5 class="mt-3">Car Wash</h5>
-<p>Deep cleaning & foam wash service</p>
-</div>
-</div>
+  <p>HTML</p>
+  <div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div>
 
-<div class="col-md-4">
-<div class="card p-3 text-center">
-<img src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc" class="img-fluid rounded">
-<h5 class="mt-3">Car Repair</h5>
-<p>Engine & full mechanical service</p>
-</div>
-</div>
+  <p class="mt-3">CSS</p>
+  <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
 
-<div class="col-md-4">
-<div class="card p-3 text-center">
-<img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70" class="img-fluid rounded">
-<h5 class="mt-3">Doorstep Service</h5>
-<p>We come to your home anytime</p>
-</div>
-</div>
+  <p class="mt-3">JavaScript</p>
+  <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
 
-</div>
-</div>
+  <p class="mt-3">Bootstrap</p>
+  <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
+</section>
 
-<!-- GALLERY -->
-<div class="container my-5">
-<h2 class="text-center mb-4">Gallery</h2>
+<!-- PROJECTS -->
+<section class="container fade" id="projects">
+  <h2 class="section-title">Projects</h2>
 
-<div class="row g-3 gallery">
+  <div class="row g-4">
 
-<div class="col-md-4">
-<img src="https://images.unsplash.com/photo-1605559424843-9e4c5f1b2f1a" class="w-100">
-</div>
+    <div class="col-md-4 project">
+      <div class="card p-3">
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
+        <h5 class="mt-3">Website Design</h5>
+        <p>Modern responsive website UI</p>
+      </div>
+    </div>
 
-<div class="col-md-4">
-<img src="https://images.unsplash.com/photo-1511910849309-0dffb8788f2f" class="w-100">
-</div>
+    <div class="col-md-4 project">
+      <div class="card p-3">
+        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c">
+        <h5 class="mt-3">Dashboard UI</h5>
+        <p>Admin dashboard design system</p>
+      </div>
+    </div>
 
-<div class="col-md-4">
-<img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023" class="w-100">
-</div>
+    <div class="col-md-4 project">
+      <div class="card p-3">
+        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3">
+        <h5 class="mt-3">App Interface</h5>
+        <p>Mobile app UI design concept</p>
+      </div>
+    </div>
 
-</div>
-</div>
+  </div>
+</section>
 
-<!-- BOOKING -->
-<div class="container my-5" id="booking">
-<h2 class="text-center mb-4">Book Service</h2>
+<!-- CONTACT -->
+<section class="container fade" id="contact">
+  <h2 class="section-title">Contact Me</h2>
 
-<form onsubmit="submitForm(event)" class="row g-3">
+  <form onsubmit="send(event)" class="row g-3">
 
-<div class="col-md-6">
-<input class="form-control" placeholder="Your Name" required>
-</div>
+    <div class="col-md-6">
+      <input class="form-control" placeholder="Your Name" required>
+    </div>
 
-<div class="col-md-6">
-<input class="form-control" placeholder="Phone Number" required>
-</div>
+    <div class="col-md-6">
+      <input class="form-control" placeholder="Email" required>
+    </div>
 
-<div class="col-12">
-<textarea class="form-control" placeholder="Service Details"></textarea>
-</div>
+    <div class="col-12">
+      <textarea class="form-control" rows="4" placeholder="Message"></textarea>
+    </div>
 
-<div class="col-12 text-center">
-<button class="btn btn-primary btn-lg">Submit</button>
-</div>
+    <div class="col-12 text-center">
+      <button class="btn btn-primary btn-lg">Send Message</button>
+    </div>
 
-</form>
-</div>
+  </form>
+</section>
 
 <!-- FOOTER -->
 <footer class="text-center">
-<h5>Royal Car Wash</h5>
-<p>© 2026 All Rights Reserved</p>
+  <h5>My Portfolio</h5>
+  <p>© 2026 All Rights Reserved</p>
 </footer>
 
 <script>
-function submitForm(e){
-e.preventDefault();
-alert("Booking Submitted Successfully!");
+/* DARK MODE */
+function toggleDark(){
+  document.body.classList.toggle("dark");
+  localStorage.setItem("dark", document.body.classList.contains("dark"));
 }
+if(localStorage.getItem("dark")==="true"){
+  document.body.classList.add("dark");
+}
+
+/* FORM */
+function send(e){
+  e.preventDefault();
+  alert("Message Sent Successfully!");
+}
+
+/* SCROLL ANIMATION */
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add("show");
+    }
+  });
+});
+
+document.querySelectorAll(".fade").forEach(el=>obs.observe(el));
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
