@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AAA Game Engine v2 Pro</title>
+<title>AAA Game Engine v2 PRO - 20 Games</title>
 
 <style>
 *{
@@ -22,6 +22,7 @@ min-height:100vh;
 }
 
 /* BACKGROUND */
+
 #bg{
 position:fixed;
 top:0;
@@ -80,6 +81,7 @@ scale:.9;
 }
 
 /* SCREENS */
+
 .screen{
 display:none;
 width:100%;
@@ -92,6 +94,7 @@ display:block;
 }
 
 /* HEADER */
+
 header{
 display:flex;
 justify-content:space-between;
@@ -104,6 +107,7 @@ border-radius:10px;
 }
 
 /* GRID */
+
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -113,6 +117,7 @@ padding-bottom:40px;
 }
 
 /* CARDS */
+
 .card{
 background:rgba(255,255,255,.05);
 border:1px solid rgba(0,229,255,.25);
@@ -130,6 +135,7 @@ box-shadow:0 0 20px #00e5ff;
 }
 
 /* BUTTONS */
+
 button{
 padding:10px 14px;
 margin:6px;
@@ -181,7 +187,6 @@ color:#00e5ff;
 font-weight:bold;
 }
 
-/* MOBILE */
 @media(max-width:600px){
 
 header{
@@ -207,10 +212,11 @@ width:100%;
 <div id="bg"></div>
 
 <!-- MENU -->
+
 <div id="menu" class="screen active">
 
 <header>
-<h2>⚡ AAA GAME ENGINE v2 PRO</h2>
+<h2>⚡ AAA GAME ENGINE v2 PRO - 20 GAMES</h2>
 </header>
 
 <div class="grid">
@@ -224,11 +230,24 @@ width:100%;
 <div class="card" onclick="loadGame('memory')">🧩 Memory</div>
 <div class="card" onclick="loadGame('reflex')">⚡ Reflex</div>
 
-</div>
+<div class="card" onclick="loadGame('guess')">🔢 Number Guess</div>
+<div class="card" onclick="loadGame('coin')">🪙 Coin Flip</div>
+<div class="card" onclick="loadGame('rps')">✂ Rock Paper Scissors</div>
+<div class="card" onclick="loadGame('color')">🎨 Color Match</div>
+<div class="card" onclick="loadGame('counter')">➕ Counter Race</div>
+<div class="card" onclick="loadGame('typing')">⌨ Typing Test</div>
+<div class="card" onclick="loadGame('evenodd')">🔵 Even Odd</div>
+<div class="card" onclick="loadGame('highlow')">📈 High Low</div>
+<div class="card" onclick="loadGame('lottery')">🎟 Lottery</div>
+<div class="card" onclick="loadGame('sequence')">🔢 Sequence Memory</div>
+<div class="card" onclick="loadGame('target10')">🎯 Reach 10</div>
+<div class="card" onclick="loadGame('randommath')">🧮 Quick Math</div>
 
+</div>
 </div>
 
 <!-- GAME SCREEN -->
+
 <div id="game" class="screen">
 
 <header>
@@ -272,6 +291,7 @@ p.style.animationDuration=
 (8+Math.random()*10)+"s";
 
 bg.appendChild(p);
+
 }
 
 /* ENGINE */
@@ -282,12 +302,16 @@ let aimCount=0;
 let reactionStart=0;
 let reactionReady=false;
 
+let guessNumber=0;
+let target10=0;
+let raceCount=0;
+let sequenceNums=[];
+
 const menu=document.getElementById("menu");
 const game=document.getElementById("game");
 const title=document.getElementById("title");
 const content=document.getElementById("content");
-
-function loadGame(g){
+  function loadGame(g){
 currentGame=g;
 menu.classList.remove("active");
 game.classList.add("active");
@@ -363,9 +387,98 @@ content.innerHTML=`
 <p id="out"></p>`;
 }
 
+/* NEW GAMES */
+
+if(g==="guess"){
+title.innerHTML="🔢 Number Guess";
+content.innerHTML=`
+<button class="green" onclick="startGuess()">NEW NUMBER</button>
+<button class="neon" onclick="guessGame()">GUESS</button>
+<p id="out"></p>`;
 }
 
-/* REACTION */
+if(g==="coin"){
+title.innerHTML="🪙 Coin Flip";
+content.innerHTML=`
+<button class="yellow" onclick="coinFlip()">FLIP</button>
+<p id="out"></p>`;
+}
+
+if(g==="rps"){
+title.innerHTML="✂ Rock Paper Scissors";
+content.innerHTML=`
+<button onclick="playRPS('Rock')">ROCK</button>
+<button onclick="playRPS('Paper')">PAPER</button>
+<button onclick="playRPS('Scissors')">SCISSORS</button>
+<p id="out"></p>`;
+}
+
+if(g==="color"){
+title.innerHTML="🎨 Color Match";
+content.innerHTML=`
+<button class="purple" onclick="colorGame()">PLAY</button>
+<p id="out"></p>`;
+}
+
+if(g==="counter"){
+title.innerHTML="➕ Counter Race";
+content.innerHTML=`
+<button class="green" onclick="counterRace()">CLICK</button>
+<p id="out">0</p>`;
+}
+
+if(g==="typing"){
+title.innerHTML="⌨ Typing Test";
+content.innerHTML=`
+<button class="yellow" onclick="typingGame()">START</button>
+<p id="out"></p>`;
+}
+
+if(g==="evenodd"){
+title.innerHTML="🔵 Even Odd";
+content.innerHTML=`
+<button class="purple" onclick="evenOdd()">PLAY</button>
+<p id="out"></p>`;
+}
+
+if(g==="highlow"){
+title.innerHTML="📈 High Low";
+content.innerHTML=`
+<button class="green" onclick="highLow()">PLAY</button>
+<p id="out"></p>`;
+}
+
+if(g==="lottery"){
+title.innerHTML="🎟 Lottery";
+content.innerHTML=`
+<button class="neon" onclick="lottery()">DRAW</button>
+<p id="out"></p>`;
+}
+
+if(g==="sequence"){
+title.innerHTML="🔢 Sequence Memory";
+content.innerHTML=`
+<button class="purple" onclick="sequenceGame()">START</button>
+<p id="out"></p>`;
+}
+
+if(g==="target10"){
+title.innerHTML="🎯 Reach 10";
+content.innerHTML=`
+<button class="green" onclick="reach10()">+1</button>
+<p id="out">0</p>`;
+}
+
+if(g==="randommath"){
+title.innerHTML="🧮 Quick Math";
+content.innerHTML=`
+<button class="yellow" onclick="quickMath()">PLAY</button>
+<p id="out"></p>`;
+}
+
+}
+
+/* ORIGINAL GAMES */
 
 function startReaction(){
 
@@ -398,8 +511,6 @@ reactionReady=false;
 
 }
 
-/* CLICK */
-
 function startClick(){
 clickCount=0;
 document.getElementById("out").innerHTML=clickCount;
@@ -409,8 +520,6 @@ function clickHit(){
 clickCount++;
 document.getElementById("out").innerHTML=clickCount;
 }
-
-/* MATH */
 
 function mathGame(){
 
@@ -426,10 +535,7 @@ out.innerHTML="❌ Answer: "+(a+b);
 }
 
 }
-
-/* TIMING */
-
-function timingGame(){
+  function timingGame(){
 
 out.innerHTML="3...";
 
@@ -439,20 +545,14 @@ setTimeout(()=>out.innerHTML="GO!",3000);
 
 }
 
-/* AIM */
-
 function aimHit(){
 aimCount++;
 out.innerHTML=aimCount;
 }
 
-/* DICE */
-
 function diceRoll(){
 out.innerHTML="🎲 "+(Math.floor(Math.random()*6)+1);
 }
-
-/* MEMORY */
 
 function memoryGame(){
 
@@ -466,10 +566,284 @@ out.innerHTML="Remember: "+nums.join(" ");
 
 }
 
-/* REFLEX */
-
 function reflexGame(){
 out.innerHTML="⚡ CLICK FAST!";
+}
+
+/* NUMBER GUESS */
+
+function startGuess(){
+guessNumber=Math.floor(Math.random()*10)+1;
+out.innerHTML="Number Ready (1-10)";
+}
+
+function guessGame(){
+
+let g=prompt("Guess 1-10");
+
+if(Number(g)===guessNumber){
+out.innerHTML="✅ Correct";
+}else{
+out.innerHTML="❌ Number was "+guessNumber;
+}
+
+}
+
+/* COIN FLIP */
+
+function coinFlip(){
+out.innerHTML=Math.random()<0.5?"🪙 Heads":"🪙 Tails";
+}
+
+/* ROCK PAPER SCISSORS */
+
+function playRPS(player){
+
+const arr=["Rock","Paper","Scissors"];
+
+const cpu=
+arr[Math.floor(Math.random()*3)];
+
+if(player===cpu){
+
+out.innerHTML=
+"🤝 Draw ("+cpu+")";
+
+}
+else if(
+
+(player==="Rock"&&cpu==="Scissors")||
+(player==="Paper"&&cpu==="Rock")||
+(player==="Scissors"&&cpu==="Paper")
+
+){
+
+out.innerHTML=
+"🏆 You Win ("+cpu+")";
+
+}
+else{
+
+out.innerHTML=
+"💀 CPU Wins ("+cpu+")";
+
+}
+
+}
+
+/* COLOR MATCH */
+
+function colorGame(){
+
+const colors=
+["Red","Blue","Green","Yellow"];
+
+const c=
+colors[Math.floor(Math.random()*colors.length)];
+
+let a=
+prompt("Type this color: "+c);
+
+if(a &&
+a.toLowerCase()===c.toLowerCase()){
+
+out.innerHTML="✅ Correct";
+
+}else{
+
+out.innerHTML="❌ Wrong";
+
+}
+
+}
+
+/* COUNTER RACE */
+
+function counterRace(){
+
+raceCount++;
+
+out.innerHTML=raceCount;
+
+if(raceCount>=20){
+
+out.innerHTML="🏆 Finished!";
+
+raceCount=0;
+
+}
+
+}
+
+/* TYPING TEST */
+
+function typingGame(){
+
+let word="ENGINE";
+
+let x=prompt("Type exactly: "+word);
+
+if(x===word){
+
+out.innerHTML="⚡ Perfect";
+
+}else{
+
+out.innerHTML="❌ Wrong";
+
+}
+
+}
+
+/* EVEN ODD */
+
+function evenOdd(){
+
+let n=
+Math.floor(Math.random()*100);
+
+let g=
+prompt(n+" : even or odd?");
+
+let ans=
+n%2===0 ? "even":"odd";
+
+if(g &&
+g.toLowerCase()===ans){
+
+out.innerHTML="✅ Correct";
+
+}else{
+
+out.innerHTML="❌ "+ans;
+
+}
+
+}
+
+/* HIGH LOW */
+
+function highLow(){
+
+let a=
+Math.floor(Math.random()*20);
+
+let b=
+Math.floor(Math.random()*20);
+
+let g=
+prompt(
+a+" vs ? Type higher or lower"
+);
+
+if(
+
+(g &&
+g.toLowerCase()==="higher" &&
+b>a)
+
+||
+
+(g &&
+g.toLowerCase()==="lower" &&
+b<a)
+
+){
+
+out.innerHTML=
+"✅ Correct ("+b+")";
+
+}else{
+
+out.innerHTML=
+"❌ Wrong ("+b+")";
+
+}
+
+}
+
+/* LOTTERY */
+
+function lottery(){
+
+let n=
+Math.floor(Math.random()*100)+1;
+
+if(n===50){
+
+out.innerHTML="🎉 JACKPOT!";
+
+}else{
+
+out.innerHTML=
+"🎟 Ticket #"+n;
+
+}
+
+}
+
+/* SEQUENCE MEMORY */
+
+function sequenceGame(){
+
+sequenceNums=[];
+
+for(let i=0;i<4;i++){
+
+sequenceNums.push(
+Math.floor(Math.random()*10)
+);
+
+}
+
+out.innerHTML=
+"Remember: "+
+sequenceNums.join(" ");
+
+}
+
+/* REACH 10 */
+
+function reach10(){
+
+target10++;
+
+out.innerHTML=target10;
+
+if(target10>=10){
+
+out.innerHTML="🏆 WINNER";
+
+target10=0;
+
+}
+
+}
+
+/* QUICK MATH */
+
+function quickMath(){
+
+let a=
+Math.floor(Math.random()*30);
+
+let b=
+Math.floor(Math.random()*10);
+
+let g=
+prompt(`${a} - ${b}`);
+
+if(Number(g)===(a-b)){
+
+out.innerHTML="✅ Correct";
+
+}else{
+
+out.innerHTML=
+"❌ "+(a-b);
+
+}
+
 }
 
 </script>
