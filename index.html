@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>3D Neon Arcade Hub</title>
+<title>Futuristic Neon Arcade Hub</title>
 
 <style>
 body{
@@ -12,57 +12,36 @@ font-family:Arial;
 background:#050714;
 color:white;
 overflow-x:hidden;
-perspective:1000px;
 }
 
-/* 🌌 BACKGROUND */
+/* 🌌 MOVING 3D GLOWING DOT BALLS */
 .bg{
 position:fixed;
 width:100%;
 height:100%;
 z-index:-2;
+overflow:hidden;
 }
 
-/* 🌟 NEON DOTS */
-.dot{
+.ball{
 position:absolute;
 border-radius:50%;
-background:#00e5ff;
-box-shadow:0 0 10px #00e5ff,0 0 25px #00e5ff;
-animation:float 12s linear infinite, pulse 2.5s infinite;
-}
-
-@keyframes float{
-from{transform:translateY(110vh);}
-to{transform:translateY(-10vh);}
-}
-
-@keyframes pulse{
-0%{transform:scale(0.8);opacity:0.4;}
-50%{transform:scale(1.4);opacity:1;}
-100%{transform:scale(0.9);opacity:0.5;}
-}
-
-/* 🧊 3D BACK LAYER */
-.layer{
-position:fixed;
-width:200%;
-height:200%;
-background:radial-gradient(circle at center, rgba(0,198,255,0.08), transparent 60%);
-transform:rotateX(60deg) translateZ(-200px);
-animation:move 10s linear infinite;
-z-index:-3;
+background:radial-gradient(circle, #00e5ff, transparent);
+box-shadow:0 0 20px #00e5ff,0 0 40px #00e5ff;
+animation:move 12s linear infinite;
+opacity:0.7;
 }
 
 @keyframes move{
-0%{transform:rotateX(60deg) translateY(0);}
-100%{transform:rotateX(60deg) translateY(-200px);}
+0%{transform:translateY(110vh) translateX(0);}
+50%{transform:translateY(50vh) translateX(50px);}
+100%{transform:translateY(-10vh) translateX(-30px);}
 }
 
 /* HEADER */
 header{
-background:#0f172a;
 padding:10px;
+background:#0f172a;
 display:flex;
 justify-content:space-between;
 }
@@ -72,37 +51,29 @@ justify-content:space-between;
 text-align:center;
 padding:40px;
 background:linear-gradient(135deg,#6c63ff,#00c6ff);
-transform:rotateX(10deg);
-box-shadow:0 20px 40px rgba(0,0,0,0.5);
 }
 
 /* GRID */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
 gap:15px;
 padding:15px;
 }
 
-/* 🎮 3D CARD EFFECT */
+/* CARD */
 .card{
 background:rgba(255,255,255,0.05);
 border:1px solid rgba(255,255,255,0.1);
 border-radius:14px;
 padding:12px;
-transition:0.3s;
 backdrop-filter:blur(10px);
-transform-style:preserve-3d;
-transform:translateZ(0);
+transition:0.3s;
 }
 
 .card:hover{
-transform:
-perspective(800px)
-rotateX(10deg)
-rotateY(-10deg)
-scale(1.05);
-box-shadow:0 0 30px #00e5ff;
+transform:scale(1.05) rotateX(5deg);
+box-shadow:0 0 25px #00e5ff;
 }
 
 /* BUTTONS */
@@ -116,76 +87,192 @@ font-weight:bold;
 transition:0.2s;
 }
 
-button:hover{
-transform:scale(1.1);
-}
+button:hover{transform:scale(1.1);}
 
 .red{background:#ff4d4d;color:white;}
 .green{background:#2ecc71;}
 .blue{background:#3498db;color:white;}
 .purple{background:#9b59b6;color:white;}
+.yellow{background:#f1c40f;color:black;}
 .cyan{background:#00e5ff;color:black;}
+.orange{background:#ff8c00;color:white;}
+.pink{background:#ff66a3;color:white;}
 </style>
 </head>
 
 <body>
 
-<!-- 🧊 3D LAYER -->
-<div class="layer"></div>
-
-<!-- 🌟 BACKGROUND -->
 <div class="bg" id="bg"></div>
 
 <header>
-<h3>🎮 3D NEON ARCADE</h3>
+<h3>🎮 FUTURISTIC NEON ARCADE HUB</h3>
 </header>
+
+<div class="hero">
+<h1>🔥 12 GAME ARCADE SYSTEM</h1>
+<p>Glowing 3D Background + Futuristic UI</p>
+</div>
 
 <div class="grid">
 
+<!-- 1 Reaction -->
 <div class="card">
-<h3>Reaction</h3>
-<button class="green">Start</button>
-<p>3D Ready</p>
+<h3>1️⃣ Reaction</h3>
+<button class="green" onclick="reaction()">Start</button>
+<p id="g1">0</p>
 </div>
 
+<!-- 2 Click -->
 <div class="card">
-<h3>Click Speed</h3>
-<button class="blue">Play</button>
+<h3>2️⃣ Click Speed</h3>
+<button class="blue" onclick="clickGame()">Click</button>
+<p id="g2">0</p>
 </div>
 
+<!-- 3 Math -->
 <div class="card">
-<h3>Math Game</h3>
-<button class="purple">Start</button>
+<h3>3️⃣ Math</h3>
+<button class="purple" onclick="math()">Play</button>
+<p id="g3"></p>
 </div>
 
+<!-- 4 Guess -->
 <div class="card">
-<h3>Snake</h3>
-<button class="cyan">Play</button>
+<h3>4️⃣ Guess</h3>
+<input id="in">
+<button class="yellow" onclick="guess()">Check</button>
+<p id="g4"></p>
+</div>
+
+<!-- 5 Random -->
+<div class="card">
+<h3>5️⃣ Random</h3>
+<button class="orange" onclick="random()">Generate</button>
+<p id="g5"></p>
+</div>
+
+<!-- 6 Aim -->
+<div class="card">
+<h3>6️⃣ Aim</h3>
+<button class="green" onclick="aim()">Hit</button>
+<p id="g6">0</p>
+</div>
+
+<!-- 7 Timing -->
+<div class="card">
+<h3>7️⃣ Timing</h3>
+<button class="cyan" onclick="timing()">Start</button>
+<p id="g7"></p>
+</div>
+
+<!-- 8 Color -->
+<div class="card">
+<h3>8️⃣ Color</h3>
+<button class="pink" onclick="color()">Change</button>
+</div>
+
+<!-- 9 Memory -->
+<div class="card">
+<h3>9️⃣ Memory</h3>
+<button onclick="memory()">Start</button>
+<p id="g9"></p>
+</div>
+
+<!-- 10 Reflex -->
+<div class="card">
+<h3>🔟 Reflex</h3>
+<button onclick="reflex()">Play</button>
+<p id="g10"></p>
+</div>
+
+<!-- 11 Dice -->
+<div class="card">
+<h3>1️⃣1️⃣ Dice</h3>
+<button class="blue" onclick="dice()">Roll</button>
+<p id="g11"></p>
+</div>
+
+<!-- 12 Snake -->
+<div class="card">
+<h3>1️⃣2️⃣ Snake (Simple)</h3>
+<button onclick="snake()">Move</button>
+<p id="g12">X0 Y0</p>
 </div>
 
 </div>
 
 <script>
 
-/* 🌟 NEON DOTS */
+/* 🌌 MOVING GLASS BALLS */
 let bg=document.getElementById("bg");
 
-for(let i=0;i<60;i++){
-let d=document.createElement("div");
-d.className="dot";
+for(let i=0;i<70;i++){
+let b=document.createElement("div");
+b.className="ball";
 
-let size=3+Math.random()*6;
-d.style.width=size+"px";
-d.style.height=size+"px";
+let s=5+Math.random()*10;
+b.style.width=s+"px";
+b.style.height=s+"px";
 
-d.style.left=Math.random()*100+"%";
-d.style.animationDuration=(6+Math.random()*10)+"s";
+b.style.left=Math.random()*100+"%";
+b.style.animationDuration=(6+Math.random()*10)+"s";
 
-let hue=180+Math.random()*60;
-d.style.background=`hsl(${hue},100%,60%)`;
-d.style.boxShadow=`0 0 10px hsl(${hue},100%,60%),0 0 25px hsl(${hue},100%,50%)`;
+bg.appendChild(b);
+}
 
-bg.appendChild(d);
+/* 1 Reaction */
+function reaction(){
+let t=Date.now();
+setTimeout(()=>g1.innerText=Date.now()-t+" ms",Math.random()*2000);
+}
+
+/* 2 Click */
+let c=0;
+function clickGame(){c++;g2.innerText=c}
+
+/* 3 Math */
+function math(){
+let a=Math.floor(Math.random()*10);
+let b=Math.floor(Math.random()*10);
+g3.innerText=a+"+"+b+"="+(a+b);
+}
+
+/* 4 Guess */
+function guess(){
+g4.innerText=(in.value==Math.floor(Math.random()*5))?"Correct":"Wrong";
+}
+
+/* 5 Random */
+function random(){g5.innerText=Math.floor(Math.random()*100)}
+
+/* 6 Aim */
+let a=0;
+function aim(){a++;g6.innerText=a}
+
+/* 7 Timing */
+function timing(){
+let t=Date.now();
+setTimeout(()=>g7.innerText=Date.now()-t+" ms",1000+Math.random()*2000);
+}
+
+/* 8 Color */
+function color(){
+document.body.style.background=`hsl(${Math.random()*360},70%,10%)`;
+}
+
+/* 9 Memory */
+function memory(){g9.innerText="Remember 1234"}
+/* 10 Reflex */
+function reflex(){g10.innerText="CLICK!"}
+
+/* 11 Dice */
+function dice(){g11.innerText=Math.floor(Math.random()*6)+1}
+
+/* 12 Snake */
+let x=0,y=0;
+function snake(){
+x++;y++;
+g12.innerText="X"+x+" Y"+y;
 }
 
 </script>
