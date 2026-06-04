@@ -332,6 +332,8 @@ let playerX=0;
 let roadOffset=0;
 let obstacles=[];
 let score=0;
+let carAngle=0;
+let roadCurve=0;
 
   
   function loadGame(g){
@@ -1188,10 +1190,12 @@ if(!carGameRunning) return;
 
 if(e.key==="ArrowLeft"){
 playerX-=25;
+carAngle=-12;
 }
 
 if(e.key==="ArrowRight"){
 playerX+=25;
+carAngle=12;
 }
 
 };
@@ -1209,7 +1213,14 @@ let p=(y-horizon)/(canvas.height-horizon);
 
 let roadWidth=80+p*600;
 
-let center=canvas.width/2;
+let center=
+canvas.width/2+
+Math.sin(
+y*0.01+
+roadOffset*0.02
+)
+*roadCurve
+*300;
 
 ctx.fillStyle="#222";
 
@@ -1246,16 +1257,68 @@ canvas.width/2+playerX,
 420
 );
 
-ctx.fillStyle="#00e5ff";
+ctx.rotate(
+carAngle*Math.PI/180
+);
+
+/* shadow */
+
+ctx.fillStyle="rgba(0,0,0,.5)";
 
 ctx.beginPath();
-
-ctx.moveTo(0,-30);
-ctx.lineTo(-25,30);
-ctx.lineTo(25,30);
-
-ctx.closePath();
+ctx.ellipse(
+0,
+35,
+35,
+10,
+0,
+0,
+Math.PI*2
+);
 ctx.fill();
+
+/* body */
+
+ctx.fillStyle="#00e5ff";
+
+ctx.fillRect(
+-25,
+-15,
+50,
+45
+);
+
+/* roof */
+
+ctx.fillStyle="#7ffcff";
+
+ctx.fillRect(
+-15,
+-35,
+30,
+25
+);
+
+/* glass */
+
+ctx.fillStyle="#001f3f";
+
+ctx.fillRect(
+-12,
+-30,
+24,
+12
+);
+
+/* wheels */
+
+ctx.fillStyle="#000";
+
+ctx.fillRect(-32,-10,8,18);
+ctx.fillRect(24,-10,8,18);
+
+ctx.fillRect(-32,18,8,18);
+ctx.fillRect(24,18,8,18);
 
 ctx.restore();
 
@@ -1263,35 +1326,47 @@ ctx.restore();
 
 function drawObstacle(o){
 
-let scale=600/o.z;
+let z=Math.max(o.z,80);
+
+let scale=700/z;
 
 let x=
 canvas.width/2+
 o.x*scale;
 
 let y=
-120+
-(600-o.z)*0.7;
+canvas.height-
+(900/z)*100;
 
-let size=
-50*scale;
+let w=60*scale;
+let h=90*scale;
 
 ctx.fillStyle="#ff4444";
 
 ctx.fillRect(
-x-size/2,
-y-size,
-size,
-size
+x-w/2,
+y-h,
+w,
+h
+);
+
+ctx.fillStyle="#ff8888";
+
+ctx.fillRect(
+x-w/2+5,
+y-h+5,
+w-10,
+15
 );
 
 }
-
 function update(){
 
 if(!carGameRunning) return;
 
 roadOffset+=8;
+roadCurve +=(Math.random()-0.5)*0.05;
+carAngle*=0.90;
 
 drawRoad();
 
@@ -1313,14 +1388,17 @@ score+=100;
 
 drawObstacle(o);
 
-let scale=600/o.z;
+let z=Math.max(o.z,80);
+let scale=600/z;
 
 let ox=o.x*scale;
 
 if(
-o.z<80 &&
-Math.abs(ox-playerX)<40
-){
+o.z<120 &&
+Math.abs(ox-playerX)<55
+)
+
+{
 
 carGameRunning=false;
 
