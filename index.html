@@ -243,6 +243,19 @@ width:100%;
 <div class="card" onclick="loadGame('target10')">🎯 Reach 10</div>
 <div class="card" onclick="loadGame('randommath')">🧮 Quick Math</div>
 
+<div class="card" onclick="loadGame('prime')">🔢 Prime Check</div>
+<div class="card" onclick="loadGame('multiply')">✖ Multiply</div>
+<div class="card" onclick="loadGame('captcha')">🤖 Captcha</div>
+<div class="card" onclick="loadGame('shuffle')">🔀 Shuffle Number</div>
+<div class="card" onclick="loadGame('lucky')">🍀 Lucky Number</div>
+<div class="card" onclick="loadGame('fasttap')">⚡ Fast Tap</div>
+<div class="card" onclick="loadGame('randomcolor')">🌈 Random Color</div>
+<div class="card" onclick="loadGame('greater')">📊 Greater Number</div>
+<div class="card" onclick="loadGame('alphabet')">🔤 Alphabet</div>
+<div class="card" onclick="loadGame('triangle')">🔺 Triangle Quiz</div>
+<div class="card" onclick="loadGame('doubledice')">🎲 Double Dice</div>
+<div class="card" onclick="loadGame('calculator')">🧮 Calculator</div>
+
 </div>
 </div>
 
@@ -475,7 +488,65 @@ content.innerHTML=`
 <button class="yellow" onclick="quickMath()">PLAY</button>
 <p id="out"></p>`;
 }
+if(g==="prime"){
+title.innerHTML="🔢 Prime Check";
+content.innerHTML=`<button onclick="primeGame()">PLAY</button><p id="out"></p>`;
+}
 
+if(g==="multiply"){
+title.innerHTML="✖ Multiply";
+content.innerHTML=`<button onclick="multiplyGame()">PLAY</button><p id="out"></p>`;
+}
+
+if(g==="captcha"){
+title.innerHTML="🤖 Captcha";
+content.innerHTML=`<button onclick="captchaGame()">START</button><p id="out"></p>`;
+}
+
+if(g==="shuffle"){
+title.innerHTML="🔀 Shuffle Number";
+content.innerHTML=`<button onclick="shuffleGame()">PLAY</button><p id="out"></p>`;
+}
+
+if(g==="lucky"){
+title.innerHTML="🍀 Lucky Number";
+content.innerHTML=`<button onclick="luckyGame()">TRY</button><p id="out"></p>`;
+}
+
+if(g==="fasttap"){
+title.innerHTML="⚡ Fast Tap";
+content.innerHTML=`<button onclick="fastTap()">TAP</button><p id="out">0</p>`;
+}
+
+if(g==="randomcolor"){
+title.innerHTML="🌈 Random Color";
+content.innerHTML=`<button onclick="randomColor()">GENERATE</button><p id="out"></p>`;
+}
+
+if(g==="greater"){
+title.innerHTML="📊 Greater Number";
+content.innerHTML=`<button onclick="greaterGame()">PLAY</button><p id="out"></p>`;
+}
+
+if(g==="alphabet"){
+title.innerHTML="🔤 Alphabet";
+content.innerHTML=`<button onclick="alphabetGame()">PLAY</button><p id="out"></p>`;
+}
+
+if(g==="triangle"){
+title.innerHTML="🔺 Triangle Quiz";
+content.innerHTML=`<button onclick="triangleGame()">PLAY</button><p id="out"></p>`;
+}
+
+if(g==="doubledice"){
+title.innerHTML="🎲 Double Dice";
+content.innerHTML=`<button onclick="doubleDice()">ROLL</button><p id="out"></p>`;
+}
+
+if(g==="calculator"){
+title.innerHTML="🧮 Calculator";
+content.innerHTML=`<button onclick="calculatorGame()">OPEN</button><p id="out"></p>`;
+}
 }
 
 /* ORIGINAL GAMES */
@@ -841,6 +912,216 @@ out.innerHTML="✅ Correct";
 
 out.innerHTML=
 "❌ "+(a-b);
+
+}
+
+}
+  function primeGame(){
+
+let n=Math.floor(Math.random()*50)+2;
+
+let g=prompt(n+" Prime? yes/no");
+
+let prime=true;
+
+for(let i=2;i<n;i++){
+if(n%i===0){
+prime=false;
+break;
+}
+}
+
+let ans=prime?"yes":"no";
+
+out.innerHTML=
+(g&&g.toLowerCase()===ans)
+?"✅ Correct"
+:"❌ "+ans;
+
+}
+
+function multiplyGame(){
+
+let a=Math.floor(Math.random()*12);
+let b=Math.floor(Math.random()*12);
+
+let g=prompt(`${a} × ${b}`);
+
+out.innerHTML=
+Number(g)===(a*b)
+?"✅ Correct"
+:"❌ "+(a*b);
+
+}
+
+function captchaGame(){
+
+let code=
+Math.random().toString(36)
+.substring(2,7)
+.toUpperCase();
+
+let g=prompt("Type: "+code);
+
+out.innerHTML=
+g===code
+?"✅ Verified"
+:"❌ Failed";
+
+}
+
+function shuffleGame(){
+
+let n=Math.floor(Math.random()*100)+1;
+
+let arr=n.toString().split('');
+
+arr.sort(()=>Math.random()-0.5);
+
+out.innerHTML=
+"Original: "+n+
+"<br>Shuffled: "+
+arr.join('');
+
+}
+
+function luckyGame(){
+
+let n=Math.floor(Math.random()*10)+1;
+
+out.innerHTML=
+n===7
+?"🍀 Lucky 7!"
+:"Number "+n;
+
+}
+
+let fastCount=0;
+
+function fastTap(){
+
+fastCount++;
+
+out.innerHTML=fastCount;
+
+if(fastCount>=50){
+
+out.innerHTML="🏆 Champion";
+
+fastCount=0;
+
+}
+
+}
+
+function randomColor(){
+
+let colors=[
+"Red",
+"Blue",
+"Green",
+"Yellow",
+"Purple",
+"Orange"
+];
+
+out.innerHTML=
+colors[
+Math.floor(
+Math.random()*colors.length
+)
+];
+
+}
+
+function greaterGame(){
+
+let a=Math.floor(Math.random()*100);
+let b=Math.floor(Math.random()*100);
+
+let g=
+prompt(
+a+" vs "+b+
+" : a or b?"
+);
+
+let ans=a>b?"a":"b";
+
+out.innerHTML=
+(g===ans)
+?"✅ Correct"
+:"❌ "+ans;
+
+}
+
+function alphabetGame(){
+
+let letters=
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+let i=
+Math.floor(Math.random()*25);
+
+let g=
+prompt(
+"What comes after "+
+letters[i]+" ?"
+);
+
+out.innerHTML=
+(g &&
+g.toUpperCase()===
+letters[i+1])
+?"✅ Correct"
+:"❌ "+letters[i+1];
+
+}
+
+function triangleGame(){
+
+let g=
+prompt(
+"How many sides does a triangle?"
+);
+
+out.innerHTML=
+Number(g)===3
+?"✅ Correct"
+:"❌ 3";
+
+}
+
+function doubleDice(){
+
+let a=
+Math.floor(Math.random()*6)+1;
+
+let b=
+Math.floor(Math.random()*6)+1;
+
+out.innerHTML=
+"🎲 "+a+
+" + 🎲 "+b+
+" = "+(a+b);
+
+}
+
+function calculatorGame(){
+
+let exp=
+prompt(
+"Enter expression\nExample: 5+10"
+);
+
+try{
+
+out.innerHTML=
+eval(exp);
+
+}catch{
+
+out.innerHTML=
+"❌ Invalid";
 
 }
 
