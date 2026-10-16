@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Viu // Multi-User Network & Master Admin</title>
+  <title>Viu // Live Multi-User Network</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
@@ -41,35 +41,35 @@
 <body>
 
   <!-- ==========================================
-       1. LOGIN SYSTEM
+       LOGIN SYSTEM
   =========================================== -->
-  <div id="login-view" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-8">
+  <div id="login-view" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-8">
     <div class="w-full max-w-sm space-y-8 text-center fade-in">
       <div>
         <h1 class="text-5xl font-bold italic tracking-tighter mb-2">Viu</h1>
-        <p class="text-gray-400 text-sm">Enter a username to join the network.<br><span class="text-rose-400 text-xs">Type 'admin' to access the Master Dashboard.</span></p>
+        <p class="text-emerald-400 text-xs font-mono mb-2" id="db-status">Connecting to live servers...</p>
+        <p class="text-gray-400 text-sm">Join the real-time network.<br><span class="text-rose-400 text-xs">Type 'admin' for Dashboard.</span></p>
       </div>
       
-      <!-- User Switcher / Existing Users -->
       <div id="existing-users" class="flex flex-wrap justify-center gap-3 mb-4"></div>
 
       <form id="loginForm" class="space-y-4">
-        <input type="text" id="usernameInput" placeholder="New Username (e.g. Jay, Tej)" required class="w-full bg-[#121212] border border-[#262626] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-gray-400">
-        <button type="submit" class="w-full bg-[#0095f6] hover:bg-[#1877f2] text-white font-semibold rounded-md py-3 text-sm transition">Enter Network</button>
+        <input type="text" id="usernameInput" placeholder="New Username" required class="w-full bg-[#121212] border border-[#262626] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-gray-400">
+        <button type="submit" id="loginBtn" disabled class="w-full bg-[#0095f6] hover:bg-[#1877f2] disabled:bg-gray-700 text-white font-semibold rounded-md py-3 text-sm transition">Enter Network</button>
       </form>
     </div>
   </div>
 
   <!-- ==========================================
-       2. MASTER ADMIN DASHBOARD (Desktop View)
+       MASTER ADMIN DASHBOARD
   =========================================== -->
   <div id="admin-container">
     <div class="flex justify-between items-center mb-8 border-b border-[#262626] pb-4">
       <div>
-        <h1 class="text-2xl font-bold text-rose-500">Master Admin Dashboard</h1>
-        <p class="text-sm text-gray-400">Manage all registered users, posts, and communications.</p>
+        <h1 class="text-2xl font-bold text-rose-500">Live Master Dashboard</h1>
+        <p class="text-sm text-gray-400">Real-time sync active.</p>
       </div>
-      <button onclick="logout()" class="px-4 py-2 bg-[#262626] rounded hover:bg-[#333] text-sm">Logout Admin</button>
+      <button id="adminLogoutBtn" class="px-4 py-2 bg-[#262626] rounded hover:bg-[#333] text-sm">Logout Admin</button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -82,7 +82,7 @@
         <p class="text-3xl font-bold" id="admin-post-count">0</p>
       </div>
       <div class="bg-[#121212] border border-[#262626] p-6 rounded-lg flex flex-col justify-center">
-        <button onclick="factoryReset()" class="w-full py-2 bg-rose-900/50 text-rose-400 border border-rose-800 rounded hover:bg-rose-900 transition text-sm">⚠️ WIPE ALL NETWORK DATA</button>
+        <button id="btnFactoryReset" class="w-full py-2 bg-rose-900/50 text-rose-400 border border-rose-800 rounded hover:bg-rose-900 transition text-sm">⚠️ WIPE LIVE DATABASE</button>
       </div>
     </div>
 
@@ -98,50 +98,42 @@
   </div>
 
   <!-- ==========================================
-       3. SOCIAL APP CONTAINER (Mobile View)
+       SOCIAL APP CONTAINER
   =========================================== -->
   <div id="app-container" class="hidden">
-    
-    <!-- Top Header -->
     <header class="h-14 border-b border-[#262626] flex items-center justify-between px-4 shrink-0 z-20 bg-black">
       <h1 class="text-xl font-bold italic tracking-tighter" id="app-header-title">Viu</h1>
       <div class="flex items-center gap-4">
-        <button onclick="openUploadModal()" id="btn-upload" class="text-white hover:text-gray-300">
+        <button id="btn-upload" class="text-white hover:text-gray-300">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
         </button>
-        <button onclick="logout()" class="text-sm font-semibold text-rose-500">Logout</button>
+        <button id="userLogoutBtn" class="text-sm font-semibold text-rose-500">Logout</button>
       </div>
     </header>
 
-    <!-- App Views -->
     <main class="flex-1 overflow-y-auto hide-scrollbar bg-black relative">
-      
-      <!-- FEED TAB -->
+      <!-- FEED -->
       <div id="tab-feed" class="w-full min-h-full pb-6">
-        <!-- Stories Bar -->
-        <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-[#262626]" id="stories-container">
-          <!-- Stories populated here -->
-        </div>
-        <!-- Posts Feed -->
+        <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-[#262626]" id="stories-container"></div>
         <div id="feed-container" class="space-y-6 pt-4"></div>
       </div>
 
-      <!-- EXPLORE / USERS TAB -->
+      <!-- EXPLORE -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4">
         <h2 class="font-bold text-lg mb-4">Discover Users</h2>
         <div id="explore-container" class="space-y-4"></div>
       </div>
 
-      <!-- CHAT LIST TAB -->
+      <!-- CHAT LIST -->
       <div id="tab-chatlist" class="w-full min-h-full hidden p-4">
         <h2 class="font-bold text-lg mb-4">Messages</h2>
         <div id="chatlist-container" class="space-y-2"></div>
       </div>
 
-      <!-- ACTIVE CHAT VIEW (Overlays other tabs) -->
+      <!-- ACTIVE CHAT VIEW -->
       <div id="active-chat-view" class="absolute inset-0 bg-black z-30 hidden flex flex-col">
         <div class="h-14 border-b border-[#262626] flex items-center px-4 gap-3 bg-[#121212]">
-          <button onclick="closeChat()" class="text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+          <button id="closeChatBtn" class="text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
           <img id="active-chat-avatar" src="" class="w-8 h-8 rounded-full">
           <span id="active-chat-name" class="font-bold">Username</span>
         </div>
@@ -151,30 +143,29 @@
           <button type="submit" class="text-[#0095f6] font-semibold text-sm px-2">Send</button>
         </form>
       </div>
-
     </main>
 
     <!-- Bottom Navigation -->
     <nav class="h-14 border-t border-[#262626] flex items-center justify-around shrink-0 bg-black pb-safe">
-      <button onclick="switchTab('feed')" class="p-2 nav-btn text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3l10 9h-3v9H5v-9H2z"/></svg></button>
-      <button onclick="switchTab('explore')" class="p-2 nav-btn text-gray-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
-      <button onclick="switchTab('chatlist')" class="p-2 nav-btn text-gray-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></button>
+      <button data-tab="feed" class="p-2 nav-btn text-white"><svg class="w-6 h-6 pointer-events-none" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3l10 9h-3v9H5v-9H2z"/></svg></button>
+      <button data-tab="explore" class="p-2 nav-btn text-gray-500"><svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+      <button data-tab="chatlist" class="p-2 nav-btn text-gray-500"><svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></button>
     </nav>
   </div>
 
   <!-- ==========================================
-       4. UPLOAD MODAL (Posts & Stories)
+       UPLOAD MODAL
   =========================================== -->
   <div id="uploadModal" class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col justify-end">
     <div class="bg-[#121212] w-full max-w-md mx-auto rounded-t-2xl p-4 border-t border-[#262626] fade-in">
       <div class="flex justify-between items-center mb-4">
         <h2 class="font-bold text-lg">Create</h2>
-        <button onclick="closeUploadModal()" class="text-gray-400 p-1">✕</button>
+        <button id="closeUploadBtn" class="text-gray-400 p-1">✕</button>
       </div>
       
       <div class="flex gap-2 mb-4">
-        <button onclick="setUploadType('post')" id="type-post" class="flex-1 py-1.5 border-b-2 border-white text-white text-sm font-semibold">Post</button>
-        <button onclick="setUploadType('story')" id="type-story" class="flex-1 py-1.5 border-b-2 border-transparent text-gray-500 text-sm font-semibold">Story</button>
+        <button id="type-post" class="flex-1 py-1.5 border-b-2 border-white text-white text-sm font-semibold">Post</button>
+        <button id="type-story" class="flex-1 py-1.5 border-b-2 border-transparent text-gray-500 text-sm font-semibold">Story</button>
       </div>
 
       <form id="uploadForm" class="space-y-4">
@@ -191,133 +182,119 @@
           <div id="imagePlaceholder" class="text-gray-500 text-sm py-4">Tap to select photo</div>
         </div>
 
-        <button type="submit" class="w-full bg-[#0095f6] hover:bg-[#1877f2] text-white font-semibold rounded-md py-3 text-sm transition">Share</button>
+        <button type="submit" id="submitUploadBtn" class="w-full bg-[#0095f6] hover:bg-[#1877f2] text-white font-semibold rounded-md py-3 text-sm transition">Share</button>
       </form>
     </div>
   </div>
 
-  <script>
-    // ==========================================
-    // DATABASE SIMULATION (LocalStorage)
-    // ==========================================
-    let DB = JSON.parse(localStorage.getItem('viu_master_db')) || {
-      users: [],      // { username, avatar, followers: [], following: [] }
-      posts: [],      // { id, author, image, caption, likes: [], comments: [], timestamp }
-      stories: [],    // { id, author, image, timestamp }
-      messages: []    // { id, sender, receiver, text, timestamp }
+  <!-- ==========================================
+       FIREBASE REALTIME INTEGRATION
+  =========================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // 🔴 REPLACE THESE VALUES WITH YOUR FIREBASE PROJECT KEYS 🔴
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
+
+    let app, db;
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+    } catch(e) {
+      document.getElementById('db-status').innerHTML = '<span class="text-rose-500">Firebase keys not configured yet. Follow Step 2.</span>';
+    }
+
+    // Live Database State
+    let DB = { users: {}, posts: {}, stories: {}, messages: {} };
     let currentUser = null;
     let currentChatTarget = null;
     let uploadType = 'post';
     let currentImageBase64 = null;
+    let activeTab = 'feed';
 
-    function saveDB() { localStorage.setItem('viu_master_db', JSON.stringify(DB)); }
-
-    // Seed Data if completely empty
-    if(DB.users.length === 0) {
-      const seedUsers = ['Jay', 'Tej'];
-      seedUsers.forEach(u => {
-        DB.users.push({ username: u, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${u}`, followers: [], following: [] });
-      });
-      DB.posts.push({
-        id: 1, author: 'Jay', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600', 
-        caption: 'First post on the new network! Setup is complete.', likes: [], comments: [], timestamp: Date.now()
-      });
-      saveDB();
+    // Compress image before sending to Firebase to prevent maxing out storage
+    function compressImage(file, callback) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxW = 600;
+          let w = img.width, h = img.height;
+          if (w > maxW) { h = Math.round((maxW / w) * h); w = maxW; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          callback(canvas.toDataURL('image/jpeg', 0.6));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
-    // ==========================================
-    // CORE APP LOGIC
-    // ==========================================
-    function init() {
-      // Render quick login buttons for existing users
+    // 1. LISTEN TO LIVE DATABASE
+    if(db) {
+      onValue(ref(db, '/'), (snapshot) => {
+        const data = snapshot.val() || {};
+        DB = {
+          users: data.users || {},
+          posts: data.posts || {},
+          stories: data.stories || {},
+          messages: data.messages || {}
+        };
+        document.getElementById('db-status').innerText = 'System Live & Connected';
+        document.getElementById('loginBtn').disabled = false;
+        
+        updateUI();
+      });
+    }
+
+    // 2. UI RENDER ENGINE
+    function updateUI() {
+      renderExistingUsers();
+      if (!currentUser) return;
+      if (currentUser === 'admin') { renderAdminDashboard(); return; }
+      
+      document.getElementById('uploadAvatar').src = DB.users[currentUser]?.avatar || '';
+      
+      if (activeTab === 'feed') { renderFeed(); renderStories(); }
+      if (activeTab === 'explore') renderExplore();
+      if (activeTab === 'chatlist') renderChatList();
+      if (currentChatTarget) renderMessages();
+    }
+
+    function renderExistingUsers() {
       const userBox = document.getElementById('existing-users');
       userBox.innerHTML = '';
-      DB.users.forEach(u => {
-        userBox.innerHTML += `<button onclick="forceLogin('${u.username}')" class="px-3 py-1 bg-[#262626] rounded-full text-xs hover:bg-gray-700">${u.username}</button>`;
+      Object.values(DB.users).forEach(u => {
+        const btn = document.createElement('button');
+        btn.className = "px-3 py-1 bg-[#262626] rounded-full text-xs hover:bg-gray-700";
+        btn.innerText = u.username;
+        btn.onclick = () => forceLogin(u.username);
+        userBox.appendChild(btn);
       });
-
-      if (!currentUser) {
-        document.getElementById('login-view').classList.remove('hidden');
-        document.getElementById('app-container').classList.add('hidden');
-        document.getElementById('admin-container').style.display = 'none';
-      } else if (currentUser === 'admin') {
-        document.getElementById('login-view').classList.add('hidden');
-        document.getElementById('app-container').classList.add('hidden');
-        document.getElementById('admin-container').style.display = 'block';
-        renderAdminDashboard();
-      } else {
-        document.getElementById('login-view').classList.add('hidden');
-        document.getElementById('app-container').classList.remove('hidden');
-        document.getElementById('admin-container').style.display = 'none';
-        
-        document.getElementById('uploadAvatar').src = DB.users.find(u => u.username === currentUser).avatar;
-        switchTab('feed');
-      }
     }
 
-    // AUTHENTICATION
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.getElementById('usernameInput').value.trim();
-      forceLogin(username);
-    });
-
-    function forceLogin(username) {
-      if(username.toLowerCase() === 'admin') {
-        currentUser = 'admin';
-      } else {
-        // Create user if doesn't exist
-        if(!DB.users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
-          DB.users.push({ username: username, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`, followers: [], following: [] });
-          saveDB();
-        }
-        // Ensure exact case matching from DB
-        currentUser = DB.users.find(u => u.username.toLowerCase() === username.toLowerCase()).username;
-      }
-      document.getElementById('usernameInput').value = '';
-      init();
-    }
-
-    function logout() { currentUser = null; init(); }
-
-    function switchTab(tab) {
-      ['feed', 'explore', 'chatlist'].forEach(t => {
-        document.getElementById(`tab-${t}`).classList.add('hidden');
-      });
-      document.getElementById(`tab-${tab}`).classList.remove('hidden');
-      
-      const navBtns = document.querySelectorAll('.nav-btn');
-      navBtns.forEach(btn => btn.classList.replace('text-white', 'text-gray-500'));
-      
-      if(tab === 'feed') {
-        navBtns[0].classList.replace('text-gray-500', 'text-white');
-        document.getElementById('app-header-title').innerText = 'Viu Feed';
-        renderFeed();
-        renderStories();
-      } else if (tab === 'explore') {
-        navBtns[1].classList.replace('text-gray-500', 'text-white');
-        document.getElementById('app-header-title').innerText = 'Discover';
-        renderExplore();
-      } else if (tab === 'chatlist') {
-        navBtns[2].classList.replace('text-gray-500', 'text-white');
-        document.getElementById('app-header-title').innerText = 'Messages';
-        renderChatList();
-      }
-    }
-
-    // ==========================================
-    // FEED & EXPLORE LOGIC
-    // ==========================================
     function renderFeed() {
       const container = document.getElementById('feed-container');
       container.innerHTML = '';
-      const sortedPosts = [...DB.posts].sort((a, b) => b.timestamp - a.timestamp);
+      const postsArray = Object.values(DB.posts).sort((a, b) => b.timestamp - a.timestamp);
 
-      sortedPosts.forEach(post => {
-        const isLiked = post.likes.includes(currentUser);
-        const postUser = DB.users.find(u => u.username === post.author);
-        container.innerHTML += `
+      postsArray.forEach(post => {
+        const postUser = DB.users[post.author] || { avatar: '' };
+        const likesArr = post.likes ? Object.keys(post.likes) : [];
+        const isLiked = likesArr.includes(currentUser);
+        const commentsArr = post.comments ? Object.values(post.comments) : [];
+
+        const html = `
           <div class="bg-black border-b border-[#262626] pb-4 fade-in">
             <div class="flex items-center p-3 gap-3">
               <img src="${postUser.avatar}" class="w-8 h-8 rounded-full border border-[#262626]">
@@ -325,54 +302,55 @@
             </div>
             <img src="${post.image}" class="w-full object-cover max-h-[400px]">
             <div class="p-3">
-              <button onclick="toggleLike(${post.id})" class="${isLiked ? 'text-rose-500' : 'text-white'} font-bold text-xl mb-2">♥</button>
-              <div class="font-semibold text-sm mb-1">${post.likes.length} likes</div>
+              <button data-like="${post.id}" class="${isLiked ? 'text-rose-500' : 'text-white'} font-bold text-xl mb-2">♥</button>
+              <div class="font-semibold text-sm mb-1">${likesArr.length} likes</div>
               <div class="text-sm"><span class="font-semibold mr-1">${post.author}</span>${post.caption}</div>
-              
-              <!-- Comments -->
               <div class="mt-2 space-y-1">
-                ${post.comments.map(c => `<div class="text-xs"><span class="font-semibold mr-1">${c.author}</span><span class="text-gray-300">${c.text}</span></div>`).join('')}
+                ${commentsArr.map(c => `<div class="text-xs"><span class="font-semibold mr-1">${c.author}</span><span class="text-gray-300">${c.text}</span></div>`).join('')}
               </div>
               <div class="mt-2 flex gap-2">
                 <input type="text" id="comment-${post.id}" placeholder="Add a comment..." class="flex-1 bg-transparent text-xs outline-none border-b border-[#262626] pb-1">
-                <button onclick="addComment(${post.id})" class="text-[#0095f6] text-xs font-semibold">Post</button>
+                <button data-comment="${post.id}" class="text-[#0095f6] text-xs font-semibold">Post</button>
               </div>
             </div>
           </div>
         `;
+        container.insertAdjacentHTML('beforeend', html);
       });
+
+      // Attach dynamic listeners
+      document.querySelectorAll('[data-like]').forEach(btn => btn.onclick = (e) => toggleLike(e.target.dataset.like));
+      document.querySelectorAll('[data-comment]').forEach(btn => btn.onclick = (e) => addComment(e.target.dataset.comment));
     }
 
     function toggleLike(postId) {
-      const post = DB.posts.find(p => p.id === postId);
-      if(post.likes.includes(currentUser)) post.likes = post.likes.filter(u => u !== currentUser);
-      else post.likes.push(currentUser);
-      saveDB(); renderFeed();
+      const postRef = ref(db, `posts/${postId}/likes/${currentUser}`);
+      if (DB.posts[postId].likes && DB.posts[postId].likes[currentUser]) remove(postRef);
+      else set(postRef, true);
     }
 
     function addComment(postId) {
       const input = document.getElementById(`comment-${postId}`);
-      const text = input.value.trim();
-      if(!text) return;
-      const post = DB.posts.find(p => p.id === postId);
-      post.comments.push({ author: currentUser, text: text });
-      saveDB(); renderFeed();
+      if(!input.value.trim()) return;
+      push(ref(db, `posts/${postId}/comments`), { author: currentUser, text: input.value.trim() });
+      input.value = '';
     }
 
     function renderStories() {
       const container = document.getElementById('stories-container');
       container.innerHTML = `
-        <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="openUploadModal('story')">
+        <div class="flex flex-col items-center gap-1 cursor-pointer" id="addStoryBtn">
           <div class="w-16 h-16 rounded-full border border-gray-600 flex items-center justify-center text-2xl text-gray-400">+</div>
           <span class="text-xs text-gray-400">Add Story</span>
         </div>
       `;
-      // Filter stories to last 24h
-      const recentStories = DB.stories.filter(s => (Date.now() - s.timestamp) < 86400000);
-      recentStories.forEach(story => {
-        const sUser = DB.users.find(u => u.username === story.author);
+      document.getElementById('addStoryBtn').onclick = () => { document.getElementById('uploadModal').classList.remove('hidden'); setUploadType('story'); };
+
+      Object.values(DB.stories).forEach(story => {
+        if((Date.now() - story.timestamp) > 86400000) return; // Hide older than 24h
+        const sUser = DB.users[story.author];
         container.innerHTML += `
-          <div class="flex flex-col items-center gap-1" onclick="alert('Viewing story by ${story.author}')">
+          <div class="flex flex-col items-center gap-1">
             <div class="story-ring w-16 h-16 rounded-full p-[2px]">
               <img src="${sUser.avatar}" class="w-full h-full rounded-full border-2 border-black object-cover bg-black">
             </div>
@@ -385,84 +363,70 @@
     function renderExplore() {
       const container = document.getElementById('explore-container');
       container.innerHTML = '';
-      const me = DB.users.find(u => u.username === currentUser);
+      const meFollowing = DB.users[currentUser]?.following || {};
       
-      DB.users.forEach(u => {
+      Object.values(DB.users).forEach(u => {
         if(u.username === currentUser) return;
-        const isFollowing = me.following.includes(u.username);
+        const isFollowing = !!meFollowing[u.username];
+        const followerCount = u.followers ? Object.keys(u.followers).length : 0;
         container.innerHTML += `
           <div class="flex items-center justify-between p-3 bg-[#121212] rounded-lg border border-[#262626]">
             <div class="flex items-center gap-3">
               <img src="${u.avatar}" class="w-10 h-10 rounded-full">
               <div>
                 <div class="font-semibold text-sm">${u.username}</div>
-                <div class="text-xs text-gray-500">${u.followers.length} followers</div>
+                <div class="text-xs text-gray-500">${followerCount} followers</div>
               </div>
             </div>
-            <div class="flex gap-2">
-              <button onclick="toggleFollow('${u.username}')" class="px-4 py-1.5 rounded text-xs font-semibold ${isFollowing ? 'bg-[#262626] text-white' : 'bg-[#0095f6] text-white'}">${isFollowing ? 'Following' : 'Follow'}</button>
-            </div>
+            <button data-follow="${u.username}" class="px-4 py-1.5 rounded text-xs font-semibold ${isFollowing ? 'bg-[#262626] text-white' : 'bg-[#0095f6] text-white'}">${isFollowing ? 'Following' : 'Follow'}</button>
           </div>
         `;
       });
+      document.querySelectorAll('[data-follow]').forEach(btn => btn.onclick = (e) => toggleFollow(e.target.dataset.follow));
     }
 
     function toggleFollow(targetUser) {
-      const me = DB.users.find(u => u.username === currentUser);
-      const target = DB.users.find(u => u.username === targetUser);
-      if(me.following.includes(targetUser)) {
-        me.following = me.following.filter(u => u !== targetUser);
-        target.followers = target.followers.filter(u => u !== currentUser);
+      const followingRef = ref(db, `users/${currentUser}/following/${targetUser}`);
+      const followerRef = ref(db, `users/${targetUser}/followers/${currentUser}`);
+      if (DB.users[currentUser].following && DB.users[currentUser].following[targetUser]) {
+        remove(followingRef); remove(followerRef);
       } else {
-        me.following.push(targetUser);
-        target.followers.push(currentUser);
+        set(followingRef, true); set(followerRef, true);
       }
-      saveDB(); renderExplore();
     }
 
-    // ==========================================
-    // CHAT MESSAGING LOGIC
-    // ==========================================
     function renderChatList() {
       const container = document.getElementById('chatlist-container');
       container.innerHTML = '';
       
-      DB.users.forEach(u => {
+      Object.values(DB.users).forEach(u => {
         if(u.username === currentUser) return;
-        // Check if there are messages
-        const thread = DB.messages.filter(m => (m.sender === currentUser && m.receiver === u.username) || (m.sender === u.username && m.receiver === currentUser));
-        const lastMsg = thread.length > 0 ? thread[thread.length-1].text : 'Tap to chat';
+        const thread = Object.values(DB.messages).filter(m => (m.sender === currentUser && m.receiver === u.username) || (m.sender === u.username && m.receiver === currentUser));
+        const lastMsg = thread.length > 0 ? thread[thread.length-1].text : 'Tap to start chatting';
         
         container.innerHTML += `
-          <div onclick="openChat('${u.username}', '${u.avatar}')" class="flex items-center p-3 hover:bg-[#121212] rounded-lg cursor-pointer transition gap-3">
-            <img src="${u.avatar}" class="w-12 h-12 rounded-full border border-[#262626]">
-            <div class="flex-1 overflow-hidden">
+          <div data-chat="${u.username}" data-avatar="${u.avatar}" class="flex items-center p-3 hover:bg-[#121212] rounded-lg cursor-pointer transition gap-3">
+            <img src="${u.avatar}" class="w-12 h-12 rounded-full border border-[#262626] pointer-events-none">
+            <div class="flex-1 overflow-hidden pointer-events-none">
               <div class="font-semibold text-sm">${u.username}</div>
               <div class="text-xs text-gray-500 truncate">${lastMsg}</div>
             </div>
           </div>
         `;
       });
-    }
-
-    function openChat(targetUsername, avatar) {
-      currentChatTarget = targetUsername;
-      document.getElementById('active-chat-avatar').src = avatar;
-      document.getElementById('active-chat-name').innerText = targetUsername;
-      document.getElementById('active-chat-view').classList.remove('hidden');
-      renderMessages();
-    }
-
-    function closeChat() {
-      document.getElementById('active-chat-view').classList.add('hidden');
-      currentChatTarget = null;
-      renderChatList();
+      document.querySelectorAll('[data-chat]').forEach(el => el.onclick = (e) => {
+        currentChatTarget = e.target.dataset.chat;
+        document.getElementById('active-chat-avatar').src = e.target.dataset.avatar;
+        document.getElementById('active-chat-name').innerText = currentChatTarget;
+        document.getElementById('active-chat-view').classList.remove('hidden');
+        renderMessages();
+      });
     }
 
     function renderMessages() {
       const container = document.getElementById('chat-messages');
       container.innerHTML = '';
-      const thread = DB.messages.filter(m => (m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser));
+      const thread = Object.values(DB.messages).filter(m => (m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser)).sort((a,b) => a.timestamp - b.timestamp);
       
       thread.forEach(msg => {
         const isMe = msg.sender === currentUser;
@@ -471,109 +435,133 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    document.getElementById('chatForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = document.getElementById('chatInput').value.trim();
-      if(!text || !currentChatTarget) return;
+    // 3. ACTION EVENT LISTENERS
+    window.forceLogin = (username) => {
+      if(username.toLowerCase() === 'admin') {
+        currentUser = 'admin';
+      } else {
+        if(!DB.users[username]) {
+          set(ref(db, 'users/' + username), { username: username, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}` });
+        }
+        currentUser = username;
+      }
+      document.getElementById('login-view').classList.add('hidden');
+      if(currentUser === 'admin') {
+        document.getElementById('admin-container').style.display = 'block';
+        updateUI();
+      } else {
+        document.getElementById('app-container').classList.remove('hidden');
+        activeTab = 'feed';
+        updateUI();
+      }
+    };
 
-      DB.messages.push({
-        id: Date.now(), sender: currentUser, receiver: currentChatTarget, text: text, timestamp: Date.now()
+    document.getElementById('loginForm').onsubmit = (e) => {
+      e.preventDefault();
+      forceLogin(document.getElementById('usernameInput').value.trim());
+    };
+
+    document.getElementById('chatForm').onsubmit = (e) => {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      if(!input.value.trim() || !currentChatTarget) return;
+      push(ref(db, 'messages'), { sender: currentUser, receiver: currentChatTarget, text: input.value.trim(), timestamp: Date.now() });
+      input.value = '';
+    };
+
+    document.getElementById('postImageInput').onchange = (e) => {
+      if(!e.target.files[0]) return;
+      compressImage(e.target.files[0], (base64) => {
+        currentImageBase64 = base64;
+        document.getElementById('imagePreview').src = currentImageBase64;
+        document.getElementById('imagePreviewContainer').classList.remove('hidden');
+        document.getElementById('imagePlaceholder').classList.add('hidden');
       });
-      saveDB();
-      document.getElementById('chatInput').value = '';
-      renderMessages();
+    };
+
+    document.getElementById('uploadForm').onsubmit = (e) => {
+      e.preventDefault();
+      if(!currentImageBase64) return;
+      document.getElementById('submitUploadBtn').innerText = 'Uploading...';
+      
+      const payload = {
+        author: currentUser, image: currentImageBase64, timestamp: Date.now()
+      };
+
+      if(uploadType === 'post') {
+        payload.caption = document.getElementById('postCaption').value.trim();
+        payload.id = Date.now().toString();
+        set(ref(db, 'posts/' + payload.id), payload).then(() => closeModal());
+      } else {
+        push(ref(db, 'stories'), payload).then(() => closeModal());
+      }
+
+      function closeModal() {
+        document.getElementById('uploadModal').classList.add('hidden');
+        document.getElementById('submitUploadBtn').innerText = 'Share';
+        currentImageBase64 = null;
+      }
+    };
+
+    // Nav Listeners
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = (e) => {
+      activeTab = e.target.dataset.tab;
+      ['feed', 'explore', 'chatlist'].forEach(t => document.getElementById(`tab-${t}`).classList.add('hidden'));
+      document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
+      
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-white', 'text-gray-500'));
+      e.target.classList.replace('text-gray-500', 'text-white');
+      
+      if(activeTab === 'feed') document.getElementById('app-header-title').innerText = 'Viu Feed';
+      if(activeTab === 'explore') document.getElementById('app-header-title').innerText = 'Discover';
+      if(activeTab === 'chatlist') document.getElementById('app-header-title').innerText = 'Messages';
+      updateUI();
     });
 
-    // ==========================================
-    // UPLOAD LOGIC
-    // ==========================================
-    function openUploadModal(type = 'post') {
-      document.getElementById('uploadModal').classList.remove('hidden');
-      setUploadType(type);
-      document.getElementById('postCaption').value = '';
-      currentImageBase64 = null;
-      document.getElementById('imagePreviewContainer').classList.add('hidden');
-      document.getElementById('imagePlaceholder').classList.remove('hidden');
-    }
-
-    function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
-
-    function setUploadType(type) {
+    document.getElementById('userLogoutBtn').onclick = () => location.reload();
+    document.getElementById('adminLogoutBtn').onclick = () => location.reload();
+    document.getElementById('closeChatBtn').onclick = () => { document.getElementById('active-chat-view').classList.add('hidden'); currentChatTarget = null; };
+    document.getElementById('btn-upload').onclick = () => { document.getElementById('uploadModal').classList.remove('hidden'); setUploadType('post'); };
+    document.getElementById('closeUploadBtn').onclick = () => document.getElementById('uploadModal').classList.add('hidden');
+    
+    window.setUploadType = (type) => {
       uploadType = type;
       document.getElementById('type-post').className = `flex-1 py-1.5 text-sm font-semibold border-b-2 ${type==='post' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
       document.getElementById('type-story').className = `flex-1 py-1.5 text-sm font-semibold border-b-2 ${type==='story' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
       document.getElementById('caption-container').style.display = type === 'post' ? 'flex' : 'none';
-    }
+    };
 
-    document.getElementById('postImageInput').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        currentImageBase64 = evt.target.result;
-        document.getElementById('imagePreview').src = currentImageBase64;
-        document.getElementById('imagePreviewContainer').classList.remove('hidden');
-        document.getElementById('imagePlaceholder').classList.add('hidden');
-      };
-      reader.readAsDataURL(file);
-    });
+    document.getElementById('type-post').onclick = () => window.setUploadType('post');
+    document.getElementById('type-story').onclick = () => window.setUploadType('story');
 
-    document.getElementById('uploadForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if(!currentImageBase64) return;
-      
-      if(uploadType === 'post') {
-        DB.posts.push({
-          id: Date.now(), author: currentUser, image: currentImageBase64,
-          caption: document.getElementById('postCaption').value.trim(),
-          likes: [], comments: [], timestamp: Date.now()
-        });
-      } else {
-        DB.stories.push({ id: Date.now(), author: currentUser, image: currentImageBase64, timestamp: Date.now() });
-      }
-      saveDB(); closeUploadModal(); switchTab('feed');
-    });
-
-    // ==========================================
-    // MASTER ADMIN LOGIC
-    // ==========================================
+    // Admin
     function renderAdminDashboard() {
-      document.getElementById('admin-user-count').innerText = DB.users.length;
-      document.getElementById('admin-post-count').innerText = DB.posts.length + DB.stories.length;
+      document.getElementById('admin-user-count').innerText = Object.keys(DB.users).length;
+      document.getElementById('admin-post-count').innerText = Object.keys(DB.posts).length + Object.keys(DB.stories).length;
       
       const tbody = document.getElementById('admin-user-table');
       tbody.innerHTML = '';
-      DB.users.forEach(u => {
+      Object.values(DB.users).forEach(u => {
         tbody.innerHTML += `
           <tr class="hover:bg-[#1a1a1a]">
             <td class="p-3"><img src="${u.avatar}" class="w-8 h-8 rounded-full"></td>
             <td class="p-3 font-semibold">${u.username}</td>
-            <td class="p-3 text-gray-400">${u.followers.length}</td>
-            <td class="p-3 text-gray-400">${u.following.length}</td>
-            <td class="p-3"><button onclick="adminDeleteUser('${u.username}')" class="text-rose-500 hover:text-white bg-rose-900/30 px-2 py-1 rounded text-xs">Delete</button></td>
+            <td class="p-3 text-gray-400">${u.followers ? Object.keys(u.followers).length : 0}</td>
+            <td class="p-3 text-gray-400">${u.following ? Object.keys(u.following).length : 0}</td>
+            <td class="p-3"><button data-del="${u.username}" class="text-rose-500 hover:text-white bg-rose-900/30 px-2 py-1 rounded text-xs">Delete</button></td>
           </tr>
         `;
       });
+      document.querySelectorAll('[data-del]').forEach(btn => btn.onclick = (e) => {
+        if(confirm(`Erase user ${e.target.dataset.del}?`)) remove(ref(db, `users/${e.target.dataset.del}`));
+      });
     }
-
-    function adminDeleteUser(username) {
-      if(confirm(`WARNING: Erase user ${username} and all their data?`)) {
-        DB.users = DB.users.filter(u => u.username !== username);
-        DB.posts = DB.posts.filter(p => p.author !== username);
-        DB.stories = DB.stories.filter(s => s.author !== username);
-        DB.messages = DB.messages.filter(m => m.sender !== username && m.receiver !== username);
-        saveDB(); renderAdminDashboard();
+    
+    document.getElementById('btnFactoryReset').onclick = () => {
+      if(confirm('CRITICAL WARNING: This will permanently delete ALL live database data. Proceed?')) {
+        remove(ref(db, '/')).then(() => location.reload());
       }
-    }
-
-    function factoryReset() {
-      if(confirm('CRITICAL WARNING: This will delete ALL users, posts, stories, and messages. Proceed?')) {
-        localStorage.removeItem('viu_master_db');
-        location.reload();
-      }
-    }
-
-    init();
+    };
   </script>
 </body>
 </html>
