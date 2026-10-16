@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meet V. Patel // Engineering Deck</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Viu // Social & Chat Platform</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,19 +17,16 @@
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['Fira Code', 'monospace'],
-          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
           colors: {
-            brand: {
-              dark: '#0a0a0f',
-              glass: 'rgba(20, 20, 30, 0.65)',
-              border: 'rgba(255, 255, 255, 0.08)',
-              accent: '#8b5cf6', // Violet
-              glow: '#c4b5fd',
-              success: '#10b981',
-              cyan: '#06b6d4'
+            viu: {
+              bg: '#000000',
+              surface: '#121212',
+              border: '#262626',
+              primary: '#0095f6',
+              primaryHover: '#1877f2',
+              text: '#f5f5f5',
+              muted: '#a8a8a8'
             }
           }
         }
@@ -39,500 +36,539 @@
 
   <style>
     body {
-      background: radial-gradient(circle at 15% 50%, #1e1b4b, #0a0a0f 45%, #050505 100%);
-      color: #e2e8f0;
-      overflow-x: hidden;
+      background-color: #fafafa;
+      color: #000;
+      overflow: hidden; /* App container handles scrolling */
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      body { background-color: #000; color: #fff; }
     }
 
-    /* Ambient Animated Orbs */
-    .bg-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      z-index: -1;
-      animation: float 20s infinite ease-in-out alternate;
-    }
-    .orb-1 { width: 400px; height: 400px; background: rgba(139, 92, 246, 0.15); top: -100px; left: -100px; }
-    .orb-2 { width: 500px; height: 500px; background: rgba(6, 182, 212, 0.1); bottom: -200px; right: -100px; animation-delay: -5s; }
-
-    @keyframes float {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(30px, 50px); }
-    }
-
-    /* Glassmorphism Panels */
-    .glass-panel {
-      background: var(--brand-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    /* Mobile App Container Layout */
+    #app-wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      height: 100vh;
+      height: 100dvh; /* For mobile browsers */
+      background-color: var(--viu-bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      border-left: 1px solid #262626;
+      border-right: 1px solid #262626;
     }
 
-    .glass-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.3s ease;
+    .dark-theme { background-color: #000; color: #fff; }
+
+    /* Hide Scrollbars but keep functionality */
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Reels Scroll Snapping */
+    .reels-container {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100%;
     }
-    .glass-btn:hover, .glass-btn.active {
-      background: rgba(139, 92, 246, 0.15);
-      border-color: rgba(139, 92, 246, 0.4);
-      box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+    .reel-item {
+      scroll-snap-align: start;
+      height: 100%;
+      position: relative;
+      background: #111;
     }
 
-    /* Terminal Typing Effect */
-    .typing-cursor::after {
-      content: '█';
-      animation: blink 1s step-start infinite;
-      color: #8b5cf6;
-      margin-left: 4px;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
+    /* Animations */
+    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
-
-    /* Boot Overlay */
-    #bootOverlay {
-      transition: opacity 0.8s ease;
-    }
+    /* Chat Bubbles */
+    .chat-bubble { max-width: 75%; padding: 10px 14px; border-radius: 18px; margin-bottom: 8px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
+    .chat-sent { background-color: #0095f6; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .chat-recv { background-color: #262626; color: white; align-self: flex-start; border-bottom-left-radius: 4px; }
   </style>
 </head>
-<body class="font-sans antialiased min-h-screen relative flex flex-col selection:bg-violet-500/30 selection:text-violet-200">
+<body class="dark-theme">
 
-  <!-- Background Ambience -->
-  <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-    <div class="bg-orb orb-1"></div>
-    <div class="bg-orb orb-2"></div>
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiLz4KPC9zdmc+')] opacity-50"></div>
-  </div>
+  <!-- APP CONTAINER -->
+  <div id="app-wrapper">
 
-  <!-- BOOT SEQUENCE OVERLAY -->
-  <div id="bootOverlay" class="fixed inset-0 z-50 bg-[#050508] flex flex-col justify-end p-8 font-mono text-sm text-brand-success">
-    <div id="bootTerminal" class="max-w-3xl space-y-1 mb-8 opacity-80"></div>
-  </div>
-
-  <!-- NAVIGATION -->
-  <nav class="glass-panel border-b-0 border-x-0 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(139,92,246,0.4)]">
-            MP
-          </div>
-          <div>
-            <h1 class="font-semibold text-gray-100 tracking-wide text-sm">MEET V. PATEL</h1>
-            <p class="text-[10px] text-violet-400 font-mono tracking-widest uppercase">.NET Backend Engineer</p>
-          </div>
+    <!-- ==================== LOGIN VIEW ==================== -->
+    <div id="view-login" class="flex-1 flex flex-col items-center justify-center p-8 z-50 bg-black absolute inset-0">
+      <div class="w-full max-w-sm space-y-8 fade-in">
+        <div class="text-center">
+          <h1 class="text-4xl font-bold italic tracking-tighter mb-2">Viu</h1>
+          <p class="text-viu-muted text-sm">Sign in to see reels, chat, and posts from your friends.</p>
         </div>
-        
-        <div class="flex gap-2">
-          <button onclick="switchTab('dashboard')" id="btn-dashboard" class="glass-btn active px-4 py-1.5 rounded-md text-xs font-medium tracking-wide">DASHBOARD</button>
-          <button onclick="switchTab('projects')" id="btn-projects" class="glass-btn px-4 py-1.5 rounded-md text-xs font-medium tracking-wide">PROJECTS</button>
-          <button onclick="switchTab('sandbox')" id="btn-sandbox" class="glass-btn px-4 py-1.5 rounded-md text-xs font-medium tracking-wide hidden sm:block">SANDBOX</button>
+        <form id="loginForm" class="space-y-4">
+          <input type="text" id="usernameInput" placeholder="Enter Username" required class="w-full bg-[#121212] border border-[#262626] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#a8a8a8] transition">
+          <button type="submit" class="w-full bg-viu-primary hover:bg-viu-primaryHover text-white font-semibold rounded-md py-3 text-sm transition">Log In</button>
+        </form>
+        <div class="text-center">
+           <button onclick="clearAllData()" class="text-xs text-rose-500 hover:text-rose-400">Developer: Clear App Data</button>
         </div>
       </div>
     </div>
-  </nav>
 
-  <!-- MAIN CONTENT AREA -->
-  <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-
-    <!-- ==========================================
-         TAB: DASHBOARD
-    =========================================== -->
-    <section id="tab-dashboard" class="tab-content space-y-6">
+    <!-- ==================== MAIN APP VIEWS ==================== -->
+    <div id="view-main" class="flex-1 flex flex-col hidden h-full w-full absolute inset-0">
       
-      <!-- Top Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- TOP NAV BAR -->
+      <header id="top-nav" class="h-14 border-b border-[#262626] flex items-center justify-between px-4 shrink-0 bg-black z-20">
+        <h1 class="text-xl font-bold italic tracking-tighter" id="headerTitle">Viu</h1>
+        <div class="flex items-center gap-4">
+          <button onclick="openUploadModal()" id="uploadBtn" class="text-white hover:text-gray-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </button>
+          <img id="navAvatar" src="" class="w-7 h-7 rounded-full bg-[#262626] border border-[#262626] object-cover cursor-pointer" onclick="logout()">
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <main class="flex-1 overflow-y-auto hide-scrollbar relative bg-black" id="content-area">
         
-        <!-- Profile Card -->
-        <div class="glass-panel rounded-xl p-6 lg:col-span-1 flex flex-col">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-16 h-16 rounded-full border-2 border-violet-500/30 p-1 flex items-center justify-center bg-violet-900/20">
-              <svg class="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-            </div>
-            <span class="flex h-2 w-2 relative">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
+        <!-- 1. FEED VIEW -->
+        <div id="tab-feed" class="w-full min-h-full pb-6">
+          <div id="feed-container" class="space-y-6 pt-2">
+             <!-- Posts render here -->
           </div>
-          <h2 class="text-xl font-bold text-white mb-1">Meet V. Patel</h2>
-          <p class="text-sm text-gray-400 mb-4">Software Developer specializing in robust backend architectures, seamless API integrations, and efficient database management.</p>
+        </div>
+
+        <!-- 2. REELS VIEW -->
+        <div id="tab-reels" class="w-full h-full hidden">
+          <div class="reels-container hide-scrollbar" id="reels-container">
+            <!-- Reels generate here -->
+          </div>
+        </div>
+
+        <!-- 3. CHAT VIEW -->
+        <div id="tab-chat" class="w-full h-full flex flex-col hidden bg-black">
+          <div class="p-3 border-b border-[#262626] flex items-center gap-3 bg-[#121212]">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-0.5">
+               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=ViuBot" class="w-full h-full rounded-full bg-black">
+            </div>
+            <div>
+              <div class="font-semibold text-sm">Viu Assistant</div>
+              <div class="text-xs text-green-500">Online</div>
+            </div>
+          </div>
           
-          <div class="mt-auto space-y-3 pt-4 border-t border-white/5">
-            <div class="flex justify-between text-xs">
-              <span class="text-gray-500">CURRENT STATUS</span>
-              <span class="text-cyan-400 font-mono">DEPLOYING MODULES</span>
-            </div>
-            <div class="flex justify-between text-xs">
-              <span class="text-gray-500">LOCATION</span>
-              <span class="text-gray-300 font-mono">GUJARAT, INDIA</span>
-            </div>
+          <div id="chat-messages" class="flex-1 overflow-y-auto hide-scrollbar p-4 flex flex-col bg-black">
+            <!-- Messages render here -->
           </div>
+
+          <form id="chatForm" class="p-3 border-t border-[#262626] bg-[#121212] flex gap-2 shrink-0">
+            <input type="text" id="chatInput" placeholder="Message..." autocomplete="off" required class="flex-1 bg-black border border-[#262626] rounded-full px-4 py-2 text-sm focus:outline-none focus:border-[#555]">
+            <button type="submit" class="text-viu-primary font-semibold text-sm px-2">Send</button>
+          </form>
         </div>
 
-        <!-- Tech Stack Matrix -->
-        <div class="glass-panel rounded-xl p-6 lg:col-span-2">
-          <h3 class="text-xs font-mono text-gray-400 uppercase tracking-widest mb-4">Core Competency Matrix</h3>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            
-            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
-              <div class="w-8 h-8 rounded bg-[#512bd4]/20 text-[#512bd4] flex items-center justify-center font-bold">.N</div>
-              <div>
-                <div class="text-sm font-semibold text-white">.NET Core</div>
-                <div class="text-[10px] text-gray-500">Architecture</div>
-              </div>
-            </div>
+      </main>
 
-            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
-              <div class="w-8 h-8 rounded bg-[#239120]/20 text-[#239120] flex items-center justify-center font-bold text-lg">C#</div>
-              <div>
-                <div class="text-sm font-semibold text-white">C#</div>
-                <div class="text-[10px] text-gray-500">Primary Logic</div>
-              </div>
-            </div>
+      <!-- BOTTOM NAV BAR -->
+      <nav id="bottom-nav" class="h-14 border-t border-[#262626] flex items-center justify-around shrink-0 bg-black pb-safe">
+        <button onclick="switchTab('feed')" id="nav-feed" class="p-2 text-white transition transform active:scale-95">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3l10 9h-3v9H5v-9H2z"/></svg>
+        </button>
+        <button onclick="switchTab('reels')" id="nav-reels" class="p-2 text-gray-500 hover:text-white transition transform active:scale-95">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
+        <button onclick="switchTab('chat')" id="nav-chat" class="p-2 text-gray-500 hover:text-white transition transform active:scale-95 relative">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+          <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-black"></span>
+        </button>
+      </nav>
 
-            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
-              <div class="w-8 h-8 rounded bg-[#f29111]/20 text-[#f29111] flex items-center justify-center font-bold text-xs">SQL</div>
-              <div>
-                <div class="text-sm font-semibold text-white">SQL Server</div>
-                <div class="text-[10px] text-gray-500">Database</div>
-              </div>
-            </div>
+    </div>
 
-            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
-              <div class="w-8 h-8 rounded bg-[#ff6c37]/20 text-[#ff6c37] flex items-center justify-center font-bold">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-              </div>
-              <div>
-                <div class="text-sm font-semibold text-white">Postman</div>
-                <div class="text-[10px] text-gray-500">API Testing</div>
-              </div>
-            </div>
-
-            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
-              <div class="w-8 h-8 rounded bg-[#f05032]/20 text-[#f05032] flex items-center justify-center font-bold">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.96 0C5.36 0 0 5.36 0 11.96c0 5.28 3.42 9.76 8.16 11.34.6.11.82-.26.82-.58 0-.29-.01-1.04-.01-2.04-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4 11.5 11.5 0 0 1 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.6-.01 2.89-.01 3.28 0 .32.22.7.83.58A12.02 12.02 0 0 0 24 11.96C24 5.36 18.64 0 11.96 0z"/></svg>
-              </div>
-              <div>
-                <div class="text-sm font-semibold text-white">Git / GitHub</div>
-                <div class="text-[10px] text-gray-500">Version Control</div>
-              </div>
-            </div>
-
-            <!-- Replaced logic design with real-time sockets for the chat app theme -->
-            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
-              <div class="w-8 h-8 rounded bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
-              </div>
-              <div>
-                <div class="text-sm font-semibold text-white">SignalR / WS</div>
-                <div class="text-[10px] text-gray-500">Real-Time Data</div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- Interactive Contribution Graph (Canvas) -->
-      <div class="glass-panel rounded-xl p-6">
-        <div class="flex justify-between items-end mb-4">
-          <div>
-            <h3 class="text-xs font-mono text-gray-400 uppercase tracking-widest">Commit Activity Visualizer</h3>
-            <p class="text-sm text-gray-500 mt-1">Simulated high-frequency deployment grid</p>
-          </div>
-          <button onclick="scrambleGraph()" class="text-[10px] text-violet-400 hover:text-white transition font-mono border border-violet-500/30 px-2 py-1 rounded bg-violet-500/10">SCRAMBLE DATA</button>
+    <!-- ==================== UPLOAD MODAL ==================== -->
+    <div id="uploadModal" class="hidden absolute inset-0 bg-black/90 z-50 flex flex-col justify-end fade-in">
+      <div class="bg-[#121212] w-full rounded-t-2xl p-4 border-t border-[#262626]">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-bold text-lg">New Post</h2>
+          <button onclick="closeUploadModal()" class="text-gray-400 p-1">✕</button>
         </div>
         
-        <div class="w-full overflow-x-auto">
-          <canvas id="contributionGraph" height="110" class="min-w-[600px] w-full"></canvas>
-        </div>
-        <div class="flex justify-end gap-2 items-center mt-2 text-[10px] font-mono text-gray-500">
-          <span>Less</span>
-          <span class="w-3 h-3 rounded-sm bg-[#161b22] border border-white/5"></span>
-          <span class="w-3 h-3 rounded-sm bg-[#0e4429]"></span>
-          <span class="w-3 h-3 rounded-sm bg-[#006d32]"></span>
-          <span class="w-3 h-3 rounded-sm bg-[#26a641]"></span>
-          <span class="w-3 h-3 rounded-sm bg-[#39d353]"></span>
-          <span>More</span>
-        </div>
+        <form id="uploadForm" class="space-y-4">
+          <div class="flex items-start gap-3">
+            <img id="uploadAvatar" src="" class="w-8 h-8 rounded-full">
+            <textarea id="postCaption" rows="3" placeholder="Write a caption..." required class="flex-1 bg-transparent text-sm resize-none outline-none placeholder-gray-500"></textarea>
+          </div>
+
+          <div class="border-2 border-dashed border-[#262626] rounded-lg p-4 text-center relative hover:border-gray-500 transition">
+            <input type="file" id="postImageInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+            <div id="imagePreviewContainer" class="hidden">
+               <img id="imagePreview" src="" class="max-h-48 mx-auto rounded">
+            </div>
+            <div id="imagePlaceholder" class="text-gray-500 text-sm py-4">
+               <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L28 20M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+               Tap to select a photo
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-viu-primary hover:bg-viu-primaryHover text-white font-semibold rounded-md py-3 text-sm transition">Share Post</button>
+        </form>
       </div>
+    </div>
 
-    </section>
-
-    <!-- ==========================================
-         TAB: PROJECTS
-    =========================================== -->
-    <section id="tab-projects" class="tab-content hidden space-y-6">
-      
-      <div class="glass-panel rounded-xl p-6 mb-6">
-        <h2 class="text-xl font-bold text-white">Engineering Portfolio</h2>
-        <p class="text-sm text-gray-400 mt-1">A selection of enterprise integrations, backend architectures, and real-time social platforms.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <!-- Project 1 -->
-        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-violet-500 hover:-translate-y-1 transition duration-300 group">
-          <div class="flex justify-between items-start mb-4">
-            <h3 class="text-lg font-bold text-white group-hover:text-violet-400 transition">Hotel Supplier Module Integration</h3>
-            <span class="px-2 py-1 rounded bg-violet-500/20 text-violet-300 text-[10px] font-mono border border-violet-500/20">ENTERPRISE API</span>
-          </div>
-          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
-            Engineered seamless B2B connectivity for hotel booking systems. Developed and optimized complex RESTful payloads via Postman, mapping JSON/XML vendor data into a unified .NET core ecosystem.
-          </p>
-          <div class="flex flex-wrap gap-2 mt-auto">
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">C#</span>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">.NET API</span>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">SQL Server</span>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Postman</span>
-          </div>
-        </div>
-
-        <!-- Project 2 (Updated: Chat & Social App) -->
-        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-cyan-500 hover:-translate-y-1 transition duration-300 group">
-          <div class="flex justify-between items-start mb-4">
-            <h3 class="text-lg font-bold text-white group-hover:text-cyan-400 transition">Viu Social & Chat Engine</h3>
-            <span class="px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-mono border border-cyan-500/20">REAL-TIME MEDIA</span>
-          </div>
-          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
-            Engineered a full-featured social platform supporting real-time chat, short-form video reels, and 24-hour ephemeral status uploads. Optimized backend APIs for multimedia handling, instant messaging synchronization, and scalable image storage.
-          </p>
-          <div class="flex flex-wrap gap-2 mt-auto">
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">SignalR / WebSockets</span>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">.NET API</span>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Media Streaming</span>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">SQL Server</span>
-          </div>
-        </div>
-
-        <!-- Project 3 -->
-        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-emerald-500 hover:-translate-y-1 transition duration-300 group">
-          <div class="flex justify-between items-start mb-4">
-            <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition">Database Query Optimizer</h3>
-            <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono border border-emerald-500/20">SQL TUNING</span>
-          </div>
-          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
-            Refactored legacy stored procedures to eliminate N+1 query bottlenecks. Implemented strategic indexing and execution plan analysis, reducing average data retrieval latency by over 40% for high-volume transactions.
-          </p>
-          <div class="flex flex-wrap gap-2 mt-auto">
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">T-SQL</span>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Performance</span>
-            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Git</span>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ==========================================
-         TAB: CODE SANDBOX (IDE)
-    =========================================== -->
-    <section id="tab-sandbox" class="tab-content hidden h-[calc(100vh-140px)]">
-      <div class="glass-panel rounded-xl flex flex-col h-full overflow-hidden border border-white/10">
-        
-        <div class="bg-black/40 border-b border-white/5 px-4 py-3 flex items-center justify-between">
-          <div class="flex gap-2 items-center">
-            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
-            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-            <span class="ml-4 text-xs font-mono text-gray-400">workspace.html</span>
-          </div>
-          <button onclick="runCode()" class="bg-violet-600 hover:bg-violet-500 text-white text-xs px-4 py-1.5 rounded transition shadow-[0_0_10px_rgba(139,92,246,0.3)]">Run Compilation</button>
-        </div>
-
-        <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 bg-[#0d0d12]">
-          <!-- Editor -->
-          <div class="border-r border-white/5 flex flex-col relative group">
-            <div class="absolute top-2 right-2 text-[10px] text-gray-500 font-mono">INPUT LAYER</div>
-            <textarea id="codeEditor" spellcheck="false" class="flex-1 w-full bg-transparent p-4 font-mono text-sm text-cyan-200 outline-none resize-none leading-relaxed selection:bg-violet-500/40 focus:ring-inset focus:ring-1 focus:ring-violet-500/50">
-<!-- Write HTML/JS here and hit Run -->
-<div style="text-align:center; padding-top:40px; font-family:sans-serif;">
-  <h2 style="color:#8b5cf6;">Systems Online</h2>
-  <p style="color:#94a3b8;">Testing API payloads in isolated DOM.</p>
-  
-  <button id="testBtn" style="padding:8px 16px; background:#06b6d4; border:none; border-radius:4px; color:#000; font-weight:bold; cursor:pointer; margin-top:20px;">
-    Ping Server
-  </button>
-  
-  <div id="output" style="margin-top:20px; font-family:monospace; color:#10b981;"></div>
-</div>
-
-<script>
-  document.getElementById('testBtn').addEventListener('click', () => {
-    const out = document.getElementById('output');
-    out.innerHTML = '> Transmitting request...<br>';
-    setTimeout(() => {
-      out.innerHTML += '> Code 200 OK<br>> Payload Received.';
-    }, 600);
-  });
-</script>
-</textarea>
-          </div>
-
-          <!-- Output -->
-          <div class="relative flex flex-col bg-white">
-            <div class="absolute top-2 right-2 text-[10px] text-gray-400 font-mono z-10 mix-blend-difference">OUTPUT FRAME</div>
-            <iframe id="codePreview" class="flex-1 w-full border-none bg-white"></iframe>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-  </main>
+  </div>
 
   <script>
-    // --- 1. BOOT SEQUENCE TERMINAL ---
-    const bootLines = [
-      "Initializing environment variables...",
-      "Mounting volume /dev/sda1... OK",
-      "Loading kernel modules...",
-      "Establishing secure connection to repository...",
-      "Resolving .NET Core dependencies...",
-      "Configuring Git SSH keys... SUCCESS",
-      "Starting SQL Server background daemon...",
-      "Compiling UI components...",
-      "MEET_V_PATEL framework loaded.",
-      "Access Granted."
+    // ==========================================
+    // 1. STATE MANAGEMENT & LOCAL STORAGE
+    // ==========================================
+    let currentUser = JSON.parse(localStorage.getItem('viu_user')) || null;
+    let posts = JSON.parse(localStorage.getItem('viu_posts')) || [];
+    let chatHistory = JSON.parse(localStorage.getItem('viu_chats')) || [
+      { sender: 'bot', text: 'Welcome to Viu Chat! Say hi! 👋' }
     ];
 
-    async function typeBootSequence() {
-      const term = document.getElementById('bootTerminal');
-      
-      for (let i = 0; i < bootLines.length; i++) {
-        const lineDiv = document.createElement('div');
-        term.appendChild(lineDiv);
-        
-        let text = bootLines[i];
-        if (i === bootLines.length - 1) {
-            lineDiv.classList.add('text-cyan-400', 'font-bold', 'mt-4');
+    // Default Seed Data if no posts exist
+    if (posts.length === 0) {
+      posts = [
+        {
+          id: 1,
+          author: 'System',
+          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=System',
+          image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop',
+          caption: 'Welcome to Viu Platform! You can upload your own photos, view reels, and chat using the bottom navigation bar. 🚀',
+          likes: 42,
+          timestamp: new Date().getTime()
         }
-
-        // Type writer effect per character
-        lineDiv.classList.add('typing-cursor');
-        for (let j = 0; j <= text.length; j++) {
-          lineDiv.textContent = text.substring(0, j);
-          await new Promise(r => setTimeout(r, Math.random() * 15 + 5)); // very fast typing
-        }
-        lineDiv.classList.remove('typing-cursor');
-      }
-
-      await new Promise(r => setTimeout(r, 600));
-      const overlay = document.getElementById('bootOverlay');
-      overlay.style.opacity = '0';
-      setTimeout(() => {
-        overlay.style.display = 'none';
-        initGraph(); // Initialize canvas after boot
-        runCode(); // Initialize iframe
-      }, 800);
+      ];
+      savePosts();
     }
 
-    // --- 2. TAB NAVIGATION ---
+    // Mock video URLs for Reels (Using robust external sample videos)
+    const mockReels = [
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
+    ];
+
+    // ==========================================
+    // 2. INITIALIZATION & AUTHENTICATION
+    // ==========================================
+    function init() {
+      if (currentUser) {
+        document.getElementById('view-login').classList.add('hidden');
+        document.getElementById('view-main').classList.remove('hidden');
+        document.getElementById('navAvatar').src = currentUser.avatar;
+        document.getElementById('uploadAvatar').src = currentUser.avatar;
+        renderFeed();
+        renderChat();
+        initReels();
+      } else {
+        document.getElementById('view-login').classList.remove('hidden');
+        document.getElementById('view-main').classList.add('hidden');
+      }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('usernameInput').value.trim();
+      if (!username) return;
+
+      currentUser = {
+        username: username,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`
+      };
+      localStorage.setItem('viu_user', JSON.stringify(currentUser));
+      init();
+    });
+
+    function logout() {
+      if(confirm('Log out of Viu?')) {
+        currentUser = null;
+        localStorage.removeItem('viu_user');
+        init();
+      }
+    }
+
+    function clearAllData() {
+      if(confirm('Warning: This will delete all posts, chats, and users from your browser storage. Continue?')) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+
+    // ==========================================
+    // 3. NAVIGATION & TABS
+    // ==========================================
     function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.glass-btn').forEach(btn => btn.classList.remove('active'));
-      
+      // Hide all tabs
+      ['feed', 'reels', 'chat'].forEach(id => {
+        document.getElementById(`tab-${id}`).classList.add('hidden');
+        document.getElementById(`nav-${id}`).classList.replace('text-white', 'text-gray-500');
+        
+        // Pause reels videos if navigating away
+        if(id === 'reels' && tabId !== 'reels') {
+           document.querySelectorAll('.reel-video').forEach(vid => vid.pause());
+        }
+      });
+
+      // Show selected tab
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-      document.getElementById(`btn-${tabId}`).classList.add('active');
-    }
+      
+      // Update icon states
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      activeBtn.classList.replace('text-gray-500', 'text-white');
 
-    // --- 3. GITHUB STYLE CONTRIBUTION GRAPH (CANVAS) ---
-    const canvas = document.getElementById('contributionGraph');
-    const ctx = canvas.getContext('2d');
-    const weeks = 52;
-    const days = 7;
-    const cellSize = 12;
-    const cellGap = 3;
-    let commitData = [];
-
-    // Colors: Empty -> Darkest Green -> Lightest Green
-    const colors = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
-
-    function generateGraphData() {
-      commitData = [];
-      for (let w = 0; w < weeks; w++) {
-        let weekCol = [];
-        for (let d = 0; d < days; d++) {
-          // Generate realistic looking data cluster
-          let intensity = 0;
-          let rand = Math.random();
-          if (rand > 0.5) intensity = 1;
-          if (rand > 0.8) intensity = 2;
-          if (rand > 0.9) intensity = 3;
-          if (rand > 0.96) intensity = 4;
-          
-          // Leave weekends mostly empty
-          if ((d === 0 || d === 6) && Math.random() > 0.2) intensity = 0;
-
-          weekCol.push(intensity);
-        }
-        commitData.push(weekCol);
+      // Top Header text update
+      const headerTitle = document.getElementById('headerTitle');
+      const uploadBtn = document.getElementById('uploadBtn');
+      if (tabId === 'feed') {
+        headerTitle.innerText = 'Viu';
+        uploadBtn.classList.remove('hidden');
+      } else if (tabId === 'reels') {
+        headerTitle.innerText = 'Reels';
+        uploadBtn.classList.add('hidden');
+        // Play visible reel
+        playVisibleReel();
+      } else if (tabId === 'chat') {
+        headerTitle.innerText = 'Direct Messages';
+        uploadBtn.classList.add('hidden');
+        const chatBox = document.getElementById('chat-messages');
+        chatBox.scrollTop = chatBox.scrollHeight;
       }
     }
 
-    function drawGraph() {
-      if (!canvas || !canvas.parentElement) return;
-      
-      // Responsive sizing
-      canvas.width = canvas.parentElement.clientWidth;
-      
-      // Calculate how many weeks can fit
-      const fitWeeks = Math.floor((canvas.width - 20) / (cellSize + cellGap));
-      const startWeek = Math.max(0, weeks - fitWeeks);
+    // ==========================================
+    // 4. FEED & UPLOAD FUNCTIONALITY
+    // ==========================================
+    function savePosts() {
+      localStorage.setItem('viu_posts', JSON.stringify(posts));
+    }
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function renderFeed() {
+      const container = document.getElementById('feed-container');
+      container.innerHTML = '';
 
-      let xOffset = 10;
-      for (let w = startWeek; w < weeks; w++) {
-        let yOffset = 10;
-        for (let d = 0; d < days; d++) {
-          let intensity = commitData[w][d];
-          
-          ctx.fillStyle = colors[intensity];
-          ctx.beginPath();
-          ctx.roundRect(xOffset, yOffset, cellSize, cellSize, 2);
-          ctx.fill();
-          
-          // Border
-          ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-          ctx.lineWidth = 1;
-          ctx.stroke();
+      // Sort newest first
+      const sortedPosts = [...posts].sort((a, b) => b.timestamp - a.timestamp);
 
-          yOffset += cellSize + cellGap;
-        }
-        xOffset += cellSize + cellGap;
+      sortedPosts.forEach(post => {
+        const timeStr = new Date(post.timestamp).toLocaleDateString();
+        const postHTML = `
+          <article class="bg-[#000] border-b border-[#262626] pb-4 fade-in">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-3 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 to-fuchsia-600 p-[2px]">
+                  <img src="${post.avatar}" class="w-full h-full rounded-full bg-black border border-black">
+                </div>
+                <div class="font-semibold text-sm">${post.author}</div>
+              </div>
+              <button class="text-gray-400 hover:text-white"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14a2 2 0 100-4 2 2 0 000 4zm-6 0a2 2 0 100-4 2 2 0 000 4zm12 0a2 2 0 100-4 2 2 0 000 4z"></path></svg></button>
+            </div>
+            <!-- Image -->
+            ${post.image ? `<img src="${post.image}" class="w-full object-cover max-h-[500px]" ondblclick="likePost(${post.id})">` : ''}
+            <!-- Actions -->
+            <div class="px-3 pt-3 flex gap-4">
+              <button onclick="likePost(${post.id})" class="text-white hover:text-gray-300 transform active:scale-75 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+              </button>
+              <button class="text-white hover:text-gray-300"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></button>
+              <button class="text-white hover:text-gray-300"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button>
+            </div>
+            <!-- Likes & Caption -->
+            <div class="px-3 pt-2">
+              <div class="font-semibold text-sm mb-1" id="likes-${post.id}">${post.likes} likes</div>
+              <div class="text-sm"><span class="font-semibold mr-1">${post.author}</span>${post.caption}</div>
+              <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wide">${timeStr}</div>
+            </div>
+          </article>
+        `;
+        container.insertAdjacentHTML('beforeend', postHTML);
+      });
+    }
+
+    function likePost(id) {
+      const post = posts.find(p => p.id === id);
+      if(post) {
+        post.likes++;
+        document.getElementById(`likes-${id}`).innerText = `${post.likes} likes`;
+        savePosts();
       }
     }
 
-    function scrambleGraph() {
-      generateGraphData();
-      drawGraph();
+    // Upload Modal Handlers
+    let currentImageBase64 = null;
+
+    function openUploadModal() {
+      document.getElementById('uploadModal').classList.remove('hidden');
+      document.getElementById('postCaption').value = '';
+      currentImageBase64 = null;
+      document.getElementById('imagePreviewContainer').classList.add('hidden');
+      document.getElementById('imagePlaceholder').classList.remove('hidden');
     }
 
-    function initGraph() {
-      generateGraphData();
-      drawGraph();
-      window.addEventListener('resize', drawGraph);
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.add('hidden');
     }
 
-    // --- 4. CODE SANDBOX RUNNER ---
-    function runCode() {
-      const code = document.getElementById('codeEditor').value;
-      const iframe = document.getElementById('codePreview');
-      iframe.srcdoc = code;
+    document.getElementById('postImageInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        currentImageBase64 = evt.target.result;
+        document.getElementById('imagePreview').src = currentImageBase64;
+        document.getElementById('imagePreviewContainer').classList.remove('hidden');
+        document.getElementById('imagePlaceholder').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const caption = document.getElementById('postCaption').value.trim();
+      
+      const newPost = {
+        id: new Date().getTime(),
+        author: currentUser.username,
+        avatar: currentUser.avatar,
+        image: currentImageBase64,
+        caption: caption,
+        likes: 0,
+        timestamp: new Date().getTime()
+      };
+
+      posts.push(newPost);
+      savePosts();
+      renderFeed();
+      closeUploadModal();
+      document.getElementById('content-area').scrollTop = 0;
+    });
+
+    // ==========================================
+    // 5. REELS FUNCTIONALITY
+    // ==========================================
+    function initReels() {
+      const container = document.getElementById('reels-container');
+      container.innerHTML = '';
+
+      mockReels.forEach((url, index) => {
+        const reelHTML = `
+          <div class="reel-item flex flex-col justify-center items-center">
+            <video src="${url}" class="reel-video w-full h-full object-cover" loop playsinline muted></video>
+            
+            <!-- Overlay UI -->
+            <div class="absolute bottom-16 left-4 right-16 z-10 text-white shadow-black">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 rounded-full bg-white p-0.5"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Creator${index}" class="rounded-full bg-black"></div>
+                <span class="font-semibold text-sm drop-shadow-md">Creator_${index+1}</span>
+                <button class="border border-white text-xs px-2 py-0.5 rounded text-white font-semibold drop-shadow-md backdrop-blur-sm">Follow</button>
+              </div>
+              <p class="text-sm drop-shadow-md line-clamp-2">Awesome scenic view for today's reel! #nature #vibes</p>
+            </div>
+
+            <!-- Right Actions -->
+            <div class="absolute bottom-16 right-2 z-10 flex flex-col items-center gap-4 text-white drop-shadow-lg">
+              <button class="flex flex-col items-center hover:text-gray-300">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                <span class="text-xs mt-1 font-semibold">${Math.floor(Math.random()*900)+100}</span>
+              </button>
+              <button class="flex flex-col items-center hover:text-gray-300">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                <span class="text-xs mt-1 font-semibold">42</span>
+              </button>
+              <button class="flex flex-col items-center hover:text-gray-300">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+              </button>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', reelHTML);
+      });
+
+      // Intersection Observer to autoplay active reel
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const video = entry.target.querySelector('video');
+          if (entry.isIntersecting) {
+            video.play().catch(e => console.log('Autoplay prevented'));
+            video.muted = false; // Optional: unmute when in view, though browsers might block it initially
+          } else {
+            video.pause();
+            video.currentTime = 0;
+          }
+        });
+      }, { threshold: 0.6 });
+
+      document.querySelectorAll('.reel-item').forEach(item => observer.observe(item));
     }
 
-    // Initialize App
-    window.onload = () => {
-      // Start typing animation on load
-      typeBootSequence();
-    };
+    function playVisibleReel() {
+      const videos = document.querySelectorAll('.reel-video');
+      videos.forEach(v => {
+        const rect = v.getBoundingClientRect();
+        if(rect.top >= 0 && rect.bottom <= window.innerHeight) {
+          v.play().catch(e=>{});
+        }
+      });
+    }
+
+    // ==========================================
+    // 6. CHAT & BOT FUNCTIONALITY
+    // ==========================================
+    function saveChat() {
+      localStorage.setItem('viu_chats', JSON.stringify(chatHistory));
+    }
+
+    function renderChat() {
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '';
+      
+      chatHistory.forEach(msg => {
+        const isBot = msg.sender === 'bot';
+        const div = document.createElement('div');
+        div.className = `chat-bubble fade-in ${isBot ? 'chat-recv' : 'chat-sent'}`;
+        div.innerText = msg.text;
+        container.appendChild(div);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    document.getElementById('chatForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if(!text) return;
+
+      // User Message
+      chatHistory.push({ sender: 'user', text: text });
+      saveChat();
+      renderChat();
+      input.value = '';
+
+      // Typing Indicator Simulation
+      const container = document.getElementById('chat-messages');
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'chat-bubble chat-recv text-gray-400 italic text-xs';
+      typingDiv.id = 'typing-indicator';
+      typingDiv.innerText = 'typing...';
+      container.appendChild(typingDiv);
+      container.scrollTop = container.scrollHeight;
+
+      // Bot Auto-Reply
+      setTimeout(() => {
+        document.getElementById('typing-indicator').remove();
+        
+        let reply = "I received your message! As a demo bot, I don't have AI connected, but your UI looks great.";
+        if(text.toLowerCase().includes('hi') || text.toLowerCase().includes('hello')) reply = `Hey ${currentUser.username}! How's your day going?`;
+        else if(text.toLowerCase().includes('help')) reply = "You can upload posts using the + button on the feed tab, or watch videos on the Reels tab!";
+        
+        chatHistory.push({ sender: 'bot', text: reply });
+        saveChat();
+        renderChat();
+      }, 1500);
+    });
+
+    // Run Initialization
+    init();
+
   </script>
 </body>
 </html>
