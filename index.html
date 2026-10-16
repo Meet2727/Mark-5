@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Viu // Pro Social Network</title>
+  <title>Viu / Ultimate Social Network</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -51,12 +51,13 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     .heart-pop { animation: popHeart 0.7s ease-out forwards; }
     @keyframes popHeart { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); } 30% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.4); } }
-    .chat-bubble { max-width: 78%; padding: 9px 13px; border-radius: 16px; font-size: 13.5px; word-wrap: break-word; position: relative; }
+    .chat-bubble { max-width: 80%; padding: 9px 13px; border-radius: 16px; font-size: 13.5px; word-wrap: break-word; position: relative; }
     .chat-sent { background-color: var(--accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
     [data-theme^="jarvis"] .chat-sent { background-color: rgba(var(--accent-rgb), 0.18); border: 1px solid var(--accent); color: var(--text-main); }
     .chat-recv { background-color: #262626; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
     .tick-blue { color: #38bdf8; font-weight: bold; text-shadow: 0 0 5px rgba(56,189,248,0.8); }
     .tick-gray { color: rgba(255,255,255,0.55); }
+    audio::-webkit-media-controls-panel { background-color: #e5e7eb; }
   </style>
 </head>
 <body>
@@ -86,7 +87,7 @@
     <header class="h-14 border-b theme-border theme-surface flex items-center justify-between px-4 shrink-0 z-20">
       <h1 class="text-xl font-heading font-bold italic tracking-tight theme-accent-text" id="app-header-title">Viu</h1>
       <div class="flex items-center gap-2">
-        <button onclick="window.openUploadModal('post')" class="p-1.5 rounded-lg border theme-border hover:opacity-80">
+        <button onclick="window.openUploadModal('post')" title="Create Post / Poll / Story" class="p-1.5 rounded-lg border theme-border hover:opacity-80">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
         </button>
         <button onclick="window.openNotifications()" class="p-1.5 rounded-lg border theme-border hover:opacity-80 relative">
@@ -95,7 +96,7 @@
         </button>
         <div class="flex items-center gap-1.5 bg-black/50 pl-1 pr-2.5 py-1 rounded-full border theme-border cursor-pointer" onclick="window.switchTab('profile')">
           <div id="nav-avatar" class="w-6 h-6"></div>
-          <span id="nav-username" class="text-xs font-semibold truncate max-w-[75px]">User</span>
+          <span id="nav-username" class="text-xs font-semibold truncate max-w-[85px]">User</span>
         </div>
       </div>
     </header>
@@ -113,7 +114,7 @@
 
       <!-- EXPLORE TAB -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4 pb-20">
-        <input type="text" id="searchUsers" placeholder="Search users..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none text-white">
+        <input type="text" id="searchUsers" placeholder="Search users or mood tags..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none text-white">
         <div id="explore-container" class="space-y-2.5"></div>
       </div>
 
@@ -133,8 +134,12 @@
             <div class="absolute bottom-0 right-0 theme-accent-bg p-1.5 rounded-full border-2 border-black text-xs">📷</div>
             <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
           </div>
-          <h2 class="text-lg font-heading font-bold" id="profile-username">User</h2>
-          <p class="text-xs text-gray-400 mt-1 mb-4" id="profile-bio">Tap 'Edit Bio' to add your status.</p>
+          <div class="flex items-center gap-1 justify-center">
+            <h2 class="text-lg font-heading font-bold" id="profile-username">User</h2>
+            <span id="profile-verified" class="hidden text-sky-400 text-sm" title="Verified">☑️</span>
+          </div>
+          <span id="profile-mood" class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/10 text-gray-300 mt-1">✨ Using Viu</span>
+          <p class="text-xs text-gray-400 mt-2 mb-4" id="profile-bio">Tap 'Edit Profile' to customize.</p>
 
           <div class="grid grid-cols-4 gap-2 w-full border-y theme-border py-2.5 mb-4 text-xs">
             <div><span class="font-bold text-sm block" id="stat-posts">0</span>Posts</div>
@@ -154,7 +159,7 @@
           </div>
 
           <div class="flex gap-2 w-full">
-            <button onclick="window.openBioModal()" class="flex-1 bg-white/10 py-2 rounded-lg text-xs font-semibold">Edit Bio</button>
+            <button onclick="window.openBioModal()" class="flex-1 bg-white/10 py-2 rounded-lg text-xs font-semibold">Edit Profile & Badge</button>
             <button onclick="window.logoutUser()" class="flex-1 bg-rose-500/20 text-rose-400 py-2 rounded-lg text-xs font-semibold">Log Out</button>
           </div>
         </div>
@@ -166,7 +171,7 @@
         <div id="profile-grid" class="grid grid-cols-3 gap-1"></div>
       </div>
 
-      <!-- ACTIVE CHAT VIEW -->
+      <!-- ACTIVE CHAT VIEW (WITH VOICE NOTES & ONLINE STATUS) -->
       <div id="active-chat-view" class="absolute inset-0 bg-black z-30 hidden flex flex-col">
         <div class="h-14 border-b theme-border flex items-center justify-between px-4 theme-surface shrink-0">
           <div class="flex items-center gap-3">
@@ -174,15 +179,17 @@
             <div id="active-chat-avatar" class="w-8 h-8 cursor-pointer" onclick="window.openUserProfile(window.getCurrentChatTarget())"></div>
             <div class="cursor-pointer" onclick="window.openUserProfile(window.getCurrentChatTarget())">
               <span id="active-chat-name" class="font-bold text-sm block leading-none">User</span>
-              <span id="typing-indicator" class="text-[10px] theme-accent-text hidden">typing...</span>
+              <span id="active-chat-status" class="text-[10px] text-emerald-400">● Online</span>
+              <span id="typing-indicator" class="text-[10px] theme-accent-text hidden ml-1">typing...</span>
             </div>
           </div>
         </div>
         <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar space-y-3 bg-black"></div>
-        <form id="chatForm" class="p-3 border-t theme-border theme-surface shrink-0 flex gap-2 items-center">
-          <label class="p-2 rounded-full bg-white/10 cursor-pointer text-sm" title="Send Photo">📷<input type="file" id="chatImageInput" accept="image/*" class="hidden"></label>
-          <input type="text" id="chatInput" placeholder="Message..." autocomplete="off" class="flex-1 bg-black border theme-border rounded-full px-4 py-2 text-sm focus:outline-none text-white">
-          <button type="submit" class="theme-accent-bg font-semibold text-xs px-4 py-2 rounded-full">Send</button>
+        <form id="chatForm" class="p-2.5 border-t theme-border theme-surface shrink-0 flex gap-1.5 items-center">
+          <label class="p-2 rounded-full bg-white/10 cursor-pointer text-sm shrink-0" title="Send Photo">📷<input type="file" id="chatImageInput" accept="image/*" class="hidden"></label>
+          <button type="button" id="voiceRecordBtn" onclick="window.toggleVoiceRecording()" class="p-2 rounded-full bg-white/10 text-sm shrink-0 transition" title="Record Voice Note">🎙️</button>
+          <input type="text" id="chatInput" placeholder="Message..." autocomplete="off" class="flex-1 bg-black border theme-border rounded-full px-3.5 py-2 text-sm focus:outline-none text-white">
+          <button type="submit" class="theme-accent-bg font-semibold text-xs px-3.5 py-2 rounded-full shrink-0">Send</button>
         </form>
       </div>
     </main>
@@ -199,7 +206,7 @@
     </nav>
   </div>
 
-  <!-- STORY VIEWER MODAL -->
+  <!-- STORY VIEWER MODAL (WITH DIRECT STORY REPLY) -->
   <div id="storyViewerModal" class="hidden fixed inset-0 z-[9999] bg-black flex flex-col justify-between select-none">
     <div class="p-4 z-20 bg-gradient-to-b from-black/90 to-transparent">
       <div class="w-full bg-white/25 h-1 mb-3 rounded-full overflow-hidden"><div id="storyProgressBar" class="bg-white h-full w-0 transition-all duration-100"></div></div>
@@ -216,40 +223,59 @@
     </div>
     <div class="flex-1 flex items-center justify-center overflow-hidden relative" onclick="window.closeStoryViewer()">
       <img id="storyViewerImage" src="" class="max-h-full max-w-full object-contain">
-      <div id="storyViewerCaption" class="hidden absolute bottom-6 left-4 right-4 bg-black/75 text-white text-center py-2 px-4 rounded-xl text-sm"></div>
+      <div id="storyViewerCaption" class="hidden absolute bottom-4 left-4 right-4 bg-black/75 text-white text-center py-2 px-4 rounded-xl text-sm"></div>
     </div>
-    <div class="p-4 z-20 bg-gradient-to-t from-black/90 to-transparent flex justify-between items-center text-xs text-gray-300">
-      <div class="flex gap-4"><span id="storyViewsCount">👁️ 0</span><span id="storyLikesCount">❤️ 0</span></div>
-      <button onclick="window.toggleStoryLike()" class="bg-white/10 px-4 py-1.5 rounded-full text-xs font-bold"><span id="storyLikeIcon">🤍</span> Like Story</button>
+    <div class="p-3 z-20 bg-black/90 border-t border-white/10 space-y-2" onclick="event.stopPropagation()">
+      <div class="flex justify-between items-center text-xs text-gray-300 px-1">
+        <div class="flex gap-4"><span id="storyViewsCount">👁️ 0</span><span id="storyLikesCount">❤️ 0</span></div>
+        <button onclick="window.toggleStoryLike()" class="bg-white/10 px-3 py-1 rounded-full text-xs font-bold"><span id="storyLikeIcon">🤍</span> Like</button>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" id="storyReplyInput" placeholder="Reply to story..." class="flex-1 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs text-white focus:outline-none">
+        <button onclick="window.sendStoryReply()" class="theme-accent-bg px-4 py-1.5 rounded-full text-xs font-bold">Send</button>
+      </div>
     </div>
   </div>
 
-  <!-- UPLOAD MODAL -->
+  <!-- UPLOAD MODAL (POST, STORY & INTERACTIVE POLL) -->
   <div id="uploadModal" class="hidden fixed inset-0 z-[200] bg-black/85 flex flex-col justify-end">
     <div class="theme-surface w-full max-w-md mx-auto rounded-t-2xl p-5 border-t theme-border">
       <div class="flex justify-between items-center mb-3">
         <h2 class="font-heading font-bold text-base">Create Content</h2>
         <button onclick="window.closeUploadModal()" class="text-gray-400">✕</button>
       </div>
-      <div class="flex gap-2 mb-3 bg-black/50 p-1 rounded-lg border theme-border">
-        <button type="button" onclick="window.setUploadType('post')" id="type-post" class="flex-1 py-1.5 rounded text-xs font-bold">FEED POST</button>
-        <button type="button" onclick="window.setUploadType('story')" id="type-story" class="flex-1 py-1.5 rounded text-xs font-bold">24H STORY</button>
+      <div class="flex gap-1.5 mb-3 bg-black/50 p-1 rounded-lg border theme-border">
+        <button type="button" onclick="window.setUploadType('post')" id="type-post" class="flex-1 py-1.5 rounded text-xs font-bold">📷 POST</button>
+        <button type="button" onclick="window.setUploadType('story')" id="type-story" class="flex-1 py-1.5 rounded text-xs font-bold">⚡ 24H STORY</button>
+        <button type="button" onclick="window.setUploadType('poll')" id="type-poll" class="flex-1 py-1.5 rounded text-xs font-bold">📊 LIVE POLL</button>
       </div>
       <form id="uploadForm" class="space-y-3">
-        <textarea id="postCaption" rows="2" placeholder="Write caption or story text..." class="w-full bg-black/40 border theme-border rounded-lg p-2.5 text-sm outline-none text-white"></textarea>
-        <div class="border-2 border-dashed theme-border rounded-xl p-4 text-center relative cursor-pointer bg-black/30">
-          <input type="file" id="postImageInput" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-          <img id="imagePreview" src="" class="hidden max-h-48 mx-auto rounded-lg">
-          <div id="imagePlaceholder" class="text-gray-400 text-xs py-5">📷 Tap to choose photo</div>
+        <textarea id="postCaption" rows="2" placeholder="Write caption or poll question..." class="w-full bg-black/40 border theme-border rounded-lg p-2.5 text-sm outline-none text-white"></textarea>
+        
+        <!-- Photo Upload Box (For Post & Story) -->
+        <div id="photoUploadSection">
+          <div class="border-2 border-dashed theme-border rounded-xl p-4 text-center relative cursor-pointer bg-black/30">
+            <input type="file" id="postImageInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+            <img id="imagePreview" src="" class="hidden max-h-44 mx-auto rounded-lg">
+            <div id="imagePlaceholder" class="text-gray-400 text-xs py-5">📷 Tap to choose photo</div>
+          </div>
+          <div id="filterBar" class="hidden flex gap-2 overflow-x-auto hide-scrollbar py-2">
+            <button type="button" onclick="window.applyImageFilter('none')" class="px-3 py-1 rounded border theme-border bg-black text-xs shrink-0">Normal</button>
+            <button type="button" onclick="window.applyImageFilter('vivid')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-pink-400 shrink-0">✨ Vivid</button>
+            <button type="button" onclick="window.applyImageFilter('bw')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-gray-300 shrink-0">🖤 B&W</button>
+            <button type="button" onclick="window.applyImageFilter('cyber')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-cyan-400 shrink-0">⚡ Cyber</button>
+            <button type="button" onclick="window.applyImageFilter('vintage')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-amber-400 shrink-0">🎞️ Vintage</button>
+          </div>
         </div>
-        <div id="filterBar" class="hidden flex gap-2 overflow-x-auto hide-scrollbar py-1">
-          <button type="button" onclick="window.applyImageFilter('none')" class="px-3 py-1 rounded border theme-border bg-black text-xs shrink-0">Normal</button>
-          <button type="button" onclick="window.applyImageFilter('vivid')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-pink-400 shrink-0">✨ Vivid</button>
-          <button type="button" onclick="window.applyImageFilter('bw')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-gray-300 shrink-0">🖤 B&W</button>
-          <button type="button" onclick="window.applyImageFilter('cyber')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-cyan-400 shrink-0">⚡ Cyber</button>
-          <button type="button" onclick="window.applyImageFilter('vintage')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-amber-400 shrink-0">🎞️ Vintage</button>
+
+        <!-- Poll Options Box (For Live Poll) -->
+        <div id="pollOptionsSection" class="hidden space-y-2">
+          <input type="text" id="pollOpt1" placeholder="Option 1 (e.g. Yes / React)" class="w-full bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white">
+          <input type="text" id="pollOpt2" placeholder="Option 2 (e.g. No / .NET)" class="w-full bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white">
+          <input type="text" id="pollOpt3" placeholder="Option 3 (Optional)" class="w-full bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white">
         </div>
-        <button type="submit" id="submitUploadBtn" class="w-full theme-accent-bg font-bold rounded-lg py-3 text-sm">Share</button>
+
+        <button type="submit" id="submitUploadBtn" class="w-full theme-accent-bg font-bold rounded-lg py-3 text-sm">Publish</button>
       </form>
     </div>
   </div>
@@ -295,12 +321,29 @@
     </div>
   </div>
 
-  <!-- BIO MODAL -->
+  <!-- BIO & STATUS MODAL -->
   <div id="bioModal" class="hidden fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4">
-    <div class="theme-surface border theme-border p-5 rounded-2xl w-full max-w-sm">
-      <h3 class="font-bold text-sm mb-3">Edit Your Bio</h3>
-      <textarea id="bioInput" rows="3" class="w-full bg-black border theme-border rounded-lg p-3 text-sm text-white mb-4"></textarea>
-      <div class="flex gap-2">
+    <div class="theme-surface border theme-border p-5 rounded-2xl w-full max-w-sm space-y-3">
+      <h3 class="font-bold text-sm">Edit Profile & Status</h3>
+      <div>
+        <label class="text-[11px] text-gray-400 block mb-1">Mood / Activity Tag</label>
+        <select id="moodInput" class="w-full bg-black border theme-border rounded-lg p-2 text-xs text-white">
+          <option value="✨ Using Viu">✨ Using Viu</option>
+          <option value="💻 Coding">💻 Coding</option>
+          <option value="🎮 Gaming">🎮 Gaming</option>
+          <option value="🎵 Listening to Music">🎵 Listening to Music</option>
+          <option value="🚀 Working on Project">🚀 Working on Project</option>
+          <option value="☕ Chilling">☕ Chilling</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-[11px] text-gray-400 block mb-1">Your Bio</label>
+        <textarea id="bioInput" rows="2" class="w-full bg-black border theme-border rounded-lg p-2.5 text-sm text-white"></textarea>
+      </div>
+      <label class="flex items-center gap-2 text-xs cursor-pointer">
+        <input type="checkbox" id="verifiedInput" class="rounded"> Enable Verified Badge (☑️)
+      </label>
+      <div class="flex gap-2 pt-2">
         <button onclick="document.getElementById('bioModal').classList.add('hidden')" class="flex-1 py-2 rounded-lg bg-white/10 text-xs">Cancel</button>
         <button onclick="window.saveBio()" class="flex-1 py-2 rounded-lg theme-accent-bg text-xs font-bold">Save</button>
       </div>
@@ -329,6 +372,7 @@
     let currentChatTarget = null, activeTab = 'feed', feedFilter = 'all', profileSubTab = 'my', uploadType = 'post';
     let rawUploadImageBase64 = null, currentImageBase64 = null, activeCommentPostId = null, activeStoryId = null, viewingProfileUser = null;
     let storyTimer = null, storyInterval = null, typingTimeout = null;
+    let mediaRecorder = null, audioChunks = [], isRecording = false;
 
     const saveLocalDB = () => localStorage.setItem('viu_local_db', JSON.stringify(DB));
     document.documentElement.setAttribute('data-theme', localStorage.getItem('viu_theme') || 'ig-dark');
@@ -371,6 +415,11 @@
     function apiPush(path, data) { const id = Date.now().toString() + Math.floor(Math.random()*999); apiSet(`${path}/${id}`, { ...data, id }); }
     function notify(target, text) { if(target && target !== currentUser) apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false }); }
 
+    // Online Presence Heartbeat
+    setInterval(() => { if(currentUser && DB.users[currentUser]) apiSet(`users/${currentUser}/lastSeen`, Date.now()); }, 25000);
+    const isUserOnline = (u) => { const ls = DB.users?.[u]?.lastSeen; return ls && (Date.now() - ls < 120000); };
+    const badgeHTML = (u) => DB.users?.[u]?.verified ? `<span class="text-sky-400 text-[11px] ml-0.5" title="Verified">☑️</span>` : '';
+
     function compressImage(file, maxW, cb) {
       const r = new FileReader();
       r.onload = (e) => {
@@ -404,15 +453,70 @@
     const formatTime = (ts) => ts ? new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
     const normMap = (obj) => { const o = {}; if(obj) Object.entries(obj).forEach(([k,v]) => { if(v && typeof v === 'object') o[k] = { ...v, id: k }; }); return o; };
 
-    function generateAvatar(u, cls = "w-8 h-8") {
+    function generateAvatar(u, cls = "w-8 h-8", showOnline = false) {
       if(!u) return '';
       const usr = DB.users && DB.users[u];
-      if(usr && usr.avatar && usr.avatar.startsWith('data:image')) return `<img src="${usr.avatar}" class="${cls} rounded-full object-cover border border-white/20 shrink-0">`;
+      const dot = (showOnline && isUserOnline(u)) ? `<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-black rounded-full"></span>` : '';
+      if(usr && usr.avatar && usr.avatar.startsWith('data:image')) return `<div class="relative inline-flex ${cls} shrink-0"><img src="${usr.avatar}" class="w-full h-full rounded-full object-cover border border-white/20">${dot}</div>`;
       const cols = ['#f43f5e', '#8b5cf6', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899'];
-      return `<div class="${cls} rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0" style="background:${cols[(u.charCodeAt(0)||0)%cols.length]}">${u.charAt(0).toUpperCase()}</div>`;
+      return `<div class="relative inline-flex ${cls} rounded-full items-center justify-center text-white font-bold text-xs shrink-0" style="background:${cols[(u.charCodeAt(0)||0)%cols.length]}">${u.charAt(0).toUpperCase()}${dot}</div>`;
     }
 
-    // ACTIONS
+    // VOICE NOTE RECORDING IN CHAT
+    window.toggleVoiceRecording = async () => {
+      if(!currentChatTarget) return;
+      const btn = document.getElementById('voiceRecordBtn');
+      if(isRecording && mediaRecorder) {
+        mediaRecorder.stop();
+        isRecording = false;
+        btn.className = "p-2 rounded-full bg-white/10 text-sm shrink-0";
+        btn.innerText = "🎙️";
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(audioChunks, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: '🎙️ Voice Note', audio: reader.result, timestamp: Date.now(), read: false });
+          };
+          reader.readAsDataURL(blob);
+          stream.getTracks().forEach(t => t.stop());
+        };
+        mediaRecorder.start();
+        isRecording = true;
+        btn.className = "p-2 rounded-full bg-rose-600 text-white text-xs font-bold animate-pulse shrink-0";
+        btn.innerText = "⏹ Stop";
+      } catch(err) {
+        alert("Microphone access is required to record a Voice Note.");
+      }
+    };
+
+    // POLL VOTING
+    window.votePoll = (postId, optIdx) => {
+      const p = DB.posts[postId]; if(!p) return;
+      apiSet(`posts/${postId}/pollVotes/${currentUser}`, optIdx);
+      notify(p.author, `voted on your poll 📊`);
+    };
+
+    // STORY DIRECT REPLY
+    window.sendStoryReply = () => {
+      if(!activeStoryId || !DB.stories[activeStoryId]) return;
+      const inp = document.getElementById('storyReplyInput'), txt = inp.value.trim();
+      if(!txt) return;
+      const st = DB.stories[activeStoryId];
+      apiPush('messages', { sender: currentUser, receiver: st.author, text: `↪️ Replied to your story: "${txt}"`, timestamp: Date.now(), read: false });
+      notify(st.author, `replied to your story 💬`);
+      inp.value = '';
+      window.closeStoryViewer();
+      window.openChat(st.author);
+    };
+
+    // FOLLOW & PROFILE
     window.toggleFollow = (target) => {
       if(!target || target === currentUser) return;
       const isF = DB.users[currentUser]?.following && DB.users[currentUser].following[target];
@@ -425,10 +529,10 @@
       if(!u || !DB.users[u]) return;
       if(u === currentUser) { window.closeUserProfile(); window.switchTab('profile'); return; }
       viewingProfileUser = u;
-      const usr = DB.users[u], posts = Object.values(normMap(DB.posts)).filter(p => p.author === u);
+      const usr = DB.users[u], posts = Object.values(normMap(DB.posts)).filter(p => p.author === u && p.image);
       const isF = !!(DB.users[currentUser]?.following && DB.users[currentUser].following[u]);
-      document.getElementById('modal-prof-header').innerText = `@${u}`;
-      document.getElementById('modal-prof-avatar').innerHTML = generateAvatar(u, "w-16 h-16 text-xl");
+      document.getElementById('modal-prof-header').innerHTML = `@${u} ${badgeHTML(u)} <span class="text-[10px] text-gray-400 ml-1">${usr.mood || ''}</span>`;
+      document.getElementById('modal-prof-avatar').innerHTML = generateAvatar(u, "w-16 h-16 text-xl", true);
       document.getElementById('modal-prof-posts').innerText = posts.length;
       document.getElementById('modal-prof-followers').innerText = usr.followers ? Object.keys(usr.followers).length : 0;
       document.getElementById('modal-prof-following').innerText = usr.following ? Object.keys(usr.following).length : 0;
@@ -436,7 +540,7 @@
       document.getElementById('modal-prof-actions').innerHTML = `
         <button onclick="window.toggleFollow('${u}')" class="flex-1 py-2 rounded-lg text-xs font-bold ${isF ? 'bg-white/15 text-white' : 'theme-accent-bg'}">${isF ? 'Following ✓' : 'Follow'}</button>
         <button onclick="window.closeUserProfile(); window.openChat('${u}')" class="flex-1 py-2 rounded-lg bg-white/10 text-xs font-bold text-white">Message</button>`;
-      document.getElementById('modal-prof-grid').innerHTML = posts.map(p => `<div class="aspect-square bg-gray-900 rounded overflow-hidden"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-6">No posts yet.</div>`;
+      document.getElementById('modal-prof-grid').innerHTML = posts.map(p => `<div class="aspect-square bg-gray-900 rounded overflow-hidden"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-6">No photo posts yet.</div>`;
       document.getElementById('userProfileModal').classList.remove('hidden');
     };
     window.closeUserProfile = () => { document.getElementById('userProfileModal').classList.add('hidden'); viewingProfileUser = null; };
@@ -448,7 +552,7 @@
       const arr = Object.values(normMap(DB.notifications && DB.notifications[currentUser])).sort((a,b) => b.timestamp - a.timestamp);
       list.innerHTML = arr.map(n => `
         <div class="flex items-center gap-3 p-3 rounded-xl bg-black/40 border theme-border text-xs">
-          ${generateAvatar(n.actor, "w-8 h-8")}
+          ${generateAvatar(n.actor, "w-8 h-8", true)}
           <div><b class="cursor-pointer" onclick="window.closeNotifications(); window.openUserProfile('${n.actor}')">${n.actor}</b> ${n.text}<div class="text-[10px] text-gray-500">${formatTime(n.timestamp)}</div></div>
         </div>`).join('') || `<div class="text-center text-gray-500 text-xs mt-8">No notifications yet.</div>`;
     };
@@ -488,15 +592,19 @@
     window.renderCommentsList = () => {
       if(!activeCommentPostId || !DB.posts[activeCommentPostId]) return;
       const cArr = Object.values(DB.posts[activeCommentPostId].comments || {});
-      document.getElementById('commentsList').innerHTML = cArr.map(c => `<div class="flex gap-2.5 text-xs">${generateAvatar(c.author, "w-7 h-7")}<div><b class="mr-1.5">${c.author}</b><span class="text-gray-300">${c.text}</span></div></div>`).join('') || `<div class="text-center text-gray-500 text-xs mt-4">No comments yet.</div>`;
+      document.getElementById('commentsList').innerHTML = cArr.map(c => `<div class="flex gap-2.5 text-xs">${generateAvatar(c.author, "w-7 h-7")}<div><b class="mr-1.5">${c.author}</b>${badgeHTML(c.author)} <span class="text-gray-300">${c.text}</span></div></div>`).join('') || `<div class="text-center text-gray-500 text-xs mt-4">No comments yet.</div>`;
     };
 
     window.openUploadModal = (t = 'post') => { document.getElementById('uploadModal').classList.remove('hidden'); window.setUploadType(t); };
     window.closeUploadModal = () => document.getElementById('uploadModal').classList.add('hidden');
     window.setUploadType = (t) => {
       uploadType = t;
-      document.getElementById('type-post').className = `flex-1 py-1.5 rounded text-xs font-bold ${t==='post' ? 'theme-accent-bg' : 'text-gray-400'}`;
-      document.getElementById('type-story').className = `flex-1 py-1.5 rounded text-xs font-bold ${t==='story' ? 'theme-accent-bg' : 'text-gray-400'}`;
+      ['post', 'story', 'poll'].forEach(k => {
+        document.getElementById(`type-${k}`).className = `flex-1 py-1.5 rounded text-xs font-bold ${t===k ? 'theme-accent-bg' : 'text-gray-400'}`;
+      });
+      document.getElementById('photoUploadSection').classList.toggle('hidden', t === 'poll');
+      document.getElementById('pollOptionsSection').classList.toggle('hidden', t !== 'poll');
+      document.getElementById('postCaption').placeholder = t === 'poll' ? "Ask a poll question..." : "Write caption or story text...";
     };
 
     window.viewStory = (id) => {
@@ -504,8 +612,8 @@
       activeStoryId = id;
       apiSet(`stories/${id}/views/${currentUser}`, true);
       const st = DB.stories[id] || s;
-      document.getElementById('storyViewerAvatar').innerHTML = generateAvatar(s.author, "w-9 h-9");
-      document.getElementById('storyViewerName').innerText = s.author;
+      document.getElementById('storyViewerAvatar').innerHTML = generateAvatar(s.author, "w-9 h-9", true);
+      document.getElementById('storyViewerName').innerHTML = `${s.author} ${badgeHTML(s.author)}`;
       document.getElementById('storyViewerTime').innerText = formatTime(s.timestamp);
       document.getElementById('storyViewerImage').src = s.image;
       const cap = document.getElementById('storyViewerCaption');
@@ -521,8 +629,8 @@
       document.getElementById('storyViewerModal').classList.remove('hidden');
       const bar = document.getElementById('storyProgressBar'); bar.style.width = '0%';
       let el = 0; if(storyInterval) clearInterval(storyInterval); if(storyTimer) clearTimeout(storyTimer);
-      storyInterval = setInterval(() => { el += 100; bar.style.width = `${Math.min(100, (el/5000)*100)}%`; }, 100);
-      storyTimer = setTimeout(window.closeStoryViewer, 5000);
+      storyInterval = setInterval(() => { el += 100; bar.style.width = `${Math.min(100, (el/6000)*100)}%`; }, 100);
+      storyTimer = setTimeout(window.closeStoryViewer, 6000);
     };
 
     window.toggleStoryLike = () => {
@@ -535,8 +643,19 @@
     window.closeStoryViewer = () => { document.getElementById('storyViewerModal').classList.add('hidden'); activeStoryId = null; clearInterval(storyInterval); clearTimeout(storyTimer); };
 
     document.getElementById('avatarFileInput').onchange = (e) => { if(e.target.files[0]) compressImage(e.target.files[0], 300, (b64) => apiSet(`users/${currentUser}/avatar`, b64)); };
-    window.openBioModal = () => { document.getElementById('bioInput').value = DB.users[currentUser]?.bio || ''; document.getElementById('bioModal').classList.remove('hidden'); };
-    window.saveBio = () => { apiSet(`users/${currentUser}/bio`, document.getElementById('bioInput').value.trim()); document.getElementById('bioModal').classList.add('hidden'); };
+    window.openBioModal = () => {
+      const u = DB.users[currentUser] || {};
+      document.getElementById('bioInput').value = u.bio || '';
+      document.getElementById('moodInput').value = u.mood || '✨ Using Viu';
+      document.getElementById('verifiedInput').checked = !!u.verified;
+      document.getElementById('bioModal').classList.remove('hidden');
+    };
+    window.saveBio = () => {
+      apiSet(`users/${currentUser}/bio`, document.getElementById('bioInput').value.trim());
+      apiSet(`users/${currentUser}/mood`, document.getElementById('moodInput').value);
+      apiSet(`users/${currentUser}/verified`, document.getElementById('verifiedInput').checked);
+      document.getElementById('bioModal').classList.add('hidden');
+    };
     window.setProfileSubTab = (sub) => { profileSubTab = sub; renderProfile(); };
     window.setFeedFilter = (f) => { feedFilter = f; renderFeed(); };
 
@@ -551,8 +670,10 @@
 
     window.openChat = (target) => {
       currentChatTarget = target;
-      document.getElementById('active-chat-name').innerText = target;
-      document.getElementById('active-chat-avatar').innerHTML = generateAvatar(target, "w-8 h-8");
+      document.getElementById('active-chat-name').innerHTML = `${target} ${badgeHTML(target)}`;
+      document.getElementById('active-chat-avatar').innerHTML = generateAvatar(target, "w-8 h-8", true);
+      document.getElementById('active-chat-status').innerText = isUserOnline(target) ? '● Online' : '○ Offline';
+      document.getElementById('active-chat-status').className = isUserOnline(target) ? 'text-[10px] text-emerald-400' : 'text-[10px] text-gray-500';
       document.getElementById('active-chat-view').classList.remove('hidden');
       renderMessages();
     };
@@ -574,8 +695,8 @@
       });
 
       if(!currentUser || !DB.users[currentUser]) return;
-      document.getElementById('nav-username').innerText = currentUser;
-      document.getElementById('nav-avatar').innerHTML = generateAvatar(currentUser, "w-6 h-6");
+      document.getElementById('nav-username').innerHTML = `${currentUser} ${badgeHTML(currentUser)}`;
+      document.getElementById('nav-avatar').innerHTML = generateAvatar(currentUser, "w-6 h-6", true);
 
       const unreadM = Object.values(normMap(DB.messages)).filter(m => m.receiver === currentUser && !m.read).length;
       const uBadge = document.getElementById('unread-badge'); uBadge.innerText = unreadM; uBadge.classList.toggle('hidden', unreadM === 0);
@@ -612,15 +733,44 @@
 
       arr.forEach(p => {
         const likes = p.likes ? Object.keys(p.likes) : [], isL = likes.includes(currentUser), isS = !!saved[p.id], cCnt = p.comments ? Object.keys(p.comments).length : 0;
+        const uMood = DB.users[p.author]?.mood || '';
+        
+        // Render Poll if it's a Poll Post
+        let mediaHTML = '';
+        if(p.isPoll && p.pollOptions) {
+          const votesMap = p.pollVotes || {};
+          const totalVotes = Object.keys(votesMap).length;
+          const myVote = votesMap[currentUser];
+          const optsHTML = p.pollOptions.map((opt, idx) => {
+            const cnt = Object.values(votesMap).filter(v => v === idx).length;
+            const pct = totalVotes > 0 ? Math.round((cnt / totalVotes) * 100) : 0;
+            const picked = myVote === idx;
+            return `
+              <button onclick="window.votePoll('${p.id}', ${idx})" class="w-full text-left relative overflow-hidden rounded-xl border ${picked ? 'border-sky-400' : 'theme-border'} bg-black/50 p-3 text-xs font-semibold">
+                <div class="absolute inset-y-0 left-0 bg-sky-500/25 transition-all" style="width:${pct}%"></div>
+                <div class="relative flex justify-between"><span>${opt} ${picked ? '✓' : ''}</span><span>${pct}% (${cnt})</span></div>
+              </button>`;
+          }).join('');
+          mediaHTML = `<div class="p-4 space-y-2 bg-white/5 border-y theme-border"><div class="font-bold text-sm mb-2">📊 ${p.caption}</div>${optsHTML}<div class="text-[10px] text-gray-400 pt-1">${totalVotes} total votes</div></div>`;
+        } else {
+          mediaHTML = `<div id="post-img-${p.id}" class="relative bg-black flex justify-center overflow-hidden" ondblclick="window.doubleTapLike('${p.id}')"><img src="${p.image}" class="w-full object-cover max-h-[460px]"></div>`;
+        }
+
         c.insertAdjacentHTML('beforeend', `
           <div class="theme-card border-b theme-border pb-3 fade-in">
             <div class="flex items-center justify-between p-3">
-              <div class="flex items-center gap-2 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${generateAvatar(p.author, "w-8 h-8")}<span class="font-bold text-sm">${p.author}</span></div>
+              <div class="flex items-center gap-2 cursor-pointer" onclick="window.openUserProfile('${p.author}')">
+                ${generateAvatar(p.author, "w-8 h-8", true)}
+                <div>
+                  <span class="font-bold text-sm">${p.author}</span>${badgeHTML(p.author)}
+                  ${uMood ? `<span class="text-[10px] text-gray-400 block leading-none">${uMood}</span>` : ''}
+                </div>
+              </div>
               <div class="flex gap-2">
                 ${p.author !== currentUser ? `<button onclick="window.toggleFollow('${p.author}')" class="text-xs font-bold px-2 py-0.5 rounded border theme-border ${myF[p.author] ? 'text-gray-400' : 'theme-accent-text'}">${myF[p.author] ? 'Following' : '+ Follow'}</button>` : `<button onclick="window.deletePost('${p.id}')" class="text-xs text-rose-500">Delete</button>`}
               </div>
             </div>
-            <div id="post-img-${p.id}" class="relative bg-black flex justify-center overflow-hidden" ondblclick="window.doubleTapLike('${p.id}')"><img src="${p.image}" class="w-full object-cover max-h-[460px]"></div>
+            ${mediaHTML}
             <div class="p-3">
               <div class="flex justify-between mb-2">
                 <div class="flex gap-4">
@@ -629,7 +779,7 @@
                 </div>
                 <button onclick="window.toggleBookmark('${p.id}')" class="text-lg">${isS ? '🔖' : '📑'}</button>
               </div>
-              <div class="text-sm"><b class="mr-2 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${p.author}</b>${p.caption || ''}</div>
+              ${!p.isPoll ? `<div class="text-sm"><b class="mr-1.5 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${p.author}</b>${p.caption || ''}</div>` : ''}
               <div class="text-[10px] text-gray-500 mt-1">${formatTime(p.timestamp)}</div>
             </div>
           </div>`);
@@ -640,10 +790,18 @@
       const c = document.getElementById('explore-container'), q = document.getElementById('searchUsers').value.toLowerCase(), myF = DB.users[currentUser]?.following || {};
       c.innerHTML = '';
       Object.values(DB.users || {}).forEach(u => {
-        if(!u?.username || u.username === currentUser || (q && !u.username.toLowerCase().includes(q))) return;
+        if(!u?.username || u.username === currentUser) return;
+        const match = u.username.toLowerCase().includes(q) || (u.mood && u.mood.toLowerCase().includes(q));
+        if(q && !match) return;
         c.innerHTML += `
           <div class="theme-surface p-3 flex items-center justify-between rounded-xl border theme-border">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.openUserProfile('${u.username}')">${generateAvatar(u.username, "w-10 h-10")}<div><div class="font-bold text-sm">${u.username}</div><div class="text-[11px] text-gray-400">${u.followers ? Object.keys(u.followers).length : 0} followers</div></div></div>
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.openUserProfile('${u.username}')">
+              ${generateAvatar(u.username, "w-10 h-10", true)}
+              <div>
+                <div class="font-bold text-sm">${u.username} ${badgeHTML(u.username)}</div>
+                <div class="text-[11px] text-gray-400">${u.mood || '✨ Using Viu'} • ${u.followers ? Object.keys(u.followers).length : 0} followers</div>
+              </div>
+            </div>
             <div class="flex gap-1.5">
               <button onclick="window.toggleFollow('${u.username}')" class="px-3 py-1.5 rounded-lg text-xs font-bold ${myF[u.username] ? 'bg-white/10' : 'theme-accent-bg'}">${myF[u.username] ? 'Following' : 'Follow'}</button>
               <button onclick="window.openChat('${u.username}')" class="px-3 py-1.5 rounded-lg bg-white/10 text-xs font-bold">Chat</button>
@@ -654,10 +812,12 @@
 
     function renderProfile() {
       const u = DB.users[currentUser] || {}, postsMap = normMap(DB.posts);
-      const myP = Object.values(postsMap).filter(p => p.author === currentUser).sort((a,b) => b.timestamp - a.timestamp);
-      const savP = Object.keys(u.saved || {}).map(id => postsMap[id]).filter(Boolean);
+      const myP = Object.values(postsMap).filter(p => p.author === currentUser && p.image).sort((a,b) => b.timestamp - a.timestamp);
+      const savP = Object.keys(u.saved || {}).map(id => postsMap[id]).filter(p => p && p.image);
       document.getElementById('profile-username').innerText = currentUser;
-      document.getElementById('profile-bio').innerText = u.bio || "Tap 'Edit Bio' to add your status.";
+      document.getElementById('profile-verified').classList.toggle('hidden', !u.verified);
+      document.getElementById('profile-mood').innerText = u.mood || '✨ Using Viu';
+      document.getElementById('profile-bio').innerText = u.bio || "Tap 'Edit Profile' to customize.";
       document.getElementById('profile-avatar-container').innerHTML = generateAvatar(currentUser, "w-full h-full text-2xl");
       document.getElementById('stat-posts').innerText = myP.length;
       document.getElementById('stat-followers').innerText = u.followers ? Object.keys(u.followers).length : 0;
@@ -666,7 +826,7 @@
       document.getElementById('prof-tab-my').className = `flex-1 py-2 text-xs font-bold border-b-2 ${profileSubTab==='my' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
       document.getElementById('prof-tab-saved').className = `flex-1 py-2 text-xs font-bold border-b-2 ${profileSubTab==='saved' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
       const list = profileSubTab === 'my' ? myP : savP;
-      document.getElementById('profile-grid').innerHTML = list.map(p => `<div class="aspect-square bg-gray-900 rounded overflow-hidden relative"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-8">No posts here.</div>`;
+      document.getElementById('profile-grid').innerHTML = list.map(p => `<div class="aspect-square bg-gray-900 rounded overflow-hidden relative"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-8">No photo posts here.</div>`;
     }
 
     function renderChatList() {
@@ -675,8 +835,8 @@
         if(!u?.username || u.username === currentUser) return;
         const th = allM.filter(m => (m.sender === currentUser && m.receiver === u.username) || (m.sender === u.username && m.receiver === currentUser)).sort((a,b) => a.timestamp - b.timestamp);
         const un = th.filter(m => m.sender === u.username && !m.read).length;
-        const last = th.length ? (th[th.length-1].image ? '📷 Photo' : th[th.length-1].text) : 'Tap to chat';
-        c.innerHTML += `<div onclick="window.openChat('${u.username}')" class="theme-surface flex items-center p-3 rounded-xl border theme-border cursor-pointer gap-3">${generateAvatar(u.username, "w-11 h-11")}<div class="flex-1 overflow-hidden"><div class="font-bold text-sm">${u.username}</div><div class="text-xs text-gray-400 truncate">${last}</div></div>${un ? `<span class="theme-accent-bg text-[10px] font-bold px-2 py-0.5 rounded-full">${un}</span>` : ''}</div>`;
+        const last = th.length ? (th[th.length-1].audio ? '🎙️ Voice Note' : (th[th.length-1].image ? '📷 Photo' : th[th.length-1].text)) : 'Tap to chat';
+        c.innerHTML += `<div onclick="window.openChat('${u.username}')" class="theme-surface flex items-center p-3 rounded-xl border theme-border cursor-pointer gap-3">${generateAvatar(u.username, "w-11 h-11", true)}<div class="flex-1 overflow-hidden"><div class="font-bold text-sm">${u.username} ${badgeHTML(u.username)}</div><div class="text-xs text-gray-400 truncate">${last}</div></div>${un ? `<span class="theme-accent-bg text-[10px] font-bold px-2 py-0.5 rounded-full">${un}</span>` : ''}</div>`;
       });
     }
 
@@ -690,6 +850,7 @@
           <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} group w-full">
             <div class="chat-bubble ${isMe ? 'chat-sent' : 'chat-recv'}">
               ${m.image ? `<img src="${m.image}" class="rounded-lg max-h-48 mb-1">` : ''}
+              ${m.audio ? `<audio controls src="${m.audio}" class="h-8 w-48 my-1"></audio>` : ''}
               ${m.text ? `<div>${m.text}</div>` : ''}
               <div class="flex justify-end gap-1 items-center mt-1"><span class="text-[9px] opacity-70">${formatTime(m.timestamp)}</span>${isMe ? `<span class="${m.read ? 'tick-blue' : 'tick-gray'} text-[11px]">✓✓</span>` : ''}</div>
               ${m.reaction ? `<span class="absolute -bottom-2 ${isMe ? 'left-2' : 'right-2'} bg-black border border-white/20 rounded-full px-1.5 text-xs">${m.reaction}</span>` : ''}
@@ -718,8 +879,9 @@
       e.preventDefault();
       const u = document.getElementById('usernameInput').value.trim(), p = document.getElementById('passwordInput').value.trim();
       if(DB.users[u]) { if(DB.users[u].password !== p) { document.getElementById('login-error').classList.remove('hidden'); return; } }
-      else apiSet('users/' + u, { username: u, password: p, bio: 'Hey there! I am using Viu.' });
+      else apiSet('users/' + u, { username: u, password: p, bio: 'Hey there! I am using Viu.', mood: '✨ Using Viu', lastSeen: Date.now() });
       currentUser = u; localStorage.setItem('viu_auth_user', u);
+      apiSet(`users/${u}/lastSeen`, Date.now());
       document.getElementById('login-view').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden');
       updateUI();
     };
@@ -740,13 +902,21 @@
     };
 
     document.getElementById('uploadForm').onsubmit = (e) => {
-      e.preventDefault(); if(!currentImageBase64) return;
-      const id = Date.now().toString();
-      const payload = { id, author: currentUser, image: currentImageBase64, caption: document.getElementById('postCaption').value.trim(), timestamp: Date.now() };
-      apiSet((uploadType === 'post' ? 'posts/' : 'stories/') + id, payload);
+      e.preventDefault();
+      const id = Date.now().toString(), cap = document.getElementById('postCaption').value.trim();
+      if(uploadType === 'poll') {
+        const o1 = document.getElementById('pollOpt1').value.trim(), o2 = document.getElementById('pollOpt2').value.trim(), o3 = document.getElementById('pollOpt3').value.trim();
+        if(!cap || !o1 || !o2) { alert("Please enter question and at least 2 options!"); return; }
+        const opts = [o1, o2]; if(o3) opts.push(o3);
+        apiSet('posts/' + id, { id, author: currentUser, isPoll: true, caption: cap, pollOptions: opts, timestamp: Date.now() });
+      } else {
+        if(!currentImageBase64) { alert("Please select a photo!"); return; }
+        const payload = { id, author: currentUser, image: currentImageBase64, caption: cap, timestamp: Date.now() };
+        apiSet((uploadType === 'post' ? 'posts/' : 'stories/') + id, payload);
+      }
       document.getElementById('uploadModal').classList.add('hidden');
-      document.getElementById('postCaption').value = ''; document.getElementById('imagePreview').classList.add('hidden');
-      document.getElementById('imagePlaceholder').classList.remove('hidden'); document.getElementById('filterBar').classList.add('hidden');
+      document.getElementById('postCaption').value = ''; document.getElementById('pollOpt1').value = ''; document.getElementById('pollOpt2').value = ''; document.getElementById('pollOpt3').value = '';
+      document.getElementById('imagePreview').classList.add('hidden'); document.getElementById('imagePlaceholder').classList.remove('hidden'); document.getElementById('filterBar').classList.add('hidden');
       currentImageBase64 = null; window.switchTab('feed');
     };
   </script>
