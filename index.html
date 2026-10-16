@@ -21,10 +21,9 @@
           },
           colors: {
             hud: {
-              bg: '#010409',
-              panel: '#030a16',
-              cyan: '#00f3ff',
-              cyanHover: '#00c3cc',
+              bg: 'var(--theme-bg)',
+              panel: 'var(--theme-panel)',
+              primary: 'var(--theme-color)',
               alert: '#ff0055'
             }
           }
@@ -34,57 +33,80 @@
   </script>
 
   <style>
+    /* DYNAMIC THEME SYSTEM */
+    :root, [data-theme="cyan"] {
+      --theme-color: #00f3ff; --theme-color-rgb: 0, 243, 255;
+      --theme-bg: #010409; --theme-panel: #030a16;
+    }
+    [data-theme="crimson"] {
+      --theme-color: #ff0055; --theme-color-rgb: 255, 0, 85;
+      --theme-bg: #090102; --theme-panel: #160305;
+    }
+    [data-theme="amber"] {
+      --theme-color: #ffb700; --theme-color-rgb: 255, 183, 0;
+      --theme-bg: #090701; --theme-panel: #161003;
+    }
+    [data-theme="emerald"] {
+      --theme-color: #00ff88; --theme-color-rgb: 0, 255, 136;
+      --theme-bg: #010904; --theme-panel: #03160a;
+    }
+
     body { 
-      background-color: var(--hud-bg); 
+      background-color: var(--theme-bg); 
       color: #e0f7ff; 
       overflow: hidden;
       background-image: 
-        radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.05) 0%, transparent 60%),
-        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+        radial-gradient(circle at 50% 50%, rgba(var(--theme-color-rgb), 0.05) 0%, transparent 60%),
+        linear-gradient(rgba(var(--theme-color-rgb), 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--theme-color-rgb), 0.03) 1px, transparent 1px);
       background-size: 100% 100%, 30px 30px, 30px 30px;
+      transition: background-color 0.5s ease;
     }
+
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
     #app-container {
       max-width: 480px; margin: 0 auto; height: 100vh; height: 100dvh;
       position: relative; display: flex; flex-direction: column;
-      border-left: 1px solid rgba(0,243,255,0.2); 
-      border-right: 1px solid rgba(0,243,255,0.2);
-      box-shadow: 0 0 30px rgba(0,243,255,0.05);
+      border-left: 1px solid rgba(var(--theme-color-rgb), 0.2); 
+      border-right: 1px solid rgba(var(--theme-color-rgb), 0.2);
+      box-shadow: 0 0 30px rgba(var(--theme-color-rgb), 0.05);
     }
 
     /* HUD Panels and Brackets */
     .hud-panel {
-      background: rgba(3, 10, 22, 0.85);
+      background: var(--theme-panel);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(0, 243, 255, 0.3);
-      box-shadow: 0 0 15px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.05);
+      border: 1px solid rgba(var(--theme-color-rgb), 0.3);
+      box-shadow: 0 0 15px rgba(var(--theme-color-rgb), 0.1), inset 0 0 20px rgba(var(--theme-color-rgb), 0.05);
       position: relative;
     }
     
     .hud-bracket::before, .hud-bracket::after {
       content: ''; position: absolute; width: 8px; height: 8px; pointer-events: none;
     }
-    .hud-bracket::before { top: -1px; left: -1px; border-top: 2px solid #00f3ff; border-left: 2px solid #00f3ff; }
-    .hud-bracket::after { bottom: -1px; right: -1px; border-bottom: 2px solid #00f3ff; border-right: 2px solid #00f3ff; }
+    .hud-bracket::before { top: -1px; left: -1px; border-top: 2px solid var(--theme-color); border-left: 2px solid var(--theme-color); }
+    .hud-bracket::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--theme-color); border-right: 2px solid var(--theme-color); }
 
-    .glow-text { text-shadow: 0 0 10px rgba(0, 243, 255, 0.6); }
-    .glow-box { box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+    .glow-text { text-shadow: 0 0 10px rgba(var(--theme-color-rgb), 0.6); }
+    .glow-box { box-shadow: 0 0 15px rgba(var(--theme-color-rgb), 0.4); }
 
     .story-ring { 
-      background: #010409;
-      border: 2px solid #00f3ff; 
-      box-shadow: 0 0 10px #00f3ff, inset 0 0 10px #00f3ff; 
+      background: var(--theme-bg);
+      border: 2px solid var(--theme-color); 
+      box-shadow: 0 0 10px var(--theme-color), inset 0 0 10px var(--theme-color); 
     }
 
     .fade-in { animation: fadeIn 0.3s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+    .pop-anim { animation: popAnim 0.3s ease-out forwards; }
+    @keyframes popAnim { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
     /* Chat Styling */
     .chat-bubble { max-width: 80%; padding: 8px 12px; border-radius: 4px; font-size: 13px; position: relative; }
-    .chat-sent { background-color: rgba(0, 243, 255, 0.15); border: 1px solid rgba(0,243,255,0.4); align-self: flex-end; }
+    .chat-sent { background-color: rgba(var(--theme-color-rgb), 0.15); border: 1px solid rgba(var(--theme-color-rgb), 0.4); align-self: flex-end; }
     .chat-recv { background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); align-self: flex-start; }
     .tick-blue { color: #3b82f6; text-shadow: 0 0 5px #3b82f6; }
   </style>
@@ -94,27 +116,27 @@
   <!-- ==========================================
        LOGIN OVERLAY
   =========================================== -->
-  <div id="login-view" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 bg-[#010409]/90 backdrop-blur-md">
+  <div id="login-view" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 bg-black/90 backdrop-blur-md">
     <div class="hud-panel hud-bracket p-8 w-full max-w-sm space-y-6 fade-in text-center">
       
       <!-- Central JARVIS Ring -->
       <div class="relative w-32 h-32 mx-auto mb-6 flex items-center justify-center">
         <svg class="absolute inset-0 w-full h-full animate-[spin_15s_linear_infinite] opacity-60" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="48" fill="none" stroke="#00f3ff" stroke-width="1" stroke-dasharray="10 5" />
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#0066ff" stroke-width="2" stroke-dasharray="20 10 5 10" />
+          <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" class="text-hud-primary" stroke-width="1" stroke-dasharray="10 5" />
+          <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" class="text-hud-primary" stroke-width="2" stroke-dasharray="20 10 5 10" />
         </svg>
-        <h1 class="font-orbitron text-3xl font-bold text-hud-cyan glow-text tracking-widest">J.A.R.V.I.S</h1>
+        <h1 class="font-orbitron text-3xl font-bold text-hud-primary glow-text tracking-widest">NEXUS</h1>
       </div>
       
-      <p class="text-hud-cyan text-[10px] uppercase tracking-widest" id="db-status">Establishing Quantum Link...</p>
+      <p class="text-hud-primary text-[10px] uppercase tracking-widest" id="db-status">Establishing Quantum Link...</p>
       
       <div id="existing-users" class="flex flex-wrap justify-center gap-2 mb-2"></div>
 
       <form id="loginForm" class="space-y-4">
-        <input type="text" id="usernameInput" placeholder="IDENTITY" required class="w-full bg-[#020813] border border-hud-cyan/40 rounded px-4 py-3 text-sm focus:outline-none focus:border-hud-cyan focus:shadow-[0_0_10px_rgba(0,243,255,0.3)] transition text-hud-cyan uppercase">
-        <input type="password" id="passwordInput" placeholder="PASSCODE" required class="w-full bg-[#020813] border border-hud-cyan/40 rounded px-4 py-3 text-sm focus:outline-none focus:border-hud-cyan focus:shadow-[0_0_10px_rgba(0,243,255,0.3)] transition text-hud-cyan">
+        <input type="text" id="usernameInput" placeholder="IDENTITY" required class="w-full bg-black/50 border border-hud-primary/40 rounded px-4 py-3 text-sm focus:outline-none focus:border-hud-primary focus:shadow-[0_0_10px_currentColor] transition text-hud-primary uppercase">
+        <input type="password" id="passwordInput" placeholder="PASSCODE" required class="w-full bg-black/50 border border-hud-primary/40 rounded px-4 py-3 text-sm focus:outline-none focus:border-hud-primary focus:shadow-[0_0_10px_currentColor] transition text-hud-primary">
         <div id="login-error" class="text-hud-alert text-xs hidden font-bold">ACCESS DENIED</div>
-        <button type="submit" id="loginBtn" disabled class="font-orbitron tracking-widest w-full bg-hud-cyan/20 border border-hud-cyan hover:bg-hud-cyan hover:text-black disabled:bg-gray-800 disabled:border-gray-600 text-hud-cyan font-bold rounded py-3 text-sm transition glow-box">INITIALIZE</button>
+        <button type="submit" id="loginBtn" disabled class="font-orbitron tracking-widest w-full bg-hud-primary/20 border border-hud-primary hover:bg-hud-primary hover:text-black disabled:bg-gray-800 disabled:border-gray-600 text-hud-primary font-bold rounded py-3 text-sm transition glow-box">INITIALIZE</button>
       </form>
     </div>
   </div>
@@ -125,19 +147,19 @@
   <div id="app-container" class="hidden">
     
     <!-- Top Header HUD -->
-    <header class="h-16 hud-panel flex items-center justify-between px-4 shrink-0 z-20 border-b border-hud-cyan/30">
+    <header class="h-16 hud-panel flex items-center justify-between px-4 shrink-0 z-20 border-b border-hud-primary/30">
       <div class="flex items-center gap-2">
-        <div class="w-2 h-2 rounded-full bg-hud-cyan animate-pulse glow-box"></div>
-        <h1 class="text-lg font-orbitron font-bold text-hud-cyan tracking-widest glow-text uppercase" id="app-header-title">SYS.FEED</h1>
+        <div class="w-2 h-2 rounded-full bg-hud-primary animate-pulse glow-box"></div>
+        <h1 class="text-lg font-orbitron font-bold text-hud-primary tracking-widest glow-text uppercase" id="app-header-title">SYS.FEED</h1>
       </div>
       
       <div class="flex items-center gap-4">
-        <button onclick="window.openUploadModal()" class="text-hud-cyan hover:text-white transition">
-          <svg class="w-6 h-6 drop-shadow-[0_0_5px_#00f3ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        <button onclick="window.openUploadModal()" class="text-hud-primary hover:text-white transition">
+          <svg class="w-6 h-6 drop-shadow-[0_0_5px_currentColor]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
         </button>
         
-        <div class="flex items-center gap-2 bg-[#020813] px-2 py-1 rounded border border-hud-cyan/40 cursor-pointer hover:bg-hud-cyan/10 transition" onclick="window.switchTab('profile')">
-           <span id="nav-username" class="text-[10px] font-bold text-hud-cyan uppercase tracking-wider">User</span>
+        <div class="flex items-center gap-2 bg-black/50 px-2 py-1 rounded border border-hud-primary/40 cursor-pointer hover:bg-hud-primary/10 transition" onclick="window.switchTab('profile')">
+           <span id="nav-username" class="text-[10px] font-bold text-hud-primary uppercase tracking-wider">User</span>
         </div>
       </div>
     </header>
@@ -147,7 +169,7 @@
       <!-- TAB: FEED -->
       <div id="tab-feed" class="w-full min-h-full pb-20">
         <!-- Stories Horizontal List -->
-        <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-hud-cyan/20 bg-[#010610]" id="stories-container"></div>
+        <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-hud-primary/20 bg-black/40" id="stories-container"></div>
         <!-- Posts List -->
         <div id="feed-container" class="space-y-6 pt-4 px-3"></div>
       </div>
@@ -155,14 +177,14 @@
       <!-- TAB: EXPLORE -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4 pb-20">
         <div class="mb-4">
-          <input type="text" id="searchUsers" placeholder="QUERY NETWORK..." class="w-full bg-[#020813] border border-hud-cyan/40 rounded px-4 py-3 text-xs focus:outline-none focus:border-hud-cyan text-hud-cyan uppercase">
+          <input type="text" id="searchUsers" placeholder="QUERY NETWORK..." class="w-full bg-black/50 border border-hud-primary/40 rounded px-4 py-3 text-xs focus:outline-none focus:border-hud-primary text-hud-primary uppercase">
         </div>
         <div id="explore-container" class="space-y-3"></div>
       </div>
 
       <!-- TAB: MESSAGES -->
       <div id="tab-chatlist" class="w-full min-h-full hidden p-4 pb-20">
-        <h2 class="font-orbitron font-bold text-sm text-hud-cyan mb-4 tracking-widest uppercase">COMMS LINK</h2>
+        <h2 class="font-orbitron font-bold text-sm text-hud-primary mb-4 tracking-widest uppercase">COMMS LINK</h2>
         <div id="chatlist-container" class="space-y-2"></div>
       </div>
 
@@ -170,32 +192,43 @@
       <div id="tab-profile" class="w-full min-h-full hidden p-4 pb-20">
         <div class="hud-panel hud-bracket p-6 flex flex-col items-center text-center mb-6">
           <div id="profile-avatar-container" class="mb-3 story-ring rounded-full p-1 w-20 h-20"></div>
-          <h2 class="text-xl font-orbitron font-bold text-hud-cyan tracking-wider uppercase" id="profile-username">User</h2>
+          <h2 class="text-xl font-orbitron font-bold text-hud-primary tracking-wider uppercase" id="profile-username">User</h2>
           <p class="text-[10px] text-gray-400 mt-2 mb-6 uppercase tracking-widest">Protocol Active</p>
           
+          <!-- Theme Switcher -->
+          <div class="w-full mb-6 border-t border-hud-primary/20 pt-4">
+            <p class="text-[10px] text-hud-primary mb-3 uppercase tracking-widest font-bold">System Interface Theme</p>
+            <div class="flex justify-center gap-3">
+              <button onclick="setTheme('cyan')" class="w-6 h-6 rounded-full bg-[#00f3ff] border-2 border-transparent hover:border-white focus:border-white transition shadow-[0_0_10px_#00f3ff]"></button>
+              <button onclick="setTheme('crimson')" class="w-6 h-6 rounded-full bg-[#ff0055] border-2 border-transparent hover:border-white focus:border-white transition shadow-[0_0_10px_#ff0055]"></button>
+              <button onclick="setTheme('amber')" class="w-6 h-6 rounded-full bg-[#ffb700] border-2 border-transparent hover:border-white focus:border-white transition shadow-[0_0_10px_#ffb700]"></button>
+              <button onclick="setTheme('emerald')" class="w-6 h-6 rounded-full bg-[#00ff88] border-2 border-transparent hover:border-white focus:border-white transition shadow-[0_0_10px_#00ff88]"></button>
+            </div>
+          </div>
+
           <button onclick="window.logoutUser()" class="w-full bg-hud-alert/10 border border-hud-alert hover:bg-hud-alert hover:text-black text-hud-alert py-2 rounded text-xs font-bold transition uppercase tracking-widest">Terminate Session</button>
         </div>
-        <h3 class="font-orbitron font-bold text-xs mb-3 px-1 text-hud-cyan uppercase tracking-widest">Data Logs</h3>
+        <h3 class="font-orbitron font-bold text-xs mb-3 px-1 text-hud-primary uppercase tracking-widest">Data Logs</h3>
         <div id="profile-grid" class="grid grid-cols-3 gap-1"></div>
       </div>
 
       <!-- ACTIVE CHAT INTERFACE -->
-      <div id="active-chat-view" class="absolute inset-0 bg-[#010409] z-30 hidden flex flex-col">
-        <div class="h-16 hud-panel flex items-center justify-between px-4 shrink-0 border-b border-hud-cyan/30">
+      <div id="active-chat-view" class="absolute inset-0 bg-black/95 z-30 hidden flex flex-col">
+        <div class="h-16 hud-panel flex items-center justify-between px-4 shrink-0 border-b border-hud-primary/30">
           <div class="flex items-center gap-3">
-             <button onclick="window.closeChat()" class="text-hud-cyan hover:text-white transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+             <button onclick="window.closeChat()" class="text-hud-primary hover:text-white transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
              <div class="flex flex-col">
-                <span id="active-chat-name" class="font-orbitron font-bold text-sm text-hud-cyan tracking-wider uppercase">User</span>
-                <span id="typing-indicator" class="text-[9px] text-hud-cyan hidden animate-pulse">Transmitting...</span>
+                <span id="active-chat-name" class="font-orbitron font-bold text-sm text-hud-primary tracking-wider uppercase">User</span>
+                <span id="typing-indicator" class="text-[9px] text-hud-primary hidden animate-pulse">Transmitting...</span>
              </div>
           </div>
         </div>
         
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar space-y-3 bg-[#010409]"></div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar space-y-3 bg-black/50"></div>
         
-        <form id="chatForm" class="p-3 hud-panel shrink-0 flex gap-2 items-center border-t border-hud-cyan/30 pb-safe">
-          <input type="text" id="chatInput" placeholder="ENTER DIRECTIVE..." required autocomplete="off" class="flex-1 bg-[#020813] border border-hud-cyan/40 rounded px-4 py-2.5 text-xs focus:outline-none focus:border-hud-cyan text-hud-cyan uppercase">
-          <button type="submit" class="bg-hud-cyan/20 border border-hud-cyan text-hud-cyan rounded p-2.5 hover:bg-hud-cyan hover:text-black transition">
+        <form id="chatForm" class="p-3 hud-panel shrink-0 flex gap-2 items-center border-t border-hud-primary/30 pb-safe">
+          <input type="text" id="chatInput" placeholder="ENTER DIRECTIVE..." required autocomplete="off" class="flex-1 bg-black/50 border border-hud-primary/40 rounded px-4 py-2.5 text-xs focus:outline-none focus:border-hud-primary text-hud-primary uppercase">
+          <button type="submit" class="bg-hud-primary/20 border border-hud-primary text-hud-primary rounded p-2.5 hover:bg-hud-primary hover:text-black transition">
             <svg class="w-5 h-5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
           </button>
         </form>
@@ -204,27 +237,27 @@
     </main>
 
     <!-- Bottom Navigation -->
-    <nav class="h-14 hud-panel flex items-center justify-around shrink-0 absolute bottom-0 w-full z-20 pb-safe border-t border-hud-cyan/30">
-      <button onclick="window.switchTab('feed')" id="navbtn-feed" class="p-2 text-hud-cyan transition drop-shadow-[0_0_5px_#00f3ff]"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg></button>
-      <button onclick="window.switchTab('explore')" id="navbtn-explore" class="p-2 text-gray-600 hover:text-hud-cyan transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
-      <button onclick="window.switchTab('chatlist')" id="navbtn-chatlist" class="p-2 text-gray-600 hover:text-hud-cyan transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg></button>
-      <button onclick="window.switchTab('profile')" id="navbtn-profile" class="p-2 text-gray-600 hover:text-hud-cyan transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>
+    <nav class="h-14 hud-panel flex items-center justify-around shrink-0 absolute bottom-0 w-full z-20 pb-safe border-t border-hud-primary/30">
+      <button onclick="window.switchTab('feed')" id="navbtn-feed" class="p-2 text-hud-primary transition drop-shadow-[0_0_5px_currentColor]"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg></button>
+      <button onclick="window.switchTab('explore')" id="navbtn-explore" class="p-2 text-gray-600 hover:text-hud-primary transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+      <button onclick="window.switchTab('chatlist')" id="navbtn-chatlist" class="p-2 text-gray-600 hover:text-hud-primary transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg></button>
+      <button onclick="window.switchTab('profile')" id="navbtn-profile" class="p-2 text-gray-600 hover:text-hud-primary transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>
     </nav>
   </div>
 
   <!-- ==========================================
-       FULL SCREEN STORY VIEWER (FIXED Z-INDEX)
+       FULL SCREEN STORY VIEWER
   =========================================== -->
-  <div id="storyViewerModal" class="hidden fixed inset-0 z-[999] bg-[#010409] flex flex-col fade-in cursor-pointer" onclick="window.closeStoryViewer()">
+  <div id="storyViewerModal" class="hidden fixed inset-0 z-[999] bg-black flex flex-col fade-in cursor-pointer" onclick="window.closeStoryViewer()">
      <div class="absolute top-0 left-0 right-0 p-4 z-10 bg-gradient-to-b from-black to-transparent">
-        <div class="w-full bg-gray-800 h-1 mb-4 rounded overflow-hidden border border-hud-cyan/20">
-           <div class="bg-hud-cyan h-full w-full animate-[progress_5s_linear]" id="storyProgressBar"></div>
+        <div class="w-full bg-gray-800 h-1 mb-4 rounded overflow-hidden border border-hud-primary/20">
+           <div class="bg-hud-primary h-full w-full animate-[progress_5s_linear]" id="storyProgressBar"></div>
         </div>
         <div class="flex items-center justify-between">
            <div class="flex items-center gap-3">
-              <span id="storyViewerName" class="font-orbitron font-bold text-sm text-hud-cyan tracking-widest uppercase"></span>
+              <span id="storyViewerName" class="font-orbitron font-bold text-sm text-hud-primary tracking-widest uppercase"></span>
            </div>
-           <button class="text-hud-cyan text-3xl font-bold">&times;</button>
+           <button class="text-hud-primary text-3xl font-bold">&times;</button>
         </div>
      </div>
      <img id="storyViewerImage" class="w-full h-full object-contain bg-black">
@@ -237,55 +270,55 @@
   <div id="uploadModal" class="hidden fixed inset-0 z-[100] bg-black/90 flex flex-col justify-center items-center p-4">
     <div class="hud-panel hud-bracket w-full max-w-sm p-6 fade-in shadow-2xl">
       <div class="flex justify-between items-center mb-5">
-        <h2 class="font-orbitron font-bold text-hud-cyan tracking-widest uppercase">UPLOAD DATA</h2>
-        <button onclick="window.closeUploadModal()" class="text-hud-cyan hover:text-white transition">✕</button>
+        <h2 class="font-orbitron font-bold text-hud-primary tracking-widest uppercase">UPLOAD DATA</h2>
+        <button onclick="window.closeUploadModal()" class="text-hud-primary hover:text-white transition">✕</button>
       </div>
       
       <div class="flex gap-2 mb-4">
-        <button onclick="window.setUploadType('post')" id="type-post" class="flex-1 py-1.5 border border-hud-cyan bg-hud-cyan/20 text-hud-cyan text-xs font-bold transition uppercase tracking-widest">FEED</button>
+        <button onclick="window.setUploadType('post')" id="type-post" class="flex-1 py-1.5 border border-hud-primary bg-hud-primary/20 text-hud-primary text-xs font-bold transition uppercase tracking-widest">FEED</button>
         <button onclick="window.setUploadType('story')" id="type-story" class="flex-1 py-1.5 border border-gray-600 text-gray-500 text-xs font-bold transition uppercase tracking-widest">STORY</button>
       </div>
 
       <form id="uploadForm" class="space-y-4">
-        <textarea id="postCaption" rows="2" placeholder="ATTACH METADATA..." class="w-full bg-[#020813] border border-hud-cyan/40 rounded p-3 text-xs resize-none outline-none focus:border-hud-cyan text-hud-cyan uppercase"></textarea>
+        <textarea id="postCaption" rows="2" placeholder="ATTACH METADATA..." class="w-full bg-black/50 border border-hud-primary/40 rounded p-3 text-xs resize-none outline-none focus:border-hud-primary text-hud-primary uppercase"></textarea>
         
-        <div class="border border-dashed border-hud-cyan/40 rounded p-6 text-center relative hover:border-hud-cyan transition cursor-pointer bg-[#020813]">
+        <div class="border border-dashed border-hud-primary/40 rounded p-6 text-center relative hover:border-hud-primary transition cursor-pointer bg-black/50">
           <input type="file" id="postImageInput" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-          <img id="imagePreview" src="" class="hidden max-h-48 mx-auto border border-hud-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)]">
-          <div id="imagePlaceholder" class="text-hud-cyan/70 text-xs font-bold flex flex-col items-center uppercase tracking-widest">
+          <img id="imagePreview" src="" class="hidden max-h-48 mx-auto border border-hud-primary shadow-[0_0_10px_currentColor]">
+          <div id="imagePlaceholder" class="text-hud-primary/70 text-xs font-bold flex flex-col items-center uppercase tracking-widest">
             <svg class="w-8 h-8 mb-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L28 20M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             SELECT VISUAL DATA
           </div>
         </div>
 
-        <button type="submit" id="submitUploadBtn" class="w-full bg-hud-cyan/20 border border-hud-cyan hover:bg-hud-cyan hover:text-black text-hud-cyan font-bold rounded py-3 text-xs transition glow-box uppercase tracking-widest">TRANSMIT</button>
+        <button type="submit" id="submitUploadBtn" class="w-full bg-hud-primary/20 border border-hud-primary hover:bg-hud-primary hover:text-black text-hud-primary font-bold rounded py-3 text-xs transition glow-box uppercase tracking-widest">TRANSMIT</button>
       </form>
     </div>
   </div>
 
   <!-- COMMENTS DRAWER -->
   <div id="commentsDrawer" class="hidden fixed inset-0 z-[60] flex flex-col justify-end bg-black/60 backdrop-blur-sm" onclick="if(event.target===this) window.closeComments()">
-    <div class="hud-panel border-t border-hud-cyan/50 w-full max-w-md mx-auto h-[60vh] flex flex-col slide-up shadow-[0_-10px_40px_rgba(0,243,255,0.1)]">
-      <div class="p-3 border-b border-hud-cyan/20 flex justify-between items-center">
-        <h3 class="font-orbitron font-bold text-xs text-hud-cyan tracking-widest uppercase">Metadata Threads</h3>
-        <button onclick="window.closeComments()" class="text-hud-cyan hover:text-white">✕</button>
+    <div class="hud-panel border-t border-hud-primary/50 w-full max-w-md mx-auto h-[60vh] flex flex-col slide-up shadow-[0_-10px_40px_currentColor]">
+      <div class="p-3 border-b border-hud-primary/20 flex justify-between items-center">
+        <h3 class="font-orbitron font-bold text-xs text-hud-primary tracking-widest uppercase">Metadata Threads</h3>
+        <button onclick="window.closeComments()" class="text-hud-primary hover:text-white">✕</button>
       </div>
       <div id="commentsList" class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar"></div>
-      <div class="p-3 border-t border-hud-cyan/20 bg-[#020813] flex gap-2 pb-safe">
-        <input type="text" id="commentInput" placeholder="INPUT DATA..." autocomplete="off" class="flex-1 bg-transparent border border-hud-cyan/40 rounded px-4 py-2 text-xs focus:outline-none focus:border-hud-cyan text-hud-cyan uppercase">
-        <button onclick="window.submitComment()" class="text-black bg-hud-cyan font-bold text-xs px-4 rounded hover:bg-hud-cyanHover uppercase tracking-widest">SEND</button>
+      <div class="p-3 border-t border-hud-primary/20 bg-black/50 flex gap-2 pb-safe">
+        <input type="text" id="commentInput" placeholder="INPUT DATA..." autocomplete="off" class="flex-1 bg-transparent border border-hud-primary/40 rounded px-4 py-2 text-xs focus:outline-none focus:border-hud-primary text-hud-primary uppercase">
+        <button onclick="window.submitComment()" class="text-black bg-hud-primary font-bold text-xs px-4 rounded hover:opacity-80 uppercase tracking-widest">SEND</button>
       </div>
     </div>
   </div>
 
   <!-- ==========================================
-       FIREBASE INTEGRATION & CORE LOGIC
+       JAVASCRIPT PROTOCOLS (FIREBASE + LOCAL FALLBACK)
   =========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // 🔴 PLACE YOUR FIREBASE KEYS HERE 🔴
+    // 🔴 FIREBASE CONFIG 🔴
      const firebaseConfig = {
   apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
   authDomain: "mark-9bc95.firebaseapp.com",
@@ -297,15 +330,20 @@
 };
 
     let app, db;
-    try {
-      app = initializeApp(firebaseConfig);
-      db = getDatabase(app);
-    } catch(e) {
-      document.getElementById('db-status').innerHTML = 'KEYS MISSING. PROTOCOL HALTED.';
-    }
+    let isFirebaseActive = false;
 
-    // --- STATE ---
-    let DB = { users: {}, posts: {}, stories: {}, messages: {}, typing: {} };
+    // THEME SYSTEM INITIALIZATION
+    const savedTheme = localStorage.getItem('viu_theme') || 'cyan';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    window.setTheme = (theme) => {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('viu_theme', theme);
+      updateUI(); // Force refresh to apply new glowing colors to components
+    };
+
+    // STATE & LOCAL STORAGE FALLBACK ENGINE
+    let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {} };
     let currentUser = localStorage.getItem('viu_auth_user') || null; 
     let currentChatTarget = null;
     let activeTab = 'feed';
@@ -314,6 +352,87 @@
     let activeCommentPostId = null;
     let typingTimeout = null;
     let storyTimer = null;
+
+    function saveLocalDB() { localStorage.setItem('viu_local_db', JSON.stringify(DB)); }
+
+    // Initialize Firebase
+    try {
+      if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+         app = initializeApp(firebaseConfig);
+         db = getDatabase(app);
+      }
+    } catch(e) { console.warn('Firebase init bypassed.'); }
+
+    if(db) {
+      onValue(ref(db, '/'), (snapshot) => {
+        const data = snapshot.val() || {};
+        DB = { users: data.users||{}, posts: data.posts||{}, stories: data.stories||{}, messages: data.messages||{}, typing: data.typing||{} };
+        isFirebaseActive = true;
+        document.getElementById('db-status').innerText = 'CONNECTION ESTABLISHED.';
+        document.getElementById('loginBtn').disabled = false;
+        
+        if(currentUser && DB.users[currentUser]) {
+           document.getElementById('login-view').classList.add('hidden');
+           document.getElementById('app-container').classList.remove('hidden');
+        }
+        updateUI();
+      }, (err) => {
+        document.getElementById('db-status').innerHTML = '<span class="text-hud-alert">Error: ' + err.message + '</span>';
+        enableLocalMode();
+      });
+    } else {
+      enableLocalMode();
+    }
+
+    function enableLocalMode() {
+       document.getElementById('db-status').innerHTML = '<span class="text-hud-primary">LOCAL PROTOCOL ENGAGED</span>';
+       document.getElementById('loginBtn').disabled = false;
+       if(currentUser && DB.users[currentUser]) {
+           document.getElementById('login-view').classList.add('hidden');
+           document.getElementById('app-container').classList.remove('hidden');
+       }
+       updateUI();
+    }
+
+    // --- DATA MUTATION WRAPPERS (Handles both Firebase & LocalStorage) ---
+    function apiSet(path, data) {
+       if(isFirebaseActive) { set(ref(db, path), data); }
+       else {
+         const parts = path.split('/');
+         let target = DB;
+         for(let i=0; i<parts.length-1; i++) { if(!target[parts[i]]) target[parts[i]] = {}; target = target[parts[i]]; }
+         target[parts[parts.length-1]] = data;
+         saveLocalDB(); updateUI();
+       }
+    }
+    function apiRemove(path) {
+       if(isFirebaseActive) { remove(ref(db, path)); }
+       else {
+         const parts = path.split('/');
+         let target = DB;
+         for(let i=0; i<parts.length-1; i++) { if(!target[parts[i]]) return; target = target[parts[i]]; }
+         delete target[parts[parts.length-1]];
+         saveLocalDB(); updateUI();
+       }
+    }
+    function apiPush(path, data) {
+       if(isFirebaseActive) { push(ref(db, path), data); }
+       else {
+         const id = Date.now().toString() + Math.floor(Math.random()*1000);
+         const parts = path.split('/');
+         let target = DB;
+         for(let i=0; i<parts.length; i++) { if(!target[parts[i]]) target[parts[i]] = {}; target = target[parts[i]]; }
+         target[id] = data;
+         saveLocalDB(); updateUI();
+       }
+    }
+
+    // --- UTILS ---
+    function generateAvatar(username, sizeClass = "w-10 h-10") {
+      if(!username) return '';
+      const initial = username.charAt(0).toUpperCase();
+      return `<div class="${sizeClass} rounded-full flex items-center justify-center text-black font-orbitron font-bold shadow-inner bg-hud-primary border border-hud-primary glow-box">${initial}</div>`;
+    }
 
     function compressImage(file, callback) {
       const reader = new FileReader();
@@ -338,34 +457,20 @@
       return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    // --- DB LISTENER ---
-    if(db) {
-      onValue(ref(db, '/'), (snapshot) => {
-        const data = snapshot.val() || {};
-        DB = {
-          users: data.users || {},
-          posts: data.posts || {},
-          stories: data.stories || {},
-          messages: data.messages || {},
-          typing: data.typing || {}
-        };
-        
-        document.getElementById('db-status').innerText = 'CONNECTION ESTABLISHED.';
-        document.getElementById('loginBtn').disabled = false;
-        
-        if(currentUser && DB.users[currentUser]) {
-           document.getElementById('login-view').classList.add('hidden');
-           document.getElementById('app-container').classList.remove('hidden');
-        }
-        
-        updateUI();
-      });
-    }
-
-    // --- GLOBAL WINDOW FUNCTIONS (FIXED) ---
+    // --- GLOBAL WINDOW FUNCTIONS ---
     window.toggleLike = (postId) => {
-        const postRef = ref(db, `posts/${postId}/likes/${currentUser}`);
-        if (DB.posts[postId].likes && DB.posts[postId].likes[currentUser]) remove(postRef); else set(postRef, true);
+        const path = `posts/${postId}/likes/${currentUser}`;
+        const btn = document.getElementById(`like-btn-${postId}`);
+        const countSpan = document.getElementById(`like-count-${postId}`);
+        
+        if (DB.posts[postId].likes && DB.posts[postId].likes[currentUser]) {
+           apiRemove(path);
+           if(!isFirebaseActive && btn) { btn.classList.remove('text-hud-alert', 'fill-current'); btn.classList.add('text-hud-primary'); countSpan.innerText = parseInt(countSpan.innerText)-1; }
+        } else {
+           apiSet(path, true);
+           if(btn) { btn.classList.add('pop-anim'); setTimeout(()=>btn.classList.remove('pop-anim'), 300); }
+           if(!isFirebaseActive && btn) { btn.classList.remove('text-hud-primary'); btn.classList.add('text-hud-alert', 'fill-current'); countSpan.innerText = parseInt(countSpan.innerText)+1; }
+        }
     };
 
     window.openComments = (postId) => {
@@ -380,7 +485,7 @@
       const input = document.getElementById('commentInput');
       const text = input.value.trim();
       if(!text || !activeCommentPostId) return;
-      push(ref(db, `posts/${activeCommentPostId}/comments`), { author: currentUser, text });
+      apiPush(`posts/${activeCommentPostId}/comments`, { author: currentUser, text });
       input.value = '';
     };
 
@@ -389,18 +494,17 @@
       const list = document.getElementById('commentsList');
       list.innerHTML = '';
       const comments = DB.posts[activeCommentPostId].comments ? Object.values(DB.posts[activeCommentPostId].comments) : [];
-      if(comments.length === 0) list.innerHTML = '<div class="text-center text-hud-cyan/50 text-xs mt-4 uppercase">NO METADATA.</div>';
+      if(comments.length === 0) list.innerHTML = '<div class="text-center text-hud-primary/50 text-xs mt-4 uppercase tracking-widest">NO METADATA.</div>';
       comments.forEach(c => {
         list.innerHTML += `
           <div class="mb-2 text-xs">
-            <span class="font-bold text-hud-cyan uppercase mr-2">[${c.author}]</span><span class="text-gray-300">${c.text}</span>
+            <span class="font-bold text-hud-primary uppercase mr-2">[${c.author}]</span><span class="text-gray-300">${c.text}</span>
           </div>
         `;
       });
       list.scrollTop = list.scrollHeight;
     };
 
-    // --- UPLOAD CONTROLS ---
     window.openUploadModal = () => { 
         document.getElementById('uploadModal').classList.remove('hidden'); 
         window.setUploadType('post'); 
@@ -409,13 +513,12 @@
     
     window.setUploadType = (type) => {
       uploadType = type;
-      document.getElementById('type-post').className = `flex-1 py-1.5 border font-bold text-xs transition uppercase tracking-widest ${type==='post' ? 'border-hud-cyan bg-hud-cyan/20 text-hud-cyan' : 'border-gray-600 text-gray-500'}`;
-      document.getElementById('type-story').className = `flex-1 py-1.5 border font-bold text-xs transition uppercase tracking-widest ${type==='story' ? 'border-hud-cyan bg-hud-cyan/20 text-hud-cyan' : 'border-gray-600 text-gray-500'}`;
+      document.getElementById('type-post').className = `flex-1 py-1.5 border font-bold text-xs transition uppercase tracking-widest ${type==='post' ? 'border-hud-primary bg-hud-primary/20 text-hud-primary glow-box' : 'border-gray-600 text-gray-500'}`;
+      document.getElementById('type-story').className = `flex-1 py-1.5 border font-bold text-xs transition uppercase tracking-widest ${type==='story' ? 'border-hud-primary bg-hud-primary/20 text-hud-primary glow-box' : 'border-gray-600 text-gray-500'}`;
       document.getElementById('postCaption').style.display = type === 'post' ? 'block' : 'none';
       document.getElementById('submitUploadBtn').innerText = type === 'post' ? 'TRANSMIT FEED' : 'TRANSMIT STORY';
     };
 
-    // --- STORY VIEWER (FIXED) ---
     window.viewStory = (storyId) => {
        const story = DB.stories[storyId];
        if(!story) return;
@@ -427,7 +530,7 @@
        
        const bar = document.getElementById('storyProgressBar');
        bar.classList.remove('animate-[progress_5s_linear]');
-       void bar.offsetWidth; // trigger reflow
+       void bar.offsetWidth; 
        bar.classList.add('animate-[progress_5s_linear]');
 
        if(storyTimer) clearTimeout(storyTimer);
@@ -439,21 +542,19 @@
        if(storyTimer) clearTimeout(storyTimer);
     };
 
-    // --- APP NAVIGATION ---
     window.switchTab = (tab) => {
       activeTab = tab;
       ['feed', 'explore', 'chatlist', 'profile'].forEach(t => document.getElementById(`tab-${t}`).classList.add('hidden'));
       document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
       
       document.querySelectorAll('.nav-btn').forEach(b => {
-         b.classList.remove('text-hud-cyan');
+         b.classList.remove('text-hud-primary', 'drop-shadow-[0_0_5px_currentColor]');
          b.classList.add('text-gray-600');
-         b.classList.remove('drop-shadow-[0_0_5px_#00f3ff]');
       });
       
       const activeBtn = document.getElementById(`navbtn-${tab}`);
       activeBtn.classList.remove('text-gray-600');
-      activeBtn.classList.add('text-hud-cyan', 'drop-shadow-[0_0_5px_#00f3ff]');
+      activeBtn.classList.add('text-hud-primary', 'drop-shadow-[0_0_5px_currentColor]');
       
       const titles = { feed: 'SYS.FEED', explore: 'NETWORK', chatlist: 'COMMS LINK', profile: 'PROTOCOL' };
       document.getElementById('app-header-title').innerText = titles[activeTab];
@@ -473,8 +574,8 @@
       renderChatList();
     };
 
-    window.deleteMessage = (msgId) => { remove(ref(db, `messages/${msgId}`)); };
-    window.deletePost = (postId) => { if(confirm("ERASE DATA?")) remove(ref(db, `posts/${postId}`)); };
+    window.deleteMessage = (msgId) => { apiRemove(`messages/${msgId}`); };
+    window.deletePost = (postId) => { if(confirm("ERASE DATA?")) apiRemove(`posts/${postId}`); };
     window.logoutUser = () => { localStorage.removeItem('viu_auth_user'); location.reload(); };
 
     // --- UI RENDERERS ---
@@ -499,7 +600,7 @@
       box.innerHTML = '';
       Object.values(DB.users).forEach(u => {
         const btn = document.createElement('button');
-        btn.className = "px-3 py-1 bg-hud-cyan/10 border border-hud-cyan/30 rounded text-[10px] text-hud-cyan hover:bg-hud-cyan hover:text-black transition uppercase tracking-widest font-bold";
+        btn.className = "px-3 py-1 bg-hud-primary/10 border border-hud-primary/30 rounded text-[10px] text-hud-primary hover:bg-hud-primary hover:text-black transition uppercase tracking-widest font-bold";
         btn.innerText = u.username;
         btn.onclick = () => {
            document.getElementById('usernameInput').value = u.username;
@@ -521,27 +622,27 @@
 
         const html = `
           <div class="hud-panel hud-bracket overflow-hidden fade-in mb-6">
-            <div class="flex items-center p-3 gap-3 border-b border-hud-cyan/30 bg-[#020813]">
-              <span class="font-orbitron font-bold text-sm text-hud-cyan tracking-wider uppercase glow-text">${post.author}</span>
+            <div class="flex items-center p-3 gap-3 border-b border-hud-primary/30 bg-black/50">
+              <span class="font-orbitron font-bold text-sm text-hud-primary tracking-wider uppercase glow-text">${post.author}</span>
             </div>
             
             <div class="relative">
-               <img src="${post.image}" class="w-full object-cover max-h-[500px] border-b border-hud-cyan/30">
+               <img src="${post.image}" class="w-full object-cover max-h-[500px] border-b border-hud-primary/30">
             </div>
             
             <div class="p-4">
               <div class="flex gap-4 mb-3">
                 <button onclick="window.toggleLike('${post.id}')" class="transition transform active:scale-75 flex items-center gap-1">
-                  <svg class="w-6 h-6 ${isLiked ? 'text-hud-alert fill-current drop-shadow-[0_0_8px_#ff0055]' : 'text-hud-cyan drop-shadow-[0_0_5px_#00f3ff]'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                  <span class="text-xs font-bold text-hud-cyan">${likesArr.length}</span>
+                  <svg id="like-btn-${post.id}" class="w-6 h-6 ${isLiked ? 'text-hud-alert fill-current drop-shadow-[0_0_8px_#ff0055]' : 'text-hud-primary drop-shadow-[0_0_5px_currentColor]'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                  <span id="like-count-${post.id}" class="text-xs font-bold text-hud-primary">${likesArr.length}</span>
                 </button>
                 <button onclick="window.openComments('${post.id}')" class="transition transform active:scale-75 flex items-center gap-1">
-                  <svg class="w-6 h-6 text-hud-cyan drop-shadow-[0_0_5px_#00f3ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                  <span class="text-xs font-bold text-hud-cyan">${commentsCount}</span>
+                  <svg class="w-6 h-6 text-hud-primary drop-shadow-[0_0_5px_currentColor]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                  <span class="text-xs font-bold text-hud-primary">${commentsCount}</span>
                 </button>
               </div>
-              <div class="text-xs leading-relaxed"><span class="font-bold text-hud-cyan mr-2 uppercase">[${post.author}]</span>${post.caption}</div>
-              <div class="text-[9px] text-gray-500 mt-3 uppercase tracking-widest border-t border-hud-cyan/10 pt-2">LOG: ${formatTime(post.timestamp)}</div>
+              <div class="text-xs leading-relaxed"><span class="font-bold text-hud-primary mr-2 uppercase">[${post.author}]</span>${post.caption}</div>
+              <div class="text-[9px] text-gray-500 mt-3 uppercase tracking-widest border-t border-hud-primary/10 pt-2">LOG: ${formatTime(post.timestamp)}</div>
             </div>
           </div>
         `;
@@ -553,19 +654,19 @@
       const container = document.getElementById('stories-container');
       container.innerHTML = `
         <div class="flex flex-col items-center gap-1 cursor-pointer shrink-0" onclick="window.openUploadModal()">
-          <div class="w-14 h-14 rounded-full border border-hud-cyan border-dashed flex items-center justify-center text-hud-cyan text-xl hover:bg-hud-cyan/10 transition">+</div>
-          <span class="text-[9px] font-bold text-hud-cyan mt-1 uppercase tracking-widest">TRANSMIT</span>
+          <div class="w-14 h-14 rounded-full border border-hud-primary border-dashed flex items-center justify-center text-hud-primary text-xl hover:bg-hud-primary/10 transition">+</div>
+          <span class="text-[9px] font-bold text-hud-primary mt-1 uppercase tracking-widest">TRANSMIT</span>
         </div>
       `;
 
       Object.values(DB.stories).forEach(story => {
         if((Date.now() - story.timestamp) > 86400000) return; // Hide older than 24h
         container.innerHTML += `
-          <div class="flex flex-col items-center gap-1 cursor-pointer shrink-0" onclick="window.viewStory('${story.id}')">
-            <div class="story-ring rounded-full w-14 h-14 flex items-center justify-center font-orbitron font-bold text-hud-cyan bg-[#020813]">
+          <div class="flex flex-col items-center gap-1 cursor-pointer shrink-0 z-50" onclick="window.viewStory('${story.id}')">
+            <div class="story-ring rounded-full w-14 h-14 flex items-center justify-center font-orbitron font-bold text-hud-primary bg-black/50">
               ${story.author.charAt(0).toUpperCase()}
             </div>
-            <span class="text-[9px] font-bold text-hud-cyan mt-1 truncate w-14 text-center uppercase tracking-widest">${story.author}</span>
+            <span class="text-[9px] font-bold text-hud-primary mt-1 truncate w-14 text-center uppercase tracking-widest">${story.author}</span>
           </div>
         `;
       });
@@ -581,14 +682,14 @@
         if(filter && !u.username.toLowerCase().includes(filter)) return;
         
         container.innerHTML += `
-          <div class="hud-panel p-3 flex items-center justify-between transition mb-2 border border-hud-cyan/20">
+          <div class="hud-panel p-3 flex items-center justify-between transition mb-2 border border-hud-primary/20">
             <div class="flex items-center gap-3">
               <div>
-                <div class="font-orbitron font-bold text-sm text-hud-cyan uppercase tracking-wider">${u.username}</div>
+                <div class="font-orbitron font-bold text-sm text-hud-primary uppercase tracking-wider">${u.username}</div>
                 <div class="text-[9px] text-gray-500 uppercase tracking-widest">Network Node</div>
               </div>
             </div>
-            <button onclick="window.openChat('${u.username}')" class="px-3 py-1.5 rounded border border-hud-cyan text-[10px] font-bold bg-hud-cyan/10 text-hud-cyan hover:bg-hud-cyan hover:text-black transition uppercase tracking-widest">LINK</button>
+            <button onclick="window.openChat('${u.username}')" class="px-3 py-1.5 rounded border border-hud-primary text-[10px] font-bold bg-hud-primary/10 text-hud-primary hover:bg-hud-primary hover:text-black transition uppercase tracking-widest glow-box">LINK</button>
           </div>
         `;
       });
@@ -602,7 +703,7 @@
       const myPosts = Object.values(DB.posts).filter(p => p.author === currentUser).sort((a,b) => b.timestamp - a.timestamp);
       myPosts.forEach(p => {
         grid.innerHTML += `
-          <div class="aspect-square bg-[#020813] border border-hud-cyan/20 overflow-hidden relative group">
+          <div class="aspect-square bg-black/50 border border-hud-primary/20 overflow-hidden relative group">
             <img src="${p.image}" class="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition duration-300">
             <button onclick="window.deletePost('${p.id}')" class="absolute top-1 right-1 bg-hud-alert/80 p-1 rounded text-white opacity-0 group-hover:opacity-100 transition text-[10px] font-bold uppercase">DEL</button>
           </div>`;
@@ -624,9 +725,9 @@
         const lastMsg = thread.length > 0 ? thread[thread.length-1].text : 'AWAITING DATA...';
         
         container.innerHTML += `
-          <div onclick="window.openChat('${u.username}')" class="hud-panel p-3 flex items-center gap-3 cursor-pointer hover:bg-hud-cyan/10 transition mb-2 border border-hud-cyan/20">
+          <div onclick="window.openChat('${u.username}')" class="hud-panel p-3 flex items-center gap-3 cursor-pointer hover:bg-hud-primary/10 transition mb-2 border border-hud-primary/20">
             <div class="flex-1 overflow-hidden">
-              <div class="font-orbitron font-bold text-sm text-hud-cyan uppercase tracking-wider mb-0.5">${u.username}</div>
+              <div class="font-orbitron font-bold text-sm text-hud-primary uppercase tracking-wider mb-0.5">${u.username}</div>
               <div class="text-[10px] text-gray-400 truncate uppercase tracking-widest">${lastMsg}</div>
             </div>
           </div>
@@ -643,16 +744,15 @@
                             .sort((a,b) => a.timestamp - b.timestamp);
       
       if(thread.length === 0) {
-         container.innerHTML = '<div class="text-center text-hud-cyan/50 text-[10px] mt-10 uppercase tracking-widest">CHANNEL OPEN. SECURE.</div>';
+         container.innerHTML = '<div class="text-center text-hud-primary/50 text-[10px] mt-10 uppercase tracking-widest">CHANNEL OPEN. SECURE.</div>';
          return;
       }
 
       thread.forEach(msg => {
         const isMe = msg.sender === currentUser;
-        // Feature: Blue tick read receipt logic included in the sent bubble HTML
         container.innerHTML += `
           <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} fade-in group w-full">
-             <div class="chat-bubble ${isMe ? 'chat-sent' : 'chat-recv'} text-hud-cyan">
+             <div class="chat-bubble ${isMe ? 'chat-sent text-hud-primary' : 'chat-recv text-gray-200'}">
                 ${msg.text}
                 <div class="chat-time flex justify-end gap-1 items-center">
                    <span>${formatTime(msg.timestamp)}</span>
@@ -677,9 +777,9 @@
     // --- INPUT LISTENERS ---
     document.getElementById('chatInput').addEventListener('input', () => {
       if(!currentChatTarget) return;
-      set(ref(db, `typing/${currentUser}/${currentChatTarget}`), true);
+      apiSet(`typing/${currentUser}/${currentChatTarget}`, true);
       clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => { set(ref(db, `typing/${currentUser}/${currentChatTarget}`), false); }, 2000);
+      typingTimeout = setTimeout(() => { apiSet(`typing/${currentUser}/${currentChatTarget}`, false); }, 2000);
     });
 
     document.getElementById('searchUsers').addEventListener('input', renderExplore);
@@ -696,7 +796,7 @@
          if(existingUser.password === pass) finishLogin(user);
          else { errDiv.classList.remove('hidden'); }
       } else {
-         set(ref(db, 'users/' + user), { username: user, password: pass });
+         apiSet('users/' + user, { username: user, password: pass });
          finishLogin(user);
       }
     };
@@ -714,8 +814,8 @@
       e.preventDefault();
       const input = document.getElementById('chatInput');
       if(!input.value.trim() || !currentChatTarget) return;
-      push(ref(db, 'messages'), { sender: currentUser, receiver: currentChatTarget, text: input.value.trim(), timestamp: Date.now() });
-      set(ref(db, `typing/${currentUser}/${currentChatTarget}`), false);
+      apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: input.value.trim(), timestamp: Date.now() });
+      apiSet(`typing/${currentUser}/${currentChatTarget}`, false);
       input.value = '';
     };
 
@@ -737,8 +837,13 @@
       const payload = { author: currentUser, image: currentImageBase64, caption: document.getElementById('postCaption').value.trim(), timestamp: Date.now() };
       const id = Date.now().toString();
       
-      if(uploadType === 'post') set(ref(db, 'posts/' + id), payload).then(finishUpload);
-      else set(ref(db, 'stories/' + id), payload).then(finishUpload);
+      if(uploadType === 'post') {
+         apiSet('posts/' + id, payload);
+         finishUpload();
+      } else {
+         apiSet('stories/' + id, payload);
+         finishUpload();
+      }
 
       function finishUpload() {
         document.getElementById('uploadModal').classList.add('hidden');
@@ -750,6 +855,9 @@
         window.switchTab('feed');
       }
     };
+
+    // INIT Fallback if Firebase blocks
+    setTimeout(() => { if(!isFirebaseActive) enableLocalMode(); }, 3000);
 
   </script>
 </body>
