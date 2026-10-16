@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Viu // Premium Social Network</title>
+  <title>Viu // Premium Network</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
@@ -15,8 +15,8 @@
           colors: {
             glass: 'rgba(20, 20, 25, 0.75)',
             glassBorder: 'rgba(255, 255, 255, 0.1)',
-            neon: '#8b5cf6',
-            neonHover: '#7c3aed'
+            neon: '#0095f6',
+            neonHover: '#1877f2'
           }
         }
       }
@@ -39,7 +39,6 @@
       background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiLz4KPC9zdmc+');
     }
 
-    /* Frosted Glass Elements */
     .frosted {
       background: var(--glass);
       backdrop-filter: blur(16px);
@@ -54,17 +53,13 @@
       border-radius: 16px;
     }
 
-    .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
-    .slide-up { animation: slideUp 0.3s ease-out forwards; }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-    /* Typing Dots Animation */
-    .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
-    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    .chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 14px; word-wrap: break-word; position: relative; }
+    .chat-sent { background-color: #0095f6; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .chat-recv { background-color: #262626; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+    .chat-time { font-size: 9px; opacity: 0.7; margin-top: 4px; text-align: right; }
   </style>
 </head>
 <body>
@@ -73,10 +68,10 @@
        LOGIN OVERLAY
   =========================================== -->
   <div id="login-view" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 bg-black/80 backdrop-blur-md">
-    <div class="frosted-card p-8 w-full max-w-sm space-y-6 fade-in shadow-[0_0_40px_rgba(139,92,246,0.15)]">
+    <div class="frosted-card p-8 w-full max-w-sm space-y-6 fade-in shadow-[0_0_40px_rgba(0,149,246,0.15)]">
       <div class="text-center">
-        <h1 class="text-4xl font-bold tracking-tight mb-1 text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-500">Viu Network</h1>
-        <p class="text-emerald-400 text-[10px] font-mono mb-4" id="db-status">Initializing quantum link...</p>
+        <h1 class="text-4xl font-bold tracking-tight mb-1 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Viu Network</h1>
+        <p class="text-emerald-400 text-[10px] font-mono mb-4" id="db-status">Initializing connection...</p>
       </div>
       
       <div id="existing-users" class="flex flex-wrap justify-center gap-2 mb-2"></div>
@@ -84,8 +79,8 @@
       <form id="loginForm" class="space-y-4">
         <input type="text" id="usernameInput" placeholder="Username" required class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-neon transition">
         <input type="password" id="passwordInput" placeholder="Password" required class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-neon transition">
-        <div id="login-error" class="text-rose-400 text-xs hidden text-center">Authentication Failed</div>
-        <button type="submit" id="loginBtn" disabled class="w-full bg-neon hover:bg-neonHover disabled:bg-gray-800 text-white font-semibold rounded-lg py-3 text-sm transition shadow-lg">Connect</button>
+        <div id="login-error" class="text-rose-400 text-xs hidden text-center font-medium">Authentication Failed</div>
+        <button type="submit" id="loginBtn" disabled class="w-full bg-neon hover:bg-neonHover disabled:bg-gray-800 text-white font-bold rounded-lg py-3 text-sm transition shadow-lg">Connect</button>
       </form>
     </div>
   </div>
@@ -95,13 +90,21 @@
   =========================================== -->
   <div id="app-container" class="hidden">
     
-    <!-- Header -->
+    <!-- UPGRADED TOP NAV: User Identification -->
     <header class="h-16 frosted flex items-center justify-between px-5 shrink-0 z-20">
       <h1 class="text-xl font-bold tracking-tight" id="app-header-title">Feed</h1>
+      
       <div class="flex items-center gap-3">
+        <!-- New Post Button -->
         <button id="btn-upload" class="text-white hover:text-neon transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
         </button>
+        
+        <!-- Logged In User Pill -->
+        <div class="flex items-center gap-2 bg-white/5 px-1.5 py-1 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition" onclick="switchTab('profile')">
+           <span id="nav-username" class="text-xs font-bold text-white ml-2">User</span>
+           <div id="nav-avatar-container"></div>
+        </div>
       </div>
     </header>
 
@@ -109,54 +112,51 @@
       
       <!-- TAB: FEED -->
       <div id="tab-feed" class="w-full min-h-full pb-20">
-        <!-- Stories Horizontal List -->
-        <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-white/5" id="stories-container"></div>
-        <!-- Posts List -->
         <div id="feed-container" class="space-y-6 pt-4 px-2"></div>
       </div>
 
       <!-- TAB: EXPLORE -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4 pb-20">
+        <div class="mb-4">
+          <input type="text" id="searchUsers" placeholder="Search users..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-neon">
+        </div>
         <div id="explore-container" class="space-y-3"></div>
       </div>
 
       <!-- TAB: MESSAGES -->
       <div id="tab-chatlist" class="w-full min-h-full hidden p-4 pb-20">
+        <h2 class="font-bold text-lg mb-4 pl-1">Direct Messages</h2>
         <div id="chatlist-container" class="space-y-2"></div>
       </div>
 
       <!-- TAB: PROFILE -->
       <div id="tab-profile" class="w-full min-h-full hidden p-4 pb-20">
-        <div class="frosted-card p-5 flex flex-col items-center text-center mb-6">
+        <div class="frosted-card p-6 flex flex-col items-center text-center mb-6">
           <div id="profile-avatar-container" class="mb-3"></div>
-          <h2 class="text-xl font-bold" id="profile-username">User</h2>
-          <p class="text-xs text-gray-400 mt-1 mb-4" id="profile-bio">No bio set.</p>
+          <h2 class="text-2xl font-bold" id="profile-username">User</h2>
+          <p class="text-sm text-gray-400 mt-2 mb-6" id="profile-bio">No bio set.</p>
           
-          <div class="flex gap-4 w-full">
-            <button id="editBioBtn" class="flex-1 bg-white/10 hover:bg-white/20 py-2 rounded-lg text-sm font-medium transition">Edit Bio</button>
-            <button id="userLogoutBtn" class="flex-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 py-2 rounded-lg text-sm font-medium transition">Log Out</button>
+          <div class="flex gap-3 w-full">
+            <button id="userLogoutBtn" class="flex-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 py-2.5 rounded-lg text-sm font-bold transition">Log Out</button>
           </div>
         </div>
-        <h3 class="font-semibold text-sm mb-3 px-1 text-gray-300">Your Posts</h3>
+        <h3 class="font-bold text-sm mb-3 px-1 text-gray-300">Your Posts</h3>
         <div id="profile-grid" class="grid grid-cols-3 gap-1"></div>
       </div>
 
-      <!-- ACTIVE CHAT INTERFACE -->
-      <div id="active-chat-view" class="absolute inset-0 bg-[#0a0a0e] z-30 hidden flex flex-col">
-        <div class="h-16 frosted flex items-center px-4 gap-4 shrink-0">
-          <button id="closeChatBtn" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-          <div id="active-chat-avatar-container" class="w-9 h-9"></div>
-          <div class="flex flex-col">
-            <span id="active-chat-name" class="font-bold text-sm">User</span>
-            <span id="typing-indicator" class="text-[10px] text-neon hidden">Typing...</span>
-          </div>
+      <!-- ACTIVE CHAT INTERFACE (FIXED) -->
+      <div id="active-chat-view" class="absolute inset-0 bg-[#000] z-30 hidden flex flex-col">
+        <div class="h-16 frosted flex items-center px-4 gap-4 shrink-0 shadow-md">
+          <button id="closeChatBtn" class="text-neon hover:text-white transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+          <div id="active-chat-avatar-container"></div>
+          <span id="active-chat-name" class="font-bold text-base">User</span>
         </div>
         
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar space-y-2"></div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar space-y-3 bg-[#050505]"></div>
         
-        <form id="chatForm" class="p-3 frosted frosted-top shrink-0 flex gap-2 items-center">
-          <input type="text" id="chatInput" placeholder="Send a message..." required class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:border-neon/50">
-          <button type="submit" class="bg-neon text-white rounded-full p-2.5 hover:bg-neonHover transition">
+        <form id="chatForm" class="p-3 frosted frosted-top shrink-0 flex gap-2 items-center pb-safe">
+          <input type="text" id="chatInput" placeholder="Send a message..." required autocomplete="off" class="flex-1 bg-white/10 border border-white/10 rounded-full px-5 py-3 text-sm focus:outline-none focus:border-neon transition">
+          <button type="submit" class="bg-neon text-white rounded-full p-3 hover:bg-neonHover transition shadow-lg">
             <svg class="w-5 h-5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
           </button>
         </form>
@@ -168,62 +168,31 @@
     <nav class="h-16 frosted frosted-top flex items-center justify-around shrink-0 absolute bottom-0 w-full z-20 pb-safe">
       <button data-tab="feed" class="nav-btn p-2 text-white transition transform active:scale-95"><svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></button>
       <button data-tab="explore" class="nav-btn p-2 text-gray-500 transition transform active:scale-95"><svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
-      <button data-tab="chatlist" class="nav-btn p-2 text-gray-500 transition transform active:scale-95"><svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg></button>
+      <button data-tab="chatlist" class="nav-btn p-2 text-gray-500 transition transform active:scale-95 relative">
+        <svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+      </button>
       <button data-tab="profile" class="nav-btn p-2 text-gray-500 transition transform active:scale-95"><svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>
     </nav>
   </div>
 
   <!-- ==========================================
-       MODALS (Upload & Comments)
+       UPLOAD MODAL
   =========================================== -->
-  
-  <!-- Upload Modal -->
   <div id="uploadModal" class="hidden fixed inset-0 z-50 bg-black/95 flex flex-col justify-center items-center p-4">
     <div class="frosted-card w-full max-w-sm p-6 fade-in">
       <div class="flex justify-between items-center mb-5">
-        <h2 class="font-bold text-lg">Create</h2>
-        <button id="closeUploadBtn" class="text-gray-400 p-1">✕</button>
-      </div>
-      <div class="flex gap-2 mb-4 bg-white/5 p-1 rounded-lg">
-        <button id="type-post" class="flex-1 py-1.5 rounded bg-white/10 text-white text-sm font-semibold transition">Post</button>
-        <button id="type-story" class="flex-1 py-1.5 rounded text-gray-400 text-sm font-semibold transition">Story</button>
+        <h2 class="font-bold text-lg">New Post</h2>
+        <button id="closeUploadBtn" class="text-gray-400 hover:text-white p-1">✕</button>
       </div>
       <form id="uploadForm" class="space-y-4">
-        <textarea id="postCaption" rows="2" placeholder="Write a caption..." class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm resize-none outline-none focus:border-neon"></textarea>
-        <div class="border-2 border-dashed border-white/20 rounded-lg p-6 text-center relative hover:border-neon transition cursor-pointer">
+        <textarea id="postCaption" rows="3" placeholder="Write a caption..." class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm resize-none outline-none focus:border-neon"></textarea>
+        <div class="border-2 border-dashed border-white/20 rounded-lg p-6 text-center relative hover:border-neon transition cursor-pointer bg-white/5">
           <input type="file" id="postImageInput" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-          <img id="imagePreview" src="" class="hidden max-h-48 mx-auto rounded">
-          <div id="imagePlaceholder" class="text-gray-400 text-sm">Select Image</div>
+          <img id="imagePreview" src="" class="hidden max-h-48 mx-auto rounded shadow-lg">
+          <div id="imagePlaceholder" class="text-gray-400 text-sm font-medium">Tap to Select Photo</div>
         </div>
-        <button type="submit" id="submitUploadBtn" class="w-full bg-neon hover:bg-neonHover text-white font-bold rounded-lg py-3 text-sm transition">Share</button>
+        <button type="submit" id="submitUploadBtn" class="w-full bg-neon hover:bg-neonHover text-white font-bold rounded-lg py-3.5 text-sm transition shadow-lg">Share Post</button>
       </form>
-    </div>
-  </div>
-
-  <!-- Comments Drawer -->
-  <div id="commentsDrawer" class="hidden fixed inset-0 z-50 flex flex-col justify-end bg-black/60 backdrop-blur-sm" onclick="if(event.target===this) closeComments()">
-    <div class="bg-[#121215] w-full max-w-md mx-auto rounded-t-2xl h-[70vh] flex flex-col slide-up border-t border-white/10">
-      <div class="p-4 border-b border-white/5 flex justify-between items-center">
-        <h3 class="font-bold">Comments</h3>
-        <button onclick="closeComments()" class="text-gray-400">✕</button>
-      </div>
-      <div id="commentsList" class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar"></div>
-      <div class="p-3 border-t border-white/5 bg-[#1a1a1f] flex gap-2">
-        <input type="text" id="commentInput" placeholder="Add a comment..." class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-neon">
-        <button onclick="submitComment()" class="text-neon font-semibold text-sm px-3">Post</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bio Edit Modal -->
-  <div id="bioModal" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-    <div class="frosted-card p-6 w-full max-w-sm fade-in">
-      <h3 class="font-bold mb-4">Edit Profile</h3>
-      <textarea id="bioInput" rows="3" placeholder="Tell us about yourself..." class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-sm outline-none focus:border-neon mb-4"></textarea>
-      <div class="flex gap-2">
-        <button onclick="document.getElementById('bioModal').classList.add('hidden')" class="flex-1 py-2 rounded-lg bg-white/10 text-sm font-medium">Cancel</button>
-        <button onclick="saveBio()" class="flex-1 py-2 rounded-lg bg-neon text-white text-sm font-medium">Save</button>
-      </div>
     </div>
   </div>
 
@@ -232,7 +201,7 @@
   =========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     // 🔴 PLACE YOUR FIREBASE KEYS HERE 🔴
     const firebaseConfig = {
@@ -244,7 +213,6 @@
   messagingSenderId: "417846424762",
   appId: "1:417846424762:web:24573a7abf942dfffefe83"
 };
-
     let app, db;
     try {
       app = initializeApp(firebaseConfig);
@@ -253,31 +221,22 @@
       document.getElementById('db-status').innerHTML = 'Keys missing. Check config.';
     }
 
-    let DB = { users: {}, posts: {}, stories: {}, messages: {} };
-    let currentUser = null;
+    // --- STATE ---
+    let DB = { users: {}, posts: {}, messages: {} };
+    let currentUser = localStorage.getItem('viu_auth_user') || null; // PERSISTENCE ADDED
     let currentChatTarget = null;
     let activeTab = 'feed';
-    let uploadType = 'post';
     let currentImageBase64 = null;
-    let activeCommentPostId = null;
-    let typingTimeout = null;
 
     // --- UTILS ---
-    
-    // Generates a pure CSS gradient avatar based on username (No external APIs)
     function generateAvatar(username, sizeClass = "w-10 h-10") {
+      if(!username) return '';
       const colors = ['#f43f5e', '#a855f7', '#3b82f6', '#10b981', '#f59e0b', '#ec4899'];
       const charCode = username.charCodeAt(0) || 0;
       const color1 = colors[charCode % colors.length];
       const color2 = colors[(charCode + 3) % colors.length];
       const initial = username.charAt(0).toUpperCase();
-      
-      return `
-        <div class="${sizeClass} rounded-full flex items-center justify-center text-white font-bold shadow-inner" 
-             style="background: linear-gradient(135deg, ${color1}, ${color2});">
-          ${initial}
-        </div>
-      `;
+      return `<div class="${sizeClass} rounded-full flex items-center justify-center text-white font-bold shadow-inner" style="background: linear-gradient(135deg, ${color1}, ${color2});">${initial}</div>`;
     }
 
     function compressImage(file, callback) {
@@ -298,6 +257,11 @@
       reader.readAsDataURL(file);
     }
 
+    function formatTime(ts) {
+      const d = new Date(ts);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
     // --- DB LISTENER ---
     if(db) {
       onValue(ref(db, '/'), (snapshot) => {
@@ -305,16 +269,20 @@
         DB = {
           users: data.users || {},
           posts: data.posts || {},
-          stories: data.stories || {},
-          messages: data.messages || {},
-          typing: data.typing || {}
+          messages: data.messages || {}
         };
+        
         document.getElementById('db-status').innerText = 'Connection Established';
         document.getElementById('db-status').classList.replace('text-emerald-400', 'text-neon');
         document.getElementById('loginBtn').disabled = false;
         
+        // Auto-login if session saved
+        if(currentUser && DB.users[currentUser]) {
+           document.getElementById('login-view').classList.add('hidden');
+           document.getElementById('app-container').classList.remove('hidden');
+        }
+        
         updateUI();
-        checkTypingStatus();
       }, (err) => {
         document.getElementById('db-status').innerText = 'Error: ' + err.message;
       });
@@ -323,16 +291,17 @@
     // --- UI ENGINE ---
     function updateUI() {
       renderExistingUsers();
-      if (!currentUser) return;
+      if (!currentUser || !DB.users[currentUser]) return;
       
+      // Update Top Nav (Top Username Feature Fixed)
       document.getElementById('nav-username').innerText = currentUser;
+      document.getElementById('nav-avatar-container').innerHTML = generateAvatar(currentUser, "w-7 h-7");
       
-      if (activeTab === 'feed') { renderFeed(); renderStories(); }
+      if (activeTab === 'feed') renderFeed();
       if (activeTab === 'explore') renderExplore();
       if (activeTab === 'chatlist') renderChatList();
       if (activeTab === 'profile') renderProfile();
       if (currentChatTarget) renderMessages();
-      if (activeCommentPostId) renderCommentsList();
     }
 
     function renderExistingUsers() {
@@ -358,28 +327,24 @@
       postsArray.forEach(post => {
         const likesArr = post.likes ? Object.keys(post.likes) : [];
         const isLiked = likesArr.includes(currentUser);
-        const commentsCount = post.comments ? Object.keys(post.comments).length : 0;
-        const avatarHTML = generateAvatar(post.author, "w-9 h-9");
+        const avatarHTML = generateAvatar(post.author, "w-10 h-10");
 
         const html = `
-          <div class="frosted-card overflow-hidden fade-in mb-4">
-            <div class="flex items-center p-3 gap-3 border-b border-white/5">
+          <div class="frosted-card overflow-hidden fade-in mb-5">
+            <div class="flex items-center p-3 gap-3 border-b border-white/5 bg-white/5">
               ${avatarHTML}
-              <span class="font-semibold text-sm tracking-wide">${post.author}</span>
+              <span class="font-bold text-sm tracking-wide">${post.author}</span>
             </div>
-            <img src="${post.image}" class="w-full object-cover max-h-[450px]">
+            <img src="${post.image}" class="w-full object-cover max-h-[500px]">
             <div class="p-4">
               <div class="flex gap-4 mb-3">
                 <button data-like="${post.id}" class="transition transform active:scale-75">
                   <svg class="w-7 h-7 ${isLiked ? 'text-rose-500 fill-current' : 'text-white'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 </button>
-                <button data-opencomments="${post.id}" class="transition transform active:scale-75">
-                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                </button>
               </div>
-              <div class="font-semibold text-sm mb-1">${likesArr.length} likes</div>
-              <div class="text-sm leading-relaxed"><span class="font-semibold mr-2">${post.author}</span>${post.caption}</div>
-              ${commentsCount > 0 ? `<button data-opencomments="${post.id}" class="text-xs text-gray-400 mt-2 hover:text-white">View all ${commentsCount} comments</button>` : ''}
+              <div class="font-bold text-sm mb-1">${likesArr.length} likes</div>
+              <div class="text-sm leading-relaxed"><span class="font-bold mr-2">${post.author}</span>${post.caption}</div>
+              <div class="text-[10px] text-gray-500 mt-2 uppercase tracking-wider">${formatTime(post.timestamp)}</div>
             </div>
           </div>
         `;
@@ -391,170 +356,138 @@
         const postRef = ref(db, `posts/${id}/likes/${currentUser}`);
         if (DB.posts[id].likes && DB.posts[id].likes[currentUser]) remove(postRef); else set(postRef, true);
       });
-      document.querySelectorAll('[data-opencomments]').forEach(btn => btn.onclick = (e) => openComments(e.currentTarget.dataset.opencomments));
-    }
-
-    // --- COMMENTS DRAWER LOGIC ---
-    window.openComments = (postId) => {
-      activeCommentPostId = postId;
-      document.getElementById('commentsDrawer').classList.remove('hidden');
-      renderCommentsList();
-    };
-    window.closeComments = () => {
-      document.getElementById('commentsDrawer').classList.add('hidden');
-      activeCommentPostId = null;
-    };
-    window.submitComment = () => {
-      const input = document.getElementById('commentInput');
-      const text = input.value.trim();
-      if(!text || !activeCommentPostId) return;
-      push(ref(db, `posts/${activeCommentPostId}/comments`), { author: currentUser, text });
-      input.value = '';
-    };
-    function renderCommentsList() {
-      if(!activeCommentPostId || !DB.posts[activeCommentPostId]) return;
-      const list = document.getElementById('commentsList');
-      list.innerHTML = '';
-      const comments = DB.posts[activeCommentPostId].comments ? Object.values(DB.posts[activeCommentPostId].comments) : [];
-      if(comments.length === 0) list.innerHTML = '<div class="text-center text-gray-500 text-sm mt-4">No comments yet.</div>';
-      comments.forEach(c => {
-        list.innerHTML += `
-          <div class="flex gap-3 mb-3 text-sm">
-            ${generateAvatar(c.author, "w-7 h-7 shrink-0")}
-            <div><span class="font-bold mr-2">${c.author}</span><span class="text-gray-300">${c.text}</span></div>
-          </div>
-        `;
-      });
-      list.scrollTop = list.scrollHeight;
-    }
-
-    // --- STORIES, EXPLORE, CHAT (Condensed) ---
-    function renderStories() {
-      const container = document.getElementById('stories-container');
-      container.innerHTML = `
-        <div class="flex flex-col items-center gap-1 cursor-pointer shrink-0" id="addStoryBtn">
-          <div class="w-16 h-16 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center text-white/50 text-2xl hover:border-neon transition">+</div>
-          <span class="text-[10px] font-medium text-gray-400 mt-1">Your Story</span>
-        </div>
-      `;
-      document.getElementById('addStoryBtn').onclick = () => { document.getElementById('uploadModal').classList.remove('hidden'); setUploadType('story'); };
     }
 
     function renderExplore() {
       const container = document.getElementById('explore-container');
       container.innerHTML = '';
-      const meFollowing = DB.users[currentUser]?.following || {};
+      const filter = document.getElementById('searchUsers').value.toLowerCase();
       
       Object.values(DB.users).forEach(u => {
         if(u.username === currentUser) return;
-        const isFollowing = !!meFollowing[u.username];
+        if(filter && !u.username.toLowerCase().includes(filter)) return;
+        
         container.innerHTML += `
-          <div class="frosted-card p-3 flex items-center justify-between">
+          <div class="frosted-card p-3 flex items-center justify-between transition hover:bg-white/5">
             <div class="flex items-center gap-3">
-              ${generateAvatar(u.username, "w-11 h-11")}
+              ${generateAvatar(u.username, "w-12 h-12")}
               <div>
-                <div class="font-semibold text-sm">${u.username}</div>
-                <div class="text-xs text-gray-400">${u.bio || 'No bio'}</div>
+                <div class="font-bold text-sm">${u.username}</div>
+                <div class="text-xs text-gray-400">Viu Member</div>
               </div>
             </div>
-            <button data-follow="${u.username}" class="px-4 py-1.5 rounded-full text-xs font-semibold transition ${isFollowing ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-neon text-white hover:bg-neonHover'}">${isFollowing ? 'Following' : 'Follow'}</button>
+            <button data-chatopen="${u.username}" class="px-4 py-1.5 rounded-full text-xs font-bold bg-neon text-white hover:bg-neonHover transition shadow">Message</button>
           </div>
         `;
       });
-      document.querySelectorAll('[data-follow]').forEach(btn => btn.onclick = (e) => {
-        const targetUser = e.currentTarget.dataset.follow;
-        const followingRef = ref(db, `users/${currentUser}/following/${targetUser}`);
-        const followerRef = ref(db, `users/${targetUser}/followers/${currentUser}`);
-        if (DB.users[currentUser].following && DB.users[currentUser].following[targetUser]) { remove(followingRef); remove(followerRef); } 
-        else { set(followingRef, true); set(followerRef, true); }
+
+      document.querySelectorAll('[data-chatopen]').forEach(btn => btn.onclick = (e) => {
+        openChat(e.currentTarget.dataset.chatopen);
       });
     }
 
     // --- PROFILE LOGIC ---
     function renderProfile() {
       const u = DB.users[currentUser];
-      document.getElementById('profile-avatar-container').innerHTML = generateAvatar(currentUser, "w-20 h-20 text-2xl");
+      document.getElementById('profile-avatar-container').innerHTML = generateAvatar(currentUser, "w-24 h-24 text-3xl shadow-lg");
       document.getElementById('profile-username').innerText = currentUser;
-      document.getElementById('profile-bio').innerText = u.bio || 'No bio written yet.';
       
       const grid = document.getElementById('profile-grid');
       grid.innerHTML = '';
       const myPosts = Object.values(DB.posts).filter(p => p.author === currentUser).sort((a,b) => b.timestamp - a.timestamp);
       myPosts.forEach(p => {
-        grid.innerHTML += `<div class="aspect-square bg-gray-800 rounded overflow-hidden"><img src="${p.image}" class="w-full h-full object-cover hover:scale-110 transition duration-300"></div>`;
+        grid.innerHTML += `
+          <div class="aspect-square bg-gray-800 rounded-md overflow-hidden relative group">
+            <img src="${p.image}" class="w-full h-full object-cover">
+            <button data-delpost="${p.id}" class="absolute top-1 right-1 bg-black/50 p-1 rounded text-rose-500 opacity-0 group-hover:opacity-100 transition">✕</button>
+          </div>`;
+      });
+
+      document.querySelectorAll('[data-delpost]').forEach(btn => btn.onclick = (e) => {
+         if(confirm("Delete this post?")) remove(ref(db, `posts/${e.currentTarget.dataset.delpost}`));
       });
     }
-    
-    document.getElementById('editBioBtn').onclick = () => {
-      document.getElementById('bioInput').value = DB.users[currentUser].bio || '';
-      document.getElementById('bioModal').classList.remove('hidden');
-    };
-    window.saveBio = () => {
-      const txt = document.getElementById('bioInput').value.trim();
-      update(ref(db, `users/${currentUser}`), { bio: txt }).then(() => document.getElementById('bioModal').classList.add('hidden'));
-    };
 
-    // --- CHAT & TYPING INDICATOR ---
+    // --- MESSAGING LOGIC (FIXED) ---
     function renderChatList() {
       const container = document.getElementById('chatlist-container');
       container.innerHTML = '';
+      
+      // Parse messages safely
+      const allMsgs = DB.messages ? Object.entries(DB.messages).map(([k,v]) => ({id: k, ...v})) : [];
+      
       Object.values(DB.users).forEach(u => {
         if(u.username === currentUser) return;
-        const thread = Object.values(DB.messages).filter(m => (m.sender === currentUser && m.receiver === u.username) || (m.sender === u.username && m.receiver === currentUser));
+        
+        const thread = allMsgs.filter(m => (m.sender === currentUser && m.receiver === u.username) || (m.sender === u.username && m.receiver === currentUser))
+                             .sort((a,b) => a.timestamp - b.timestamp);
+        
         const lastMsg = thread.length > 0 ? thread[thread.length-1].text : 'Start conversation...';
         
         container.innerHTML += `
-          <div data-chat="${u.username}" class="frosted-card p-3 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition">
+          <div data-chat="${u.username}" class="frosted-card p-3 flex items-center gap-4 cursor-pointer hover:bg-white/10 transition shadow-sm">
             ${generateAvatar(u.username, "w-12 h-12 shrink-0")}
             <div class="flex-1 overflow-hidden">
-              <div class="font-semibold text-sm">${u.username}</div>
+              <div class="font-bold text-sm mb-0.5">${u.username}</div>
               <div class="text-xs text-gray-400 truncate">${lastMsg}</div>
             </div>
           </div>
         `;
       });
-      document.querySelectorAll('[data-chat]').forEach(el => el.onclick = (e) => {
-        currentChatTarget = e.currentTarget.dataset.chat;
-        document.getElementById('active-chat-avatar-container').innerHTML = generateAvatar(currentChatTarget, "w-full h-full");
-        document.getElementById('active-chat-name').innerText = currentChatTarget;
-        document.getElementById('active-chat-view').classList.remove('hidden');
-        renderMessages();
-      });
+
+      document.querySelectorAll('[data-chat]').forEach(el => el.onclick = (e) => openChat(e.currentTarget.dataset.chat));
+    }
+
+    function openChat(target) {
+      currentChatTarget = target;
+      document.getElementById('active-chat-avatar-container').innerHTML = generateAvatar(target, "w-8 h-8");
+      document.getElementById('active-chat-name').innerText = target;
+      document.getElementById('active-chat-view').classList.remove('hidden');
+      renderMessages();
     }
 
     function renderMessages() {
       const container = document.getElementById('chat-messages');
       container.innerHTML = '';
-      const thread = Object.values(DB.messages).filter(m => (m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser)).sort((a,b) => a.timestamp - b.timestamp);
       
+      // Parse and filter safely
+      const allMsgs = DB.messages ? Object.entries(DB.messages).map(([k,v]) => ({id: k, ...v})) : [];
+      const thread = allMsgs.filter(m => (m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser))
+                            .sort((a,b) => a.timestamp - b.timestamp);
+      
+      if(thread.length === 0) {
+         container.innerHTML = '<div class="text-center text-gray-500 text-xs mt-10">No messages yet. Say hi!</div>';
+         return;
+      }
+
       thread.forEach(msg => {
         const isMe = msg.sender === currentUser;
-        container.innerHTML += `<div class="chat-bubble ${isMe ? 'bg-neon text-white self-end rounded-br-sm' : 'bg-white/10 text-white self-start rounded-bl-sm'} shadow-md fade-in">${msg.text}</div>`;
+        container.innerHTML += `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} fade-in group">
+             <div class="chat-bubble ${isMe ? 'chat-sent' : 'chat-recv'} shadow-md">
+                ${msg.text}
+                <div class="chat-time text-white/60">${formatTime(msg.timestamp)}</div>
+             </div>
+             ${isMe ? `<button data-delmsg="${msg.id}" class="text-[10px] text-rose-500 opacity-0 group-hover:opacity-100 transition px-2">Delete</button>` : ''}
+          </div>
+        `;
       });
-      container.scrollTop = container.scrollHeight;
-      checkTypingStatus();
-    }
+      
+      // Auto Scroll to bottom securely
+      setTimeout(() => { container.scrollTop = container.scrollHeight; }, 10);
 
-    // Typing Logic
-    document.getElementById('chatInput').addEventListener('input', () => {
-      if(!currentChatTarget) return;
-      set(ref(db, `typing/${currentUser}/${currentChatTarget}`), true);
-      clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => { set(ref(db, `typing/${currentUser}/${currentChatTarget}`), false); }, 2000);
-    });
-
-    function checkTypingStatus() {
-      if(!currentChatTarget) return;
-      const isTyping = DB.typing && DB.typing[currentChatTarget] && DB.typing[currentChatTarget][currentUser];
-      document.getElementById('typing-indicator').classList.toggle('hidden', !isTyping);
+      document.querySelectorAll('[data-delmsg]').forEach(btn => btn.onclick = (e) => {
+         remove(ref(db, `messages/${e.target.dataset.delmsg}`));
+      });
     }
 
     document.getElementById('chatForm').onsubmit = (e) => {
       e.preventDefault();
       const input = document.getElementById('chatInput');
-      if(!input.value.trim() || !currentChatTarget) return;
-      push(ref(db, 'messages'), { sender: currentUser, receiver: currentChatTarget, text: input.value.trim(), timestamp: Date.now() });
-      set(ref(db, `typing/${currentUser}/${currentChatTarget}`), false); // Stop typing immediately
+      const txt = input.value.trim();
+      if(!txt || !currentChatTarget) return;
+      
+      push(ref(db, 'messages'), { sender: currentUser, receiver: currentChatTarget, text: txt, timestamp: Date.now() });
       input.value = '';
     };
 
@@ -570,31 +503,24 @@
          if(existingUser.password === pass) finishLogin(user);
          else { errDiv.classList.remove('hidden'); }
       } else {
-         set(ref(db, 'users/' + user), { username: user, password: pass, bio: '' });
+         set(ref(db, 'users/' + user), { username: user, password: pass });
          finishLogin(user);
       }
     };
 
     function finishLogin(user) {
       currentUser = user;
+      localStorage.setItem('viu_auth_user', user); // Save Session
+      document.getElementById('login-error').classList.add('hidden');
       document.getElementById('login-view').classList.add('hidden');
       document.getElementById('app-container').classList.remove('hidden');
-      document.getElementById('app-header-title').innerText = 'Feed';
+      activeTab = 'feed';
       updateUI();
     }
 
     // --- UPLOAD LOGIC ---
-    document.getElementById('btn-upload').onclick = () => { document.getElementById('uploadModal').classList.remove('hidden'); setUploadType('post'); };
+    document.getElementById('btn-upload').onclick = () => { document.getElementById('uploadModal').classList.remove('hidden'); };
     document.getElementById('closeUploadBtn').onclick = () => document.getElementById('uploadModal').classList.add('hidden');
-    document.getElementById('type-post').onclick = () => setUploadType('post');
-    document.getElementById('type-story').onclick = () => setUploadType('story');
-
-    function setUploadType(type) {
-      uploadType = type;
-      document.getElementById('type-post').className = `flex-1 py-1.5 rounded transition font-semibold text-sm ${type==='post' ? 'bg-white/20 text-white' : 'text-gray-400'}`;
-      document.getElementById('type-story').className = `flex-1 py-1.5 rounded transition font-semibold text-sm ${type==='story' ? 'bg-white/20 text-white' : 'text-gray-400'}`;
-      document.getElementById('postCaption').style.display = type === 'post' ? 'block' : 'none';
-    }
 
     document.getElementById('postImageInput').onchange = (e) => {
       if(!e.target.files[0]) return;
@@ -610,25 +536,22 @@
       e.preventDefault();
       if(!currentImageBase64) return;
       document.getElementById('submitUploadBtn').innerText = 'Uploading...';
-      const payload = { author: currentUser, image: currentImageBase64, timestamp: Date.now() };
       
-      if(uploadType === 'post') {
-        payload.caption = document.getElementById('postCaption').value.trim();
-        payload.id = Date.now().toString();
-        set(ref(db, 'posts/' + payload.id), payload).then(closeModal);
-      } else {
-        payload.id = Date.now().toString();
-        set(ref(db, 'stories/' + payload.id), payload).then(closeModal);
-      }
-
-      function closeModal() {
+      const payload = { author: currentUser, image: currentImageBase64, caption: document.getElementById('postCaption').value.trim(), timestamp: Date.now() };
+      const id = Date.now().toString();
+      
+      set(ref(db, 'posts/' + id), payload).then(() => {
         document.getElementById('uploadModal').classList.add('hidden');
-        document.getElementById('submitUploadBtn').innerText = 'Share';
+        document.getElementById('submitUploadBtn').innerText = 'Share Post';
+        document.getElementById('postCaption').value = '';
+        document.getElementById('imagePreview').classList.add('hidden');
+        document.getElementById('imagePlaceholder').classList.remove('hidden');
         currentImageBase64 = null;
-      }
+        switchTab('feed');
+      });
     };
 
-    // --- NAV LISTENERS ---
+    // --- NAV LISTENERS & SEARCH ---
     document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = (e) => {
       activeTab = e.currentTarget.dataset.tab;
       ['feed', 'explore', 'chatlist', 'profile'].forEach(t => document.getElementById(`tab-${t}`).classList.add('hidden'));
@@ -642,8 +565,18 @@
       updateUI();
     });
 
-    document.getElementById('userLogoutBtn').onclick = () => location.reload();
-    document.getElementById('closeChatBtn').onclick = () => { document.getElementById('active-chat-view').classList.add('hidden'); currentChatTarget = null; };
+    document.getElementById('searchUsers').addEventListener('input', renderExplore);
+    
+    document.getElementById('userLogoutBtn').onclick = () => {
+      localStorage.removeItem('viu_auth_user');
+      location.reload();
+    };
+    
+    document.getElementById('closeChatBtn').onclick = () => { 
+      document.getElementById('active-chat-view').classList.add('hidden'); 
+      currentChatTarget = null; 
+      renderChatList();
+    };
   </script>
 </body>
 </html>
