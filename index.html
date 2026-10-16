@@ -3,409 +3,506 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Viu // Social & Chat Platform</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS -->
+  <title>Viu // Multi-User Network & Master Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          colors: {
-            viu: {
-              bg: '#000000',
-              surface: '#121212',
-              border: '#262626',
-              primary: '#0095f6',
-              primaryHover: '#1877f2',
-              text: '#f5f5f5',
-              muted: '#a8a8a8'
-            }
-          }
-        }
-      }
+      theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
     }
   </script>
 
   <style>
-    body {
-      background-color: #fafafa;
-      color: #000;
-      overflow: hidden; /* App container handles scrolling */
-    }
-    
-    @media (prefers-color-scheme: dark) {
-      body { background-color: #000; color: #fff; }
-    }
-
-    /* Mobile App Container Layout */
-    #app-wrapper {
-      max-width: 480px;
-      margin: 0 auto;
-      height: 100vh;
-      height: 100dvh; /* For mobile browsers */
-      background-color: var(--viu-bg);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      border-left: 1px solid #262626;
-      border-right: 1px solid #262626;
-    }
-
-    .dark-theme { background-color: #000; color: #fff; }
-
-    /* Hide Scrollbars but keep functionality */
+    body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* Reels Scroll Snapping */
-    .reels-container {
-      scroll-snap-type: y mandatory;
-      overflow-y: scroll;
-      height: 100%;
-    }
-    .reel-item {
-      scroll-snap-align: start;
-      height: 100%;
-      position: relative;
-      background: #111;
+    
+    #app-container {
+      max-width: 480px; margin: 0 auto; height: 100vh; height: 100dvh;
+      background-color: #000; position: relative; display: flex; flex-direction: column;
+      border-left: 1px solid #262626; border-right: 1px solid #262626;
     }
 
-    /* Animations */
-    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    #admin-container {
+      max-width: 1000px; margin: 0 auto; min-height: 100vh;
+      background-color: #0a0a0a; padding: 20px; display: none;
+    }
+
+    .story-ring { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+    .fade-in { animation: fadeIn 0.3s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Chat Bubbles */
-    .chat-bubble { max-width: 75%; padding: 10px 14px; border-radius: 18px; margin-bottom: 8px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
-    .chat-sent { background-color: #0095f6; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-    .chat-recv { background-color: #262626; color: white; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .chat-bubble { max-width: 75%; padding: 10px 14px; border-radius: 18px; margin-bottom: 8px; font-size: 14px; word-wrap: break-word; }
+    .chat-sent { background-color: #0095f6; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .chat-recv { background-color: #262626; align-self: flex-start; border-bottom-left-radius: 4px; }
   </style>
 </head>
-<body class="dark-theme">
+<body>
 
-  <!-- APP CONTAINER -->
-  <div id="app-wrapper">
-
-    <!-- ==================== LOGIN VIEW ==================== -->
-    <div id="view-login" class="flex-1 flex flex-col items-center justify-center p-8 z-50 bg-black absolute inset-0">
-      <div class="w-full max-w-sm space-y-8 fade-in">
-        <div class="text-center">
-          <h1 class="text-4xl font-bold italic tracking-tighter mb-2">Viu</h1>
-          <p class="text-viu-muted text-sm">Sign in to see reels, chat, and posts from your friends.</p>
-        </div>
-        <form id="loginForm" class="space-y-4">
-          <input type="text" id="usernameInput" placeholder="Enter Username" required class="w-full bg-[#121212] border border-[#262626] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-[#a8a8a8] transition">
-          <button type="submit" class="w-full bg-viu-primary hover:bg-viu-primaryHover text-white font-semibold rounded-md py-3 text-sm transition">Log In</button>
-        </form>
-        <div class="text-center">
-           <button onclick="clearAllData()" class="text-xs text-rose-500 hover:text-rose-400">Developer: Clear App Data</button>
-        </div>
+  <!-- ==========================================
+       1. LOGIN SYSTEM
+  =========================================== -->
+  <div id="login-view" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-8">
+    <div class="w-full max-w-sm space-y-8 text-center fade-in">
+      <div>
+        <h1 class="text-5xl font-bold italic tracking-tighter mb-2">Viu</h1>
+        <p class="text-gray-400 text-sm">Enter a username to join the network.<br><span class="text-rose-400 text-xs">Type 'admin' to access the Master Dashboard.</span></p>
       </div>
-    </div>
-
-    <!-- ==================== MAIN APP VIEWS ==================== -->
-    <div id="view-main" class="flex-1 flex flex-col hidden h-full w-full absolute inset-0">
       
-      <!-- TOP NAV BAR -->
-      <header id="top-nav" class="h-14 border-b border-[#262626] flex items-center justify-between px-4 shrink-0 bg-black z-20">
-        <h1 class="text-xl font-bold italic tracking-tighter" id="headerTitle">Viu</h1>
-        <div class="flex items-center gap-4">
-          <button onclick="openUploadModal()" id="uploadBtn" class="text-white hover:text-gray-300">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-          </button>
-          <img id="navAvatar" src="" class="w-7 h-7 rounded-full bg-[#262626] border border-[#262626] object-cover cursor-pointer" onclick="logout()">
-        </div>
-      </header>
+      <!-- User Switcher / Existing Users -->
+      <div id="existing-users" class="flex flex-wrap justify-center gap-3 mb-4"></div>
 
-      <!-- CONTENT AREA -->
-      <main class="flex-1 overflow-y-auto hide-scrollbar relative bg-black" id="content-area">
-        
-        <!-- 1. FEED VIEW -->
-        <div id="tab-feed" class="w-full min-h-full pb-6">
-          <div id="feed-container" class="space-y-6 pt-2">
-             <!-- Posts render here -->
-          </div>
-        </div>
+      <form id="loginForm" class="space-y-4">
+        <input type="text" id="usernameInput" placeholder="New Username (e.g. Jay, Tej)" required class="w-full bg-[#121212] border border-[#262626] rounded-md px-4 py-3 text-sm focus:outline-none focus:border-gray-400">
+        <button type="submit" class="w-full bg-[#0095f6] hover:bg-[#1877f2] text-white font-semibold rounded-md py-3 text-sm transition">Enter Network</button>
+      </form>
+    </div>
+  </div>
 
-        <!-- 2. REELS VIEW -->
-        <div id="tab-reels" class="w-full h-full hidden">
-          <div class="reels-container hide-scrollbar" id="reels-container">
-            <!-- Reels generate here -->
-          </div>
-        </div>
-
-        <!-- 3. CHAT VIEW -->
-        <div id="tab-chat" class="w-full h-full flex flex-col hidden bg-black">
-          <div class="p-3 border-b border-[#262626] flex items-center gap-3 bg-[#121212]">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-0.5">
-               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=ViuBot" class="w-full h-full rounded-full bg-black">
-            </div>
-            <div>
-              <div class="font-semibold text-sm">Viu Assistant</div>
-              <div class="text-xs text-green-500">Online</div>
-            </div>
-          </div>
-          
-          <div id="chat-messages" class="flex-1 overflow-y-auto hide-scrollbar p-4 flex flex-col bg-black">
-            <!-- Messages render here -->
-          </div>
-
-          <form id="chatForm" class="p-3 border-t border-[#262626] bg-[#121212] flex gap-2 shrink-0">
-            <input type="text" id="chatInput" placeholder="Message..." autocomplete="off" required class="flex-1 bg-black border border-[#262626] rounded-full px-4 py-2 text-sm focus:outline-none focus:border-[#555]">
-            <button type="submit" class="text-viu-primary font-semibold text-sm px-2">Send</button>
-          </form>
-        </div>
-
-      </main>
-
-      <!-- BOTTOM NAV BAR -->
-      <nav id="bottom-nav" class="h-14 border-t border-[#262626] flex items-center justify-around shrink-0 bg-black pb-safe">
-        <button onclick="switchTab('feed')" id="nav-feed" class="p-2 text-white transition transform active:scale-95">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3l10 9h-3v9H5v-9H2z"/></svg>
-        </button>
-        <button onclick="switchTab('reels')" id="nav-reels" class="p-2 text-gray-500 hover:text-white transition transform active:scale-95">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </button>
-        <button onclick="switchTab('chat')" id="nav-chat" class="p-2 text-gray-500 hover:text-white transition transform active:scale-95 relative">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-          <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-black"></span>
-        </button>
-      </nav>
-
+  <!-- ==========================================
+       2. MASTER ADMIN DASHBOARD (Desktop View)
+  =========================================== -->
+  <div id="admin-container">
+    <div class="flex justify-between items-center mb-8 border-b border-[#262626] pb-4">
+      <div>
+        <h1 class="text-2xl font-bold text-rose-500">Master Admin Dashboard</h1>
+        <p class="text-sm text-gray-400">Manage all registered users, posts, and communications.</p>
+      </div>
+      <button onclick="logout()" class="px-4 py-2 bg-[#262626] rounded hover:bg-[#333] text-sm">Logout Admin</button>
     </div>
 
-    <!-- ==================== UPLOAD MODAL ==================== -->
-    <div id="uploadModal" class="hidden absolute inset-0 bg-black/90 z-50 flex flex-col justify-end fade-in">
-      <div class="bg-[#121212] w-full rounded-t-2xl p-4 border-t border-[#262626]">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="font-bold text-lg">New Post</h2>
-          <button onclick="closeUploadModal()" class="text-gray-400 p-1">✕</button>
-        </div>
-        
-        <form id="uploadForm" class="space-y-4">
-          <div class="flex items-start gap-3">
-            <img id="uploadAvatar" src="" class="w-8 h-8 rounded-full">
-            <textarea id="postCaption" rows="3" placeholder="Write a caption..." required class="flex-1 bg-transparent text-sm resize-none outline-none placeholder-gray-500"></textarea>
-          </div>
-
-          <div class="border-2 border-dashed border-[#262626] rounded-lg p-4 text-center relative hover:border-gray-500 transition">
-            <input type="file" id="postImageInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-            <div id="imagePreviewContainer" class="hidden">
-               <img id="imagePreview" src="" class="max-h-48 mx-auto rounded">
-            </div>
-            <div id="imagePlaceholder" class="text-gray-500 text-sm py-4">
-               <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L28 20M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-               Tap to select a photo
-            </div>
-          </div>
-
-          <button type="submit" class="w-full bg-viu-primary hover:bg-viu-primaryHover text-white font-semibold rounded-md py-3 text-sm transition">Share Post</button>
-        </form>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-[#121212] border border-[#262626] p-6 rounded-lg">
+        <h3 class="text-gray-400 text-sm mb-1">Total Users</h3>
+        <p class="text-3xl font-bold" id="admin-user-count">0</p>
+      </div>
+      <div class="bg-[#121212] border border-[#262626] p-6 rounded-lg">
+        <h3 class="text-gray-400 text-sm mb-1">Total Posts & Stories</h3>
+        <p class="text-3xl font-bold" id="admin-post-count">0</p>
+      </div>
+      <div class="bg-[#121212] border border-[#262626] p-6 rounded-lg flex flex-col justify-center">
+        <button onclick="factoryReset()" class="w-full py-2 bg-rose-900/50 text-rose-400 border border-rose-800 rounded hover:bg-rose-900 transition text-sm">⚠️ WIPE ALL NETWORK DATA</button>
       </div>
     </div>
 
+    <h2 class="text-lg font-bold mb-4 border-b border-[#262626] pb-2">User Registry</h2>
+    <div class="bg-[#121212] border border-[#262626] rounded-lg overflow-x-auto mb-8">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-[#1a1a1a] text-gray-400">
+          <tr><th class="p-3">Avatar</th><th class="p-3">Username</th><th class="p-3">Followers</th><th class="p-3">Following</th><th class="p-3">Actions</th></tr>
+        </thead>
+        <tbody id="admin-user-table" class="divide-y divide-[#262626]"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       3. SOCIAL APP CONTAINER (Mobile View)
+  =========================================== -->
+  <div id="app-container" class="hidden">
+    
+    <!-- Top Header -->
+    <header class="h-14 border-b border-[#262626] flex items-center justify-between px-4 shrink-0 z-20 bg-black">
+      <h1 class="text-xl font-bold italic tracking-tighter" id="app-header-title">Viu</h1>
+      <div class="flex items-center gap-4">
+        <button onclick="openUploadModal()" id="btn-upload" class="text-white hover:text-gray-300">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        </button>
+        <button onclick="logout()" class="text-sm font-semibold text-rose-500">Logout</button>
+      </div>
+    </header>
+
+    <!-- App Views -->
+    <main class="flex-1 overflow-y-auto hide-scrollbar bg-black relative">
+      
+      <!-- FEED TAB -->
+      <div id="tab-feed" class="w-full min-h-full pb-6">
+        <!-- Stories Bar -->
+        <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b border-[#262626]" id="stories-container">
+          <!-- Stories populated here -->
+        </div>
+        <!-- Posts Feed -->
+        <div id="feed-container" class="space-y-6 pt-4"></div>
+      </div>
+
+      <!-- EXPLORE / USERS TAB -->
+      <div id="tab-explore" class="w-full min-h-full hidden p-4">
+        <h2 class="font-bold text-lg mb-4">Discover Users</h2>
+        <div id="explore-container" class="space-y-4"></div>
+      </div>
+
+      <!-- CHAT LIST TAB -->
+      <div id="tab-chatlist" class="w-full min-h-full hidden p-4">
+        <h2 class="font-bold text-lg mb-4">Messages</h2>
+        <div id="chatlist-container" class="space-y-2"></div>
+      </div>
+
+      <!-- ACTIVE CHAT VIEW (Overlays other tabs) -->
+      <div id="active-chat-view" class="absolute inset-0 bg-black z-30 hidden flex flex-col">
+        <div class="h-14 border-b border-[#262626] flex items-center px-4 gap-3 bg-[#121212]">
+          <button onclick="closeChat()" class="text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+          <img id="active-chat-avatar" src="" class="w-8 h-8 rounded-full">
+          <span id="active-chat-name" class="font-bold">Username</span>
+        </div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar"></div>
+        <form id="chatForm" class="p-3 border-t border-[#262626] bg-[#121212] flex gap-2">
+          <input type="text" id="chatInput" placeholder="Message..." required class="flex-1 bg-black border border-[#262626] rounded-full px-4 py-2 text-sm focus:outline-none">
+          <button type="submit" class="text-[#0095f6] font-semibold text-sm px-2">Send</button>
+        </form>
+      </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="h-14 border-t border-[#262626] flex items-center justify-around shrink-0 bg-black pb-safe">
+      <button onclick="switchTab('feed')" class="p-2 nav-btn text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3l10 9h-3v9H5v-9H2z"/></svg></button>
+      <button onclick="switchTab('explore')" class="p-2 nav-btn text-gray-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+      <button onclick="switchTab('chatlist')" class="p-2 nav-btn text-gray-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></button>
+    </nav>
+  </div>
+
+  <!-- ==========================================
+       4. UPLOAD MODAL (Posts & Stories)
+  =========================================== -->
+  <div id="uploadModal" class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col justify-end">
+    <div class="bg-[#121212] w-full max-w-md mx-auto rounded-t-2xl p-4 border-t border-[#262626] fade-in">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-bold text-lg">Create</h2>
+        <button onclick="closeUploadModal()" class="text-gray-400 p-1">✕</button>
+      </div>
+      
+      <div class="flex gap-2 mb-4">
+        <button onclick="setUploadType('post')" id="type-post" class="flex-1 py-1.5 border-b-2 border-white text-white text-sm font-semibold">Post</button>
+        <button onclick="setUploadType('story')" id="type-story" class="flex-1 py-1.5 border-b-2 border-transparent text-gray-500 text-sm font-semibold">Story</button>
+      </div>
+
+      <form id="uploadForm" class="space-y-4">
+        <div id="caption-container" class="flex items-start gap-3">
+          <img id="uploadAvatar" src="" class="w-8 h-8 rounded-full">
+          <textarea id="postCaption" rows="2" placeholder="Write a caption..." class="flex-1 bg-transparent text-sm resize-none outline-none placeholder-gray-500"></textarea>
+        </div>
+
+        <div class="border-2 border-dashed border-[#262626] rounded-lg p-4 text-center relative">
+          <input type="file" id="postImageInput" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+          <div id="imagePreviewContainer" class="hidden">
+             <img id="imagePreview" src="" class="max-h-48 mx-auto rounded">
+          </div>
+          <div id="imagePlaceholder" class="text-gray-500 text-sm py-4">Tap to select photo</div>
+        </div>
+
+        <button type="submit" class="w-full bg-[#0095f6] hover:bg-[#1877f2] text-white font-semibold rounded-md py-3 text-sm transition">Share</button>
+      </form>
+    </div>
   </div>
 
   <script>
     // ==========================================
-    // 1. STATE MANAGEMENT & LOCAL STORAGE
+    // DATABASE SIMULATION (LocalStorage)
     // ==========================================
-    let currentUser = JSON.parse(localStorage.getItem('viu_user')) || null;
-    let posts = JSON.parse(localStorage.getItem('viu_posts')) || [];
-    let chatHistory = JSON.parse(localStorage.getItem('viu_chats')) || [
-      { sender: 'bot', text: 'Welcome to Viu Chat! Say hi! 👋' }
-    ];
+    let DB = JSON.parse(localStorage.getItem('viu_master_db')) || {
+      users: [],      // { username, avatar, followers: [], following: [] }
+      posts: [],      // { id, author, image, caption, likes: [], comments: [], timestamp }
+      stories: [],    // { id, author, image, timestamp }
+      messages: []    // { id, sender, receiver, text, timestamp }
+    };
+    let currentUser = null;
+    let currentChatTarget = null;
+    let uploadType = 'post';
+    let currentImageBase64 = null;
 
-    // Default Seed Data if no posts exist
-    if (posts.length === 0) {
-      posts = [
-        {
-          id: 1,
-          author: 'System',
-          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=System',
-          image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop',
-          caption: 'Welcome to Viu Platform! You can upload your own photos, view reels, and chat using the bottom navigation bar. 🚀',
-          likes: 42,
-          timestamp: new Date().getTime()
-        }
-      ];
-      savePosts();
+    function saveDB() { localStorage.setItem('viu_master_db', JSON.stringify(DB)); }
+
+    // Seed Data if completely empty
+    if(DB.users.length === 0) {
+      const seedUsers = ['Jay', 'Tej'];
+      seedUsers.forEach(u => {
+        DB.users.push({ username: u, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${u}`, followers: [], following: [] });
+      });
+      DB.posts.push({
+        id: 1, author: 'Jay', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600', 
+        caption: 'First post on the new network! Setup is complete.', likes: [], comments: [], timestamp: Date.now()
+      });
+      saveDB();
     }
 
-    // Mock video URLs for Reels (Using robust external sample videos)
-    const mockReels = [
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
-    ];
-
     // ==========================================
-    // 2. INITIALIZATION & AUTHENTICATION
+    // CORE APP LOGIC
     // ==========================================
     function init() {
-      if (currentUser) {
-        document.getElementById('view-login').classList.add('hidden');
-        document.getElementById('view-main').classList.remove('hidden');
-        document.getElementById('navAvatar').src = currentUser.avatar;
-        document.getElementById('uploadAvatar').src = currentUser.avatar;
-        renderFeed();
-        renderChat();
-        initReels();
+      // Render quick login buttons for existing users
+      const userBox = document.getElementById('existing-users');
+      userBox.innerHTML = '';
+      DB.users.forEach(u => {
+        userBox.innerHTML += `<button onclick="forceLogin('${u.username}')" class="px-3 py-1 bg-[#262626] rounded-full text-xs hover:bg-gray-700">${u.username}</button>`;
+      });
+
+      if (!currentUser) {
+        document.getElementById('login-view').classList.remove('hidden');
+        document.getElementById('app-container').classList.add('hidden');
+        document.getElementById('admin-container').style.display = 'none';
+      } else if (currentUser === 'admin') {
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('app-container').classList.add('hidden');
+        document.getElementById('admin-container').style.display = 'block';
+        renderAdminDashboard();
       } else {
-        document.getElementById('view-login').classList.remove('hidden');
-        document.getElementById('view-main').classList.add('hidden');
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        document.getElementById('admin-container').style.display = 'none';
+        
+        document.getElementById('uploadAvatar').src = DB.users.find(u => u.username === currentUser).avatar;
+        switchTab('feed');
       }
     }
 
+    // AUTHENTICATION
     document.getElementById('loginForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const username = document.getElementById('usernameInput').value.trim();
-      if (!username) return;
-
-      currentUser = {
-        username: username,
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`
-      };
-      localStorage.setItem('viu_user', JSON.stringify(currentUser));
-      init();
+      forceLogin(username);
     });
 
-    function logout() {
-      if(confirm('Log out of Viu?')) {
-        currentUser = null;
-        localStorage.removeItem('viu_user');
-        init();
-      }
-    }
-
-    function clearAllData() {
-      if(confirm('Warning: This will delete all posts, chats, and users from your browser storage. Continue?')) {
-        localStorage.clear();
-        location.reload();
-      }
-    }
-
-    // ==========================================
-    // 3. NAVIGATION & TABS
-    // ==========================================
-    function switchTab(tabId) {
-      // Hide all tabs
-      ['feed', 'reels', 'chat'].forEach(id => {
-        document.getElementById(`tab-${id}`).classList.add('hidden');
-        document.getElementById(`nav-${id}`).classList.replace('text-white', 'text-gray-500');
-        
-        // Pause reels videos if navigating away
-        if(id === 'reels' && tabId !== 'reels') {
-           document.querySelectorAll('.reel-video').forEach(vid => vid.pause());
+    function forceLogin(username) {
+      if(username.toLowerCase() === 'admin') {
+        currentUser = 'admin';
+      } else {
+        // Create user if doesn't exist
+        if(!DB.users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+          DB.users.push({ username: username, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`, followers: [], following: [] });
+          saveDB();
         }
+        // Ensure exact case matching from DB
+        currentUser = DB.users.find(u => u.username.toLowerCase() === username.toLowerCase()).username;
+      }
+      document.getElementById('usernameInput').value = '';
+      init();
+    }
+
+    function logout() { currentUser = null; init(); }
+
+    function switchTab(tab) {
+      ['feed', 'explore', 'chatlist'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
       });
-
-      // Show selected tab
-      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
       
-      // Update icon states
-      const activeBtn = document.getElementById(`nav-${tabId}`);
-      activeBtn.classList.replace('text-gray-500', 'text-white');
-
-      // Top Header text update
-      const headerTitle = document.getElementById('headerTitle');
-      const uploadBtn = document.getElementById('uploadBtn');
-      if (tabId === 'feed') {
-        headerTitle.innerText = 'Viu';
-        uploadBtn.classList.remove('hidden');
-      } else if (tabId === 'reels') {
-        headerTitle.innerText = 'Reels';
-        uploadBtn.classList.add('hidden');
-        // Play visible reel
-        playVisibleReel();
-      } else if (tabId === 'chat') {
-        headerTitle.innerText = 'Direct Messages';
-        uploadBtn.classList.add('hidden');
-        const chatBox = document.getElementById('chat-messages');
-        chatBox.scrollTop = chatBox.scrollHeight;
+      const navBtns = document.querySelectorAll('.nav-btn');
+      navBtns.forEach(btn => btn.classList.replace('text-white', 'text-gray-500'));
+      
+      if(tab === 'feed') {
+        navBtns[0].classList.replace('text-gray-500', 'text-white');
+        document.getElementById('app-header-title').innerText = 'Viu Feed';
+        renderFeed();
+        renderStories();
+      } else if (tab === 'explore') {
+        navBtns[1].classList.replace('text-gray-500', 'text-white');
+        document.getElementById('app-header-title').innerText = 'Discover';
+        renderExplore();
+      } else if (tab === 'chatlist') {
+        navBtns[2].classList.replace('text-gray-500', 'text-white');
+        document.getElementById('app-header-title').innerText = 'Messages';
+        renderChatList();
       }
     }
 
     // ==========================================
-    // 4. FEED & UPLOAD FUNCTIONALITY
+    // FEED & EXPLORE LOGIC
     // ==========================================
-    function savePosts() {
-      localStorage.setItem('viu_posts', JSON.stringify(posts));
-    }
-
     function renderFeed() {
       const container = document.getElementById('feed-container');
       container.innerHTML = '';
-
-      // Sort newest first
-      const sortedPosts = [...posts].sort((a, b) => b.timestamp - a.timestamp);
+      const sortedPosts = [...DB.posts].sort((a, b) => b.timestamp - a.timestamp);
 
       sortedPosts.forEach(post => {
-        const timeStr = new Date(post.timestamp).toLocaleDateString();
-        const postHTML = `
-          <article class="bg-[#000] border-b border-[#262626] pb-4 fade-in">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-3 py-3">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 to-fuchsia-600 p-[2px]">
-                  <img src="${post.avatar}" class="w-full h-full rounded-full bg-black border border-black">
-                </div>
-                <div class="font-semibold text-sm">${post.author}</div>
-              </div>
-              <button class="text-gray-400 hover:text-white"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14a2 2 0 100-4 2 2 0 000 4zm-6 0a2 2 0 100-4 2 2 0 000 4zm12 0a2 2 0 100-4 2 2 0 000 4z"></path></svg></button>
+        const isLiked = post.likes.includes(currentUser);
+        const postUser = DB.users.find(u => u.username === post.author);
+        container.innerHTML += `
+          <div class="bg-black border-b border-[#262626] pb-4 fade-in">
+            <div class="flex items-center p-3 gap-3">
+              <img src="${postUser.avatar}" class="w-8 h-8 rounded-full border border-[#262626]">
+              <span class="font-semibold text-sm">${post.author}</span>
             </div>
-            <!-- Image -->
-            ${post.image ? `<img src="${post.image}" class="w-full object-cover max-h-[500px]" ondblclick="likePost(${post.id})">` : ''}
-            <!-- Actions -->
-            <div class="px-3 pt-3 flex gap-4">
-              <button onclick="likePost(${post.id})" class="text-white hover:text-gray-300 transform active:scale-75 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-              </button>
-              <button class="text-white hover:text-gray-300"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></button>
-              <button class="text-white hover:text-gray-300"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button>
-            </div>
-            <!-- Likes & Caption -->
-            <div class="px-3 pt-2">
-              <div class="font-semibold text-sm mb-1" id="likes-${post.id}">${post.likes} likes</div>
+            <img src="${post.image}" class="w-full object-cover max-h-[400px]">
+            <div class="p-3">
+              <button onclick="toggleLike(${post.id})" class="${isLiked ? 'text-rose-500' : 'text-white'} font-bold text-xl mb-2">♥</button>
+              <div class="font-semibold text-sm mb-1">${post.likes.length} likes</div>
               <div class="text-sm"><span class="font-semibold mr-1">${post.author}</span>${post.caption}</div>
-              <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wide">${timeStr}</div>
+              
+              <!-- Comments -->
+              <div class="mt-2 space-y-1">
+                ${post.comments.map(c => `<div class="text-xs"><span class="font-semibold mr-1">${c.author}</span><span class="text-gray-300">${c.text}</span></div>`).join('')}
+              </div>
+              <div class="mt-2 flex gap-2">
+                <input type="text" id="comment-${post.id}" placeholder="Add a comment..." class="flex-1 bg-transparent text-xs outline-none border-b border-[#262626] pb-1">
+                <button onclick="addComment(${post.id})" class="text-[#0095f6] text-xs font-semibold">Post</button>
+              </div>
             </div>
-          </article>
+          </div>
         `;
-        container.insertAdjacentHTML('beforeend', postHTML);
       });
     }
 
-    function likePost(id) {
-      const post = posts.find(p => p.id === id);
-      if(post) {
-        post.likes++;
-        document.getElementById(`likes-${id}`).innerText = `${post.likes} likes`;
-        savePosts();
-      }
+    function toggleLike(postId) {
+      const post = DB.posts.find(p => p.id === postId);
+      if(post.likes.includes(currentUser)) post.likes = post.likes.filter(u => u !== currentUser);
+      else post.likes.push(currentUser);
+      saveDB(); renderFeed();
     }
 
-    // Upload Modal Handlers
-    let currentImageBase64 = null;
+    function addComment(postId) {
+      const input = document.getElementById(`comment-${postId}`);
+      const text = input.value.trim();
+      if(!text) return;
+      const post = DB.posts.find(p => p.id === postId);
+      post.comments.push({ author: currentUser, text: text });
+      saveDB(); renderFeed();
+    }
 
-    function openUploadModal() {
+    function renderStories() {
+      const container = document.getElementById('stories-container');
+      container.innerHTML = `
+        <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="openUploadModal('story')">
+          <div class="w-16 h-16 rounded-full border border-gray-600 flex items-center justify-center text-2xl text-gray-400">+</div>
+          <span class="text-xs text-gray-400">Add Story</span>
+        </div>
+      `;
+      // Filter stories to last 24h
+      const recentStories = DB.stories.filter(s => (Date.now() - s.timestamp) < 86400000);
+      recentStories.forEach(story => {
+        const sUser = DB.users.find(u => u.username === story.author);
+        container.innerHTML += `
+          <div class="flex flex-col items-center gap-1" onclick="alert('Viewing story by ${story.author}')">
+            <div class="story-ring w-16 h-16 rounded-full p-[2px]">
+              <img src="${sUser.avatar}" class="w-full h-full rounded-full border-2 border-black object-cover bg-black">
+            </div>
+            <span class="text-xs">${story.author}</span>
+          </div>
+        `;
+      });
+    }
+
+    function renderExplore() {
+      const container = document.getElementById('explore-container');
+      container.innerHTML = '';
+      const me = DB.users.find(u => u.username === currentUser);
+      
+      DB.users.forEach(u => {
+        if(u.username === currentUser) return;
+        const isFollowing = me.following.includes(u.username);
+        container.innerHTML += `
+          <div class="flex items-center justify-between p-3 bg-[#121212] rounded-lg border border-[#262626]">
+            <div class="flex items-center gap-3">
+              <img src="${u.avatar}" class="w-10 h-10 rounded-full">
+              <div>
+                <div class="font-semibold text-sm">${u.username}</div>
+                <div class="text-xs text-gray-500">${u.followers.length} followers</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="toggleFollow('${u.username}')" class="px-4 py-1.5 rounded text-xs font-semibold ${isFollowing ? 'bg-[#262626] text-white' : 'bg-[#0095f6] text-white'}">${isFollowing ? 'Following' : 'Follow'}</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function toggleFollow(targetUser) {
+      const me = DB.users.find(u => u.username === currentUser);
+      const target = DB.users.find(u => u.username === targetUser);
+      if(me.following.includes(targetUser)) {
+        me.following = me.following.filter(u => u !== targetUser);
+        target.followers = target.followers.filter(u => u !== currentUser);
+      } else {
+        me.following.push(targetUser);
+        target.followers.push(currentUser);
+      }
+      saveDB(); renderExplore();
+    }
+
+    // ==========================================
+    // CHAT MESSAGING LOGIC
+    // ==========================================
+    function renderChatList() {
+      const container = document.getElementById('chatlist-container');
+      container.innerHTML = '';
+      
+      DB.users.forEach(u => {
+        if(u.username === currentUser) return;
+        // Check if there are messages
+        const thread = DB.messages.filter(m => (m.sender === currentUser && m.receiver === u.username) || (m.sender === u.username && m.receiver === currentUser));
+        const lastMsg = thread.length > 0 ? thread[thread.length-1].text : 'Tap to chat';
+        
+        container.innerHTML += `
+          <div onclick="openChat('${u.username}', '${u.avatar}')" class="flex items-center p-3 hover:bg-[#121212] rounded-lg cursor-pointer transition gap-3">
+            <img src="${u.avatar}" class="w-12 h-12 rounded-full border border-[#262626]">
+            <div class="flex-1 overflow-hidden">
+              <div class="font-semibold text-sm">${u.username}</div>
+              <div class="text-xs text-gray-500 truncate">${lastMsg}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openChat(targetUsername, avatar) {
+      currentChatTarget = targetUsername;
+      document.getElementById('active-chat-avatar').src = avatar;
+      document.getElementById('active-chat-name').innerText = targetUsername;
+      document.getElementById('active-chat-view').classList.remove('hidden');
+      renderMessages();
+    }
+
+    function closeChat() {
+      document.getElementById('active-chat-view').classList.add('hidden');
+      currentChatTarget = null;
+      renderChatList();
+    }
+
+    function renderMessages() {
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '';
+      const thread = DB.messages.filter(m => (m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser));
+      
+      thread.forEach(msg => {
+        const isMe = msg.sender === currentUser;
+        container.innerHTML += `<div class="chat-bubble ${isMe ? 'chat-sent' : 'chat-recv'} fade-in">${msg.text}</div>`;
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    document.getElementById('chatForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = document.getElementById('chatInput').value.trim();
+      if(!text || !currentChatTarget) return;
+
+      DB.messages.push({
+        id: Date.now(), sender: currentUser, receiver: currentChatTarget, text: text, timestamp: Date.now()
+      });
+      saveDB();
+      document.getElementById('chatInput').value = '';
+      renderMessages();
+    });
+
+    // ==========================================
+    // UPLOAD LOGIC
+    // ==========================================
+    function openUploadModal(type = 'post') {
       document.getElementById('uploadModal').classList.remove('hidden');
+      setUploadType(type);
       document.getElementById('postCaption').value = '';
       currentImageBase64 = null;
       document.getElementById('imagePreviewContainer').classList.add('hidden');
       document.getElementById('imagePlaceholder').classList.remove('hidden');
     }
 
-    function closeUploadModal() {
-      document.getElementById('uploadModal').classList.add('hidden');
+    function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
+
+    function setUploadType(type) {
+      uploadType = type;
+      document.getElementById('type-post').className = `flex-1 py-1.5 text-sm font-semibold border-b-2 ${type==='post' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
+      document.getElementById('type-story').className = `flex-1 py-1.5 text-sm font-semibold border-b-2 ${type==='story' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
+      document.getElementById('caption-container').style.display = type === 'post' ? 'flex' : 'none';
     }
 
     document.getElementById('postImageInput').addEventListener('change', function(e) {
@@ -423,152 +520,60 @@
 
     document.getElementById('uploadForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const caption = document.getElementById('postCaption').value.trim();
+      if(!currentImageBase64) return;
       
-      const newPost = {
-        id: new Date().getTime(),
-        author: currentUser.username,
-        avatar: currentUser.avatar,
-        image: currentImageBase64,
-        caption: caption,
-        likes: 0,
-        timestamp: new Date().getTime()
-      };
-
-      posts.push(newPost);
-      savePosts();
-      renderFeed();
-      closeUploadModal();
-      document.getElementById('content-area').scrollTop = 0;
-    });
-
-    // ==========================================
-    // 5. REELS FUNCTIONALITY
-    // ==========================================
-    function initReels() {
-      const container = document.getElementById('reels-container');
-      container.innerHTML = '';
-
-      mockReels.forEach((url, index) => {
-        const reelHTML = `
-          <div class="reel-item flex flex-col justify-center items-center">
-            <video src="${url}" class="reel-video w-full h-full object-cover" loop playsinline muted></video>
-            
-            <!-- Overlay UI -->
-            <div class="absolute bottom-16 left-4 right-16 z-10 text-white shadow-black">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-8 h-8 rounded-full bg-white p-0.5"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Creator${index}" class="rounded-full bg-black"></div>
-                <span class="font-semibold text-sm drop-shadow-md">Creator_${index+1}</span>
-                <button class="border border-white text-xs px-2 py-0.5 rounded text-white font-semibold drop-shadow-md backdrop-blur-sm">Follow</button>
-              </div>
-              <p class="text-sm drop-shadow-md line-clamp-2">Awesome scenic view for today's reel! #nature #vibes</p>
-            </div>
-
-            <!-- Right Actions -->
-            <div class="absolute bottom-16 right-2 z-10 flex flex-col items-center gap-4 text-white drop-shadow-lg">
-              <button class="flex flex-col items-center hover:text-gray-300">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                <span class="text-xs mt-1 font-semibold">${Math.floor(Math.random()*900)+100}</span>
-              </button>
-              <button class="flex flex-col items-center hover:text-gray-300">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                <span class="text-xs mt-1 font-semibold">42</span>
-              </button>
-              <button class="flex flex-col items-center hover:text-gray-300">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-              </button>
-            </div>
-          </div>
-        `;
-        container.insertAdjacentHTML('beforeend', reelHTML);
-      });
-
-      // Intersection Observer to autoplay active reel
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          const video = entry.target.querySelector('video');
-          if (entry.isIntersecting) {
-            video.play().catch(e => console.log('Autoplay prevented'));
-            video.muted = false; // Optional: unmute when in view, though browsers might block it initially
-          } else {
-            video.pause();
-            video.currentTime = 0;
-          }
+      if(uploadType === 'post') {
+        DB.posts.push({
+          id: Date.now(), author: currentUser, image: currentImageBase64,
+          caption: document.getElementById('postCaption').value.trim(),
+          likes: [], comments: [], timestamp: Date.now()
         });
-      }, { threshold: 0.6 });
-
-      document.querySelectorAll('.reel-item').forEach(item => observer.observe(item));
-    }
-
-    function playVisibleReel() {
-      const videos = document.querySelectorAll('.reel-video');
-      videos.forEach(v => {
-        const rect = v.getBoundingClientRect();
-        if(rect.top >= 0 && rect.bottom <= window.innerHeight) {
-          v.play().catch(e=>{});
-        }
-      });
-    }
-
-    // ==========================================
-    // 6. CHAT & BOT FUNCTIONALITY
-    // ==========================================
-    function saveChat() {
-      localStorage.setItem('viu_chats', JSON.stringify(chatHistory));
-    }
-
-    function renderChat() {
-      const container = document.getElementById('chat-messages');
-      container.innerHTML = '';
-      
-      chatHistory.forEach(msg => {
-        const isBot = msg.sender === 'bot';
-        const div = document.createElement('div');
-        div.className = `chat-bubble fade-in ${isBot ? 'chat-recv' : 'chat-sent'}`;
-        div.innerText = msg.text;
-        container.appendChild(div);
-      });
-      container.scrollTop = container.scrollHeight;
-    }
-
-    document.getElementById('chatForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if(!text) return;
-
-      // User Message
-      chatHistory.push({ sender: 'user', text: text });
-      saveChat();
-      renderChat();
-      input.value = '';
-
-      // Typing Indicator Simulation
-      const container = document.getElementById('chat-messages');
-      const typingDiv = document.createElement('div');
-      typingDiv.className = 'chat-bubble chat-recv text-gray-400 italic text-xs';
-      typingDiv.id = 'typing-indicator';
-      typingDiv.innerText = 'typing...';
-      container.appendChild(typingDiv);
-      container.scrollTop = container.scrollHeight;
-
-      // Bot Auto-Reply
-      setTimeout(() => {
-        document.getElementById('typing-indicator').remove();
-        
-        let reply = "I received your message! As a demo bot, I don't have AI connected, but your UI looks great.";
-        if(text.toLowerCase().includes('hi') || text.toLowerCase().includes('hello')) reply = `Hey ${currentUser.username}! How's your day going?`;
-        else if(text.toLowerCase().includes('help')) reply = "You can upload posts using the + button on the feed tab, or watch videos on the Reels tab!";
-        
-        chatHistory.push({ sender: 'bot', text: reply });
-        saveChat();
-        renderChat();
-      }, 1500);
+      } else {
+        DB.stories.push({ id: Date.now(), author: currentUser, image: currentImageBase64, timestamp: Date.now() });
+      }
+      saveDB(); closeUploadModal(); switchTab('feed');
     });
 
-    // Run Initialization
-    init();
+    // ==========================================
+    // MASTER ADMIN LOGIC
+    // ==========================================
+    function renderAdminDashboard() {
+      document.getElementById('admin-user-count').innerText = DB.users.length;
+      document.getElementById('admin-post-count').innerText = DB.posts.length + DB.stories.length;
+      
+      const tbody = document.getElementById('admin-user-table');
+      tbody.innerHTML = '';
+      DB.users.forEach(u => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-[#1a1a1a]">
+            <td class="p-3"><img src="${u.avatar}" class="w-8 h-8 rounded-full"></td>
+            <td class="p-3 font-semibold">${u.username}</td>
+            <td class="p-3 text-gray-400">${u.followers.length}</td>
+            <td class="p-3 text-gray-400">${u.following.length}</td>
+            <td class="p-3"><button onclick="adminDeleteUser('${u.username}')" class="text-rose-500 hover:text-white bg-rose-900/30 px-2 py-1 rounded text-xs">Delete</button></td>
+          </tr>
+        `;
+      });
+    }
 
+    function adminDeleteUser(username) {
+      if(confirm(`WARNING: Erase user ${username} and all their data?`)) {
+        DB.users = DB.users.filter(u => u.username !== username);
+        DB.posts = DB.posts.filter(p => p.author !== username);
+        DB.stories = DB.stories.filter(s => s.author !== username);
+        DB.messages = DB.messages.filter(m => m.sender !== username && m.receiver !== username);
+        saveDB(); renderAdminDashboard();
+      }
+    }
+
+    function factoryReset() {
+      if(confirm('CRITICAL WARNING: This will delete ALL users, posts, stories, and messages. Proceed?')) {
+        localStorage.removeItem('viu_master_db');
+        location.reload();
+      }
+    }
+
+    init();
   </script>
 </body>
 </html>
