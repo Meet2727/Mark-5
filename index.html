@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AquaNode // IoT Solar Telemetry</title>
+  <title>Meet V. Patel // Engineering Deck</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,15 +18,19 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Outfit', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
           },
           colors: {
-            solar: '#fbbf24',
-            water: '#0ea5e9',
-            dark: '#0f172a',
-            panel: '#1e293b',
-            accent: '#38bdf8'
+            brand: {
+              dark: '#0a0a0f',
+              glass: 'rgba(20, 20, 30, 0.65)',
+              border: 'rgba(255, 255, 255, 0.08)',
+              accent: '#8b5cf6', // Violet
+              glow: '#c4b5fd',
+              success: '#10b981',
+              cyan: '#06b6d4'
+            }
           }
         }
       }
@@ -35,368 +39,500 @@
 
   <style>
     body {
-      background-color: #0b0f19;
-      color: #f8fafc;
+      background: radial-gradient(circle at 15% 50%, #1e1b4b, #0a0a0f 45%, #050505 100%);
+      color: #e2e8f0;
       overflow-x: hidden;
     }
 
-    /* Custom Glass Cards */
-    .telemetry-card {
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      border: 1px solid rgba(56, 189, 248, 0.15);
-      border-radius: 1rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Animated SVG Waves */
-    .wave-container {
+    /* Ambient Animated Orbs */
+    .bg-orb {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 100px;
-      overflow: hidden;
-      z-index: 0;
-      opacity: 0.3;
-    }
-    .wave {
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 200%; height: 100%;
-      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDEyMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZD0iTTMyMS4zOSw1Ni40NEMyMjguMDksOC4yNSwxMTEuNzMsMCwwLDBWMTIwaDEyMDBWMEMxMTA0LjU0LDAsOTk3LjcyLDguMjUsOTAyLjcyLDU2LjQ0QzgwOC4wMiwxMDQuNjIsNjg1LjcyLDEyMCw1OTguNzIsMTIwQzUxMS43MiwxMjAsMzg5LjAyLDEwNC42MiwzMjEuMzksNTYuNDRaIiBmaWxsPSIjMGVhNWU5IiBvcGFjaXR5PSIwLjMiPjwvcGF0aD48L3N2Zz4=') repeat-x;
-      background-size: 50% 100%;
-      animation: wave-anim 10s linear infinite;
-    }
-    .wave:nth-child(2) {
-      bottom: -10px;
-      opacity: 0.5;
-      animation: wave-anim 7s linear infinite reverse;
-    }
-    @keyframes wave-anim {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    /* Sun Glow */
-    .sun-glow {
-      box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
-      animation: pulse-sun 4s ease-in-out infinite alternate;
-    }
-    @keyframes pulse-sun {
-      0% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.2); }
-      100% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.6); }
-    }
-
-    /* Status Indicator */
-    .status-dot {
-      height: 8px; width: 8px;
       border-radius: 50%;
-      display: inline-block;
-      box-shadow: 0 0 10px currentColor;
+      filter: blur(80px);
+      z-index: -1;
+      animation: float 20s infinite ease-in-out alternate;
+    }
+    .orb-1 { width: 400px; height: 400px; background: rgba(139, 92, 246, 0.15); top: -100px; left: -100px; }
+    .orb-2 { width: 500px; height: 500px; background: rgba(6, 182, 212, 0.1); bottom: -200px; right: -100px; animation-delay: -5s; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(30px, 50px); }
     }
 
-    /* Switch Toggle */
-    .toggle-checkbox:checked { right: 0; border-color: #38bdf8; }
-    .toggle-checkbox:checked + .toggle-label { background-color: #0ea5e9; }
+    /* Glassmorphism Panels */
+    .glass-panel {
+      background: var(--brand-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .glass-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+    }
+    .glass-btn:hover, .glass-btn.active {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+    }
+
+    /* Terminal Typing Effect */
+    .typing-cursor::after {
+      content: '█';
+      animation: blink 1s step-start infinite;
+      color: #8b5cf6;
+      margin-left: 4px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
+
+    /* Boot Overlay */
+    #bootOverlay {
+      transition: opacity 0.8s ease;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-accent selection:text-dark">
+<body class="font-sans antialiased min-h-screen relative flex flex-col selection:bg-violet-500/30 selection:text-violet-200">
 
-  <!-- TOP NAV -->
-  <nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-water to-accent flex items-center justify-center">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+  <!-- Background Ambience -->
+  <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiLz4KPC9zdmc+')] opacity-50"></div>
+  </div>
+
+  <!-- BOOT SEQUENCE OVERLAY -->
+  <div id="bootOverlay" class="fixed inset-0 z-50 bg-[#050508] flex flex-col justify-end p-8 font-mono text-sm text-brand-success">
+    <div id="bootTerminal" class="max-w-3xl space-y-1 mb-8 opacity-80"></div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav class="glass-panel border-b-0 border-x-0 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(139,92,246,0.4)]">
+            MP
+          </div>
+          <div>
+            <h1 class="font-semibold text-gray-100 tracking-wide text-sm">MEET V. PATEL</h1>
+            <p class="text-[10px] text-violet-400 font-mono tracking-widest uppercase">.NET Backend Engineer</p>
+          </div>
         </div>
-        <div>
-          <h1 class="font-bold text-lg leading-tight tracking-wide">AQUANODE // IoT</h1>
-          <p class="text-[10px] text-slate-400 font-mono uppercase tracking-widest">Distributed Telemetry Interface</p>
-        </div>
-      </div>
-      
-      <div class="flex items-center gap-4 font-mono text-xs text-slate-300">
-        <div class="hidden sm:flex items-center gap-2">
-          <span class="status-dot text-emerald-400 bg-emerald-400 animate-pulse"></span>
-          <span>SYSTEM ONLINE</span>
-        </div>
-        <div class="bg-slate-800 px-3 py-1 rounded border border-slate-700">
-          <span id="clock" class="text-accent">00:00:00</span>
+        
+        <div class="flex gap-2">
+          <button onclick="switchTab('dashboard')" id="btn-dashboard" class="glass-btn active px-4 py-1.5 rounded-md text-xs font-medium tracking-wide">DASHBOARD</button>
+          <button onclick="switchTab('projects')" id="btn-projects" class="glass-btn px-4 py-1.5 rounded-md text-xs font-medium tracking-wide">PROJECTS</button>
+          <button onclick="switchTab('sandbox')" id="btn-sandbox" class="glass-btn px-4 py-1.5 rounded-md text-xs font-medium tracking-wide hidden sm:block">SANDBOX</button>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- MAIN DASHBOARD -->
-  <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-    
-    <!-- HEADER STATS -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-        <div class="text-[10px] text-slate-400 font-mono mb-1">LOCAL WEATHER // NAVSARI</div>
-        <div class="text-xl font-bold text-white">32°C <span class="text-solar text-sm">☀ Clear</span></div>
-      </div>
-      <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-        <div class="text-[10px] text-slate-400 font-mono mb-1">ACTIVE TARGET</div>
-        <div class="text-xl font-bold text-white">500L <span class="text-slate-400 text-sm font-normal">Reservoir</span></div>
-      </div>
-      <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-        <div class="text-[10px] text-slate-400 font-mono mb-1">BIOTIC OCCUPANCY</div>
-        <div class="text-xl font-bold text-emerald-400">12 <span class="text-slate-400 text-sm font-normal">Units Detected</span></div>
-      </div>
-      <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-        <div class="text-[10px] text-slate-400 font-mono mb-1">SYSTEM UPTIME</div>
-        <div class="text-xl font-bold text-white" id="uptimeCounter">99.9%</div>
-      </div>
-    </div>
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 
-    <!-- MAIN GRID -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- ==========================================
+         TAB: DASHBOARD
+    =========================================== -->
+    <section id="tab-dashboard" class="tab-content space-y-6">
       
-      <!-- 1. SOLAR POWER MATRIX -->
-      <div class="telemetry-card p-6 flex flex-col col-span-1">
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h2 class="text-sm font-mono text-solar tracking-widest uppercase">Solar Array Matrix</h2>
-            <p class="text-[10px] text-slate-400 mt-1">20W Monocrystalline PV</p>
+      <!-- Top Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Profile Card -->
+        <div class="glass-panel rounded-xl p-6 lg:col-span-1 flex flex-col">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-16 h-16 rounded-full border-2 border-violet-500/30 p-1 flex items-center justify-center bg-violet-900/20">
+              <svg class="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            </div>
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
           </div>
-          <div class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center sun-glow text-solar">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <h2 class="text-xl font-bold text-white mb-1">Meet V. Patel</h2>
+          <p class="text-sm text-gray-400 mb-4">Software Developer specializing in robust backend architectures, seamless API integrations, and efficient database management.</p>
+          
+          <div class="mt-auto space-y-3 pt-4 border-t border-white/5">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">CURRENT STATUS</span>
+              <span class="text-cyan-400 font-mono">DEPLOYING MODULES</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">LOCATION</span>
+              <span class="text-gray-300 font-mono">GUJARAT, INDIA</span>
+            </div>
           </div>
         </div>
 
-        <div class="flex items-end gap-2 mb-2 z-10 relative">
-          <span class="text-5xl font-bold text-white" id="solarWattage">18.4</span>
-          <span class="text-lg text-slate-400 mb-1">W</span>
+        <!-- Tech Stack Matrix -->
+        <div class="glass-panel rounded-xl p-6 lg:col-span-2">
+          <h3 class="text-xs font-mono text-gray-400 uppercase tracking-widest mb-4">Core Competency Matrix</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#512bd4]/20 text-[#512bd4] flex items-center justify-center font-bold">.N</div>
+              <div>
+                <div class="text-sm font-semibold text-white">.NET Core</div>
+                <div class="text-[10px] text-gray-500">Architecture</div>
+              </div>
+            </div>
+
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#239120]/20 text-[#239120] flex items-center justify-center font-bold text-lg">C#</div>
+              <div>
+                <div class="text-sm font-semibold text-white">C#</div>
+                <div class="text-[10px] text-gray-500">Primary Logic</div>
+              </div>
+            </div>
+
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#f29111]/20 text-[#f29111] flex items-center justify-center font-bold text-xs">SQL</div>
+              <div>
+                <div class="text-sm font-semibold text-white">SQL Server</div>
+                <div class="text-[10px] text-gray-500">Database</div>
+              </div>
+            </div>
+
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#ff6c37]/20 text-[#ff6c37] flex items-center justify-center font-bold">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-white">Postman</div>
+                <div class="text-[10px] text-gray-500">API Testing</div>
+              </div>
+            </div>
+
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#f05032]/20 text-[#f05032] flex items-center justify-center font-bold">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.96 0C5.36 0 0 5.36 0 11.96c0 5.28 3.42 9.76 8.16 11.34.6.11.82-.26.82-.58 0-.29-.01-1.04-.01-2.04-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4 11.5 11.5 0 0 1 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.6-.01 2.89-.01 3.28 0 .32.22.7.83.58A12.02 12.02 0 0 0 24 11.96C24 5.36 18.64 0 11.96 0z"/></svg>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-white">Git / GitHub</div>
+                <div class="text-[10px] text-gray-500">Version Control</div>
+              </div>
+            </div>
+
+            <!-- Replaced logic design with real-time sockets for the chat app theme -->
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-white">SignalR / WS</div>
+                <div class="text-[10px] text-gray-500">Real-Time Data</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Contribution Graph (Canvas) -->
+      <div class="glass-panel rounded-xl p-6">
+        <div class="flex justify-between items-end mb-4">
+          <div>
+            <h3 class="text-xs font-mono text-gray-400 uppercase tracking-widest">Commit Activity Visualizer</h3>
+            <p class="text-sm text-gray-500 mt-1">Simulated high-frequency deployment grid</p>
+          </div>
+          <button onclick="scrambleGraph()" class="text-[10px] text-violet-400 hover:text-white transition font-mono border border-violet-500/30 px-2 py-1 rounded bg-violet-500/10">SCRAMBLE DATA</button>
         </div>
         
-        <div class="space-y-3 z-10 relative mt-4">
-          <div class="flex justify-between text-xs font-mono border-b border-slate-700 pb-1">
-            <span class="text-slate-400">INPUT VOLTAGE</span>
-            <span class="text-accent" id="solarVoltage">13.8 V</span>
-          </div>
-          <div class="flex justify-between text-xs font-mono border-b border-slate-700 pb-1">
-            <span class="text-slate-400">CURRENT (AMP)</span>
-            <span class="text-accent" id="solarCurrent">1.33 A</span>
-          </div>
-          <div class="flex justify-between text-xs font-mono">
-            <span class="text-slate-400">EFFICIENCY</span>
-            <span class="text-emerald-400">92%</span>
-          </div>
+        <div class="w-full overflow-x-auto">
+          <canvas id="contributionGraph" height="110" class="min-w-[600px] w-full"></canvas>
         </div>
-
-        <!-- Mini Line Chart for Solar -->
-        <div class="mt-auto pt-6 h-24 w-full relative z-10">
-           <canvas id="solarChartCanvas" class="w-full h-full"></canvas>
+        <div class="flex justify-end gap-2 items-center mt-2 text-[10px] font-mono text-gray-500">
+          <span>Less</span>
+          <span class="w-3 h-3 rounded-sm bg-[#161b22] border border-white/5"></span>
+          <span class="w-3 h-3 rounded-sm bg-[#0e4429]"></span>
+          <span class="w-3 h-3 rounded-sm bg-[#006d32]"></span>
+          <span class="w-3 h-3 rounded-sm bg-[#26a641]"></span>
+          <span class="w-3 h-3 rounded-sm bg-[#39d353]"></span>
+          <span>More</span>
         </div>
       </div>
 
-      <!-- 2. FLUID DYNAMICS / PUMP CONTROL -->
-      <div class="telemetry-card p-6 flex flex-col col-span-1 relative">
-        <div class="wave-container">
-          <div class="wave"></div>
-          <div class="wave"></div>
-        </div>
+    </section>
 
-        <div class="flex justify-between items-start mb-6 z-10 relative">
-          <div>
-            <h2 class="text-sm font-mono text-water tracking-widest uppercase">DC Pump Controller</h2>
-            <p class="text-[10px] text-slate-400 mt-1">12V Submersible Filtration</p>
-          </div>
-          <div class="w-10 h-10 rounded-full bg-sky-500/20 border border-sky-500/50 flex items-center justify-center text-water shadow-[0_0_15px_rgba(14,165,233,0.3)]">
-            <svg class="w-5 h-5 animate-spin-slow" style="animation: spin 3s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-          </div>
-        </div>
-
-        <div class="z-10 relative flex justify-between items-center mb-6 bg-slate-900/60 p-3 rounded border border-slate-700">
-          <span class="text-xs font-mono text-slate-300">PUMP STATE</span>
-          <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-            <input type="checkbox" name="toggle" id="pumpToggle" checked class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 top-0.5 left-0.5 transition-transform duration-200 ease-in-out transform translate-x-6 border-sky-500"/>
-            <label for="pumpToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-sky-500 cursor-pointer transition-colors duration-200"></label>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 z-10 relative">
-          <div class="bg-slate-900/60 p-3 rounded border border-slate-700/50">
-            <div class="text-[10px] text-slate-400 font-mono">FLOW RATE</div>
-            <div class="text-xl font-bold text-white mt-1" id="flowRate">850 <span class="text-xs font-normal text-slate-500">L/H</span></div>
-          </div>
-          <div class="bg-slate-900/60 p-3 rounded border border-slate-700/50">
-            <div class="text-[10px] text-slate-400 font-mono">FILTRATION</div>
-            <div class="text-xl font-bold text-emerald-400 mt-1">OPTIMAL</div>
-          </div>
-          <div class="bg-slate-900/60 p-3 rounded border border-slate-700/50 col-span-2">
-            <div class="flex justify-between items-center">
-              <div class="text-[10px] text-slate-400 font-mono">WATER TEMPERATURE</div>
-              <div class="text-lg font-bold text-white">24.5 °C</div>
-            </div>
-            <!-- Progress bar -->
-            <div class="w-full bg-slate-800 h-1.5 mt-2 rounded-full overflow-hidden">
-              <div class="bg-gradient-to-r from-water to-emerald-400 h-full w-[65%]"></div>
-            </div>
-          </div>
-        </div>
+    <!-- ==========================================
+         TAB: PROJECTS
+    =========================================== -->
+    <section id="tab-projects" class="tab-content hidden space-y-6">
+      
+      <div class="glass-panel rounded-xl p-6 mb-6">
+        <h2 class="text-xl font-bold text-white">Engineering Portfolio</h2>
+        <p class="text-sm text-gray-400 mt-1">A selection of enterprise integrations, backend architectures, and real-time social platforms.</p>
       </div>
 
-      <!-- 3. LIVE DIAGNOSTIC TERMINAL -->
-      <div class="telemetry-card flex flex-col col-span-1 lg:col-span-1 p-0 border border-slate-700">
-        <div class="bg-slate-900/80 p-3 border-b border-slate-700 flex justify-between items-center">
-           <h2 class="text-xs font-mono text-slate-300">> SYSTEM_LOGS</h2>
-           <button onclick="clearLogs()" class="text-[10px] text-slate-500 hover:text-white transition">CLEAR</button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Project 1 -->
+        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-violet-500 hover:-translate-y-1 transition duration-300 group">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-bold text-white group-hover:text-violet-400 transition">Hotel Supplier Module Integration</h3>
+            <span class="px-2 py-1 rounded bg-violet-500/20 text-violet-300 text-[10px] font-mono border border-violet-500/20">ENTERPRISE API</span>
+          </div>
+          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
+            Engineered seamless B2B connectivity for hotel booking systems. Developed and optimized complex RESTful payloads via Postman, mapping JSON/XML vendor data into a unified .NET core ecosystem.
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">C#</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">.NET API</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">SQL Server</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Postman</span>
+          </div>
         </div>
-        <div id="terminalOutput" class="flex-1 p-4 font-mono text-[11px] text-slate-400 overflow-y-auto space-y-2 h-[280px] bg-[#090d16]">
-          <!-- Logs populate here -->
-        </div>
-        <div class="p-3 border-t border-slate-700 bg-slate-900/50 flex gap-2">
-           <button onclick="runDiagnostic()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-xs py-2 rounded border border-slate-600 transition font-mono">RUN DIAGNOSTIC</button>
-           <button onclick="addLog('Manually initiated feed cycle.')" class="flex-1 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 text-xs py-2 rounded transition font-mono">FEED CYCLE</button>
-        </div>
-      </div>
 
-    </div>
+        <!-- Project 2 (Updated: Chat & Social App) -->
+        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-cyan-500 hover:-translate-y-1 transition duration-300 group">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-bold text-white group-hover:text-cyan-400 transition">Viu Social & Chat Engine</h3>
+            <span class="px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-mono border border-cyan-500/20">REAL-TIME MEDIA</span>
+          </div>
+          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
+            Engineered a full-featured social platform supporting real-time chat, short-form video reels, and 24-hour ephemeral status uploads. Optimized backend APIs for multimedia handling, instant messaging synchronization, and scalable image storage.
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">SignalR / WebSockets</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">.NET API</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Media Streaming</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">SQL Server</span>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-emerald-500 hover:-translate-y-1 transition duration-300 group">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition">Database Query Optimizer</h3>
+            <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono border border-emerald-500/20">SQL TUNING</span>
+          </div>
+          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
+            Refactored legacy stored procedures to eliminate N+1 query bottlenecks. Implemented strategic indexing and execution plan analysis, reducing average data retrieval latency by over 40% for high-volume transactions.
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">T-SQL</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Performance</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Git</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB: CODE SANDBOX (IDE)
+    =========================================== -->
+    <section id="tab-sandbox" class="tab-content hidden h-[calc(100vh-140px)]">
+      <div class="glass-panel rounded-xl flex flex-col h-full overflow-hidden border border-white/10">
+        
+        <div class="bg-black/40 border-b border-white/5 px-4 py-3 flex items-center justify-between">
+          <div class="flex gap-2 items-center">
+            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            <span class="ml-4 text-xs font-mono text-gray-400">workspace.html</span>
+          </div>
+          <button onclick="runCode()" class="bg-violet-600 hover:bg-violet-500 text-white text-xs px-4 py-1.5 rounded transition shadow-[0_0_10px_rgba(139,92,246,0.3)]">Run Compilation</button>
+        </div>
+
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 bg-[#0d0d12]">
+          <!-- Editor -->
+          <div class="border-r border-white/5 flex flex-col relative group">
+            <div class="absolute top-2 right-2 text-[10px] text-gray-500 font-mono">INPUT LAYER</div>
+            <textarea id="codeEditor" spellcheck="false" class="flex-1 w-full bg-transparent p-4 font-mono text-sm text-cyan-200 outline-none resize-none leading-relaxed selection:bg-violet-500/40 focus:ring-inset focus:ring-1 focus:ring-violet-500/50">
+<!-- Write HTML/JS here and hit Run -->
+<div style="text-align:center; padding-top:40px; font-family:sans-serif;">
+  <h2 style="color:#8b5cf6;">Systems Online</h2>
+  <p style="color:#94a3b8;">Testing API payloads in isolated DOM.</p>
+  
+  <button id="testBtn" style="padding:8px 16px; background:#06b6d4; border:none; border-radius:4px; color:#000; font-weight:bold; cursor:pointer; margin-top:20px;">
+    Ping Server
+  </button>
+  
+  <div id="output" style="margin-top:20px; font-family:monospace; color:#10b981;"></div>
+</div>
+
+<script>
+  document.getElementById('testBtn').addEventListener('click', () => {
+    const out = document.getElementById('output');
+    out.innerHTML = '> Transmitting request...<br>';
+    setTimeout(() => {
+      out.innerHTML += '> Code 200 OK<br>> Payload Received.';
+    }, 600);
+  });
+</script>
+</textarea>
+          </div>
+
+          <!-- Output -->
+          <div class="relative flex flex-col bg-white">
+            <div class="absolute top-2 right-2 text-[10px] text-gray-400 font-mono z-10 mix-blend-difference">OUTPUT FRAME</div>
+            <iframe id="codePreview" class="flex-1 w-full border-none bg-white"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 
   <script>
-    // --- 1. CLOCK & UPTIME ---
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+    // --- 1. BOOT SEQUENCE TERMINAL ---
+    const bootLines = [
+      "Initializing environment variables...",
+      "Mounting volume /dev/sda1... OK",
+      "Loading kernel modules...",
+      "Establishing secure connection to repository...",
+      "Resolving .NET Core dependencies...",
+      "Configuring Git SSH keys... SUCCESS",
+      "Starting SQL Server background daemon...",
+      "Compiling UI components...",
+      "MEET_V_PATEL framework loaded.",
+      "Access Granted."
+    ];
 
-    // --- 2. TERMINAL LOGGING ---
-    const terminal = document.getElementById('terminalOutput');
-    function addLog(message, isError = false) {
-      const line = document.createElement('div');
-      const time = new Date().toLocaleTimeString('en-US', { hour12: false });
-      line.innerHTML = `<span class="text-slate-500">[${time}]</span> <span class="${isError ? 'text-rose-400' : 'text-emerald-400'}">${message}</span>`;
-      terminal.appendChild(line);
-      terminal.scrollTop = terminal.scrollHeight;
-    }
-
-    function clearLogs() {
-      terminal.innerHTML = '';
-      addLog('Terminal memory cleared.');
-    }
-
-    function runDiagnostic() {
-      addLog('Initializing system diagnostic...');
-      setTimeout(() => addLog('Checking 12V DC Pump... OK'), 600);
-      setTimeout(() => addLog('Verifying Solar 20W Array... NOMINAL (13.8V)'), 1200);
-      setTimeout(() => addLog('Analyzing fluid dynamics... FLOW RATE OPTIMAL'), 1800);
-      setTimeout(() => addLog('Biosphere health check passed. 12 units detected.'), 2400);
-    }
-
-    // Initial boot logs
-    addLog('System Boot Sequence Initiated...');
-    setTimeout(() => runDiagnostic(), 1000);
-
-    // --- 3. TELEMETRY SIMULATION (SOLAR & PUMP) ---
-    let isPumpOn = true;
-    const pumpToggle = document.getElementById('pumpToggle');
-    const flowRateEl = document.getElementById('flowRate');
-    
-    pumpToggle.addEventListener('change', (e) => {
-      isPumpOn = e.target.checked;
-      if (isPumpOn) {
-        addLog('Pump relay activated. Resuming 12V DC power.');
-        flowRateEl.innerHTML = `850 <span class="text-xs font-normal text-slate-500">L/H</span>`;
-      } else {
-        addLog('Pump relay deactivated by user.', true);
-        flowRateEl.innerHTML = `0 <span class="text-xs font-normal text-slate-500">L/H</span>`;
-      }
-    });
-
-    const solarWattageEl = document.getElementById('solarWattage');
-    const solarVoltageEl = document.getElementById('solarVoltage');
-    const solarCurrentEl = document.getElementById('solarCurrent');
-    
-    let solarDataHistory = Array(30).fill(15); // seed data for chart
-
-    setInterval(() => {
-      // Simulate slight fluctuations in sunlight
-      const baseWatts = 17 + (Math.random() * 2.5);
-      const baseVolts = 13.5 + (Math.random() * 0.6);
-      const current = baseWatts / baseVolts;
-
-      solarWattageEl.innerText = baseWatts.toFixed(1);
-      solarVoltageEl.innerText = `${baseVolts.toFixed(1)} V`;
-      solarCurrentEl.innerText = `${current.toFixed(2)} A`;
-
-      // Update Chart Data
-      solarDataHistory.shift();
-      solarDataHistory.push(baseWatts);
-      drawSolarChart();
-
-      // Flow rate micro-fluctuations if pump is on
-      if(isPumpOn) {
-         const flow = 840 + Math.floor(Math.random() * 20);
-         flowRateEl.innerHTML = `${flow} <span class="text-xs font-normal text-slate-500">L/H</span>`;
-      }
-
-    }, 2000);
-
-    // --- 4. CANVAS LINE CHART ---
-    const chartCanvas = document.getElementById('solarChartCanvas');
-    const ctx = chartCanvas.getContext('2d');
-
-    function drawSolarChart() {
-      // Responsive resize
-      chartCanvas.width = chartCanvas.parentElement.clientWidth;
-      chartCanvas.height = chartCanvas.parentElement.clientHeight;
-
-      const width = chartCanvas.width;
-      const height = chartCanvas.height;
-      const maxVal = 22; // max possible wattage
-      const minVal = 0;
-
-      ctx.clearRect(0, 0, width, height);
-
-      // Draw Grid lines
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, height / 2);
-      ctx.lineTo(width, height / 2);
-      ctx.stroke();
-
-      // Draw Line
-      ctx.beginPath();
-      const stepX = width / (solarDataHistory.length - 1);
+    async function typeBootSequence() {
+      const term = document.getElementById('bootTerminal');
       
-      for (let i = 0; i < solarDataHistory.length; i++) {
-        const x = i * stepX;
-        const normalizedY = (solarDataHistory[i] - minVal) / (maxVal - minVal);
-        const y = height - (normalizedY * height);
+      for (let i = 0; i < bootLines.length; i++) {
+        const lineDiv = document.createElement('div');
+        term.appendChild(lineDiv);
         
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        let text = bootLines[i];
+        if (i === bootLines.length - 1) {
+            lineDiv.classList.add('text-cyan-400', 'font-bold', 'mt-4');
+        }
+
+        // Type writer effect per character
+        lineDiv.classList.add('typing-cursor');
+        for (let j = 0; j <= text.length; j++) {
+          lineDiv.textContent = text.substring(0, j);
+          await new Promise(r => setTimeout(r, Math.random() * 15 + 5)); // very fast typing
+        }
+        lineDiv.classList.remove('typing-cursor');
       }
 
-      ctx.strokeStyle = '#fbbf24'; // Solar yellow
-      ctx.lineWidth = 2;
-      ctx.shadowColor = 'rgba(251, 191, 36, 0.5)';
-      ctx.shadowBlur = 10;
-      ctx.stroke();
-
-      // Fill area under line
-      ctx.lineTo(width, height);
-      ctx.lineTo(0, height);
-      ctx.closePath();
-      
-      const gradient = ctx.createLinearGradient(0, 0, 0, height);
-      gradient.addColorStop(0, 'rgba(251, 191, 36, 0.2)');
-      gradient.addColorStop(1, 'rgba(251, 191, 36, 0)');
-      
-      ctx.fillStyle = gradient;
-      ctx.fill();
+      await new Promise(r => setTimeout(r, 600));
+      const overlay = document.getElementById('bootOverlay');
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        initGraph(); // Initialize canvas after boot
+        runCode(); // Initialize iframe
+      }, 800);
     }
 
-    // Initial draw
-    setTimeout(drawSolarChart, 100);
-    window.addEventListener('resize', drawSolarChart);
+    // --- 2. TAB NAVIGATION ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.glass-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.getElementById(`btn-${tabId}`).classList.add('active');
+    }
 
+    // --- 3. GITHUB STYLE CONTRIBUTION GRAPH (CANVAS) ---
+    const canvas = document.getElementById('contributionGraph');
+    const ctx = canvas.getContext('2d');
+    const weeks = 52;
+    const days = 7;
+    const cellSize = 12;
+    const cellGap = 3;
+    let commitData = [];
+
+    // Colors: Empty -> Darkest Green -> Lightest Green
+    const colors = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
+
+    function generateGraphData() {
+      commitData = [];
+      for (let w = 0; w < weeks; w++) {
+        let weekCol = [];
+        for (let d = 0; d < days; d++) {
+          // Generate realistic looking data cluster
+          let intensity = 0;
+          let rand = Math.random();
+          if (rand > 0.5) intensity = 1;
+          if (rand > 0.8) intensity = 2;
+          if (rand > 0.9) intensity = 3;
+          if (rand > 0.96) intensity = 4;
+          
+          // Leave weekends mostly empty
+          if ((d === 0 || d === 6) && Math.random() > 0.2) intensity = 0;
+
+          weekCol.push(intensity);
+        }
+        commitData.push(weekCol);
+      }
+    }
+
+    function drawGraph() {
+      if (!canvas || !canvas.parentElement) return;
+      
+      // Responsive sizing
+      canvas.width = canvas.parentElement.clientWidth;
+      
+      // Calculate how many weeks can fit
+      const fitWeeks = Math.floor((canvas.width - 20) / (cellSize + cellGap));
+      const startWeek = Math.max(0, weeks - fitWeeks);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      let xOffset = 10;
+      for (let w = startWeek; w < weeks; w++) {
+        let yOffset = 10;
+        for (let d = 0; d < days; d++) {
+          let intensity = commitData[w][d];
+          
+          ctx.fillStyle = colors[intensity];
+          ctx.beginPath();
+          ctx.roundRect(xOffset, yOffset, cellSize, cellSize, 2);
+          ctx.fill();
+          
+          // Border
+          ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          yOffset += cellSize + cellGap;
+        }
+        xOffset += cellSize + cellGap;
+      }
+    }
+
+    function scrambleGraph() {
+      generateGraphData();
+      drawGraph();
+    }
+
+    function initGraph() {
+      generateGraphData();
+      drawGraph();
+      window.addEventListener('resize', drawGraph);
+    }
+
+    // --- 4. CODE SANDBOX RUNNER ---
+    function runCode() {
+      const code = document.getElementById('codeEditor').value;
+      const iframe = document.getElementById('codePreview');
+      iframe.srcdoc = code;
+    }
+
+    // Initialize App
+    window.onload = () => {
+      // Start typing animation on load
+      typeBootSequence();
+    };
   </script>
 </body>
 </html>
