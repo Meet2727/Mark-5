@@ -1,1432 +1,536 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AAA Game Engine v2 PRO - 27 Games</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meet V. Patel // Engineering Deck</title>
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-body{
-font-family:Arial,sans-serif;
-background:#050714;
-color:white;
-overflow-x:hidden;
-overflow-y:auto;
-min-height:100vh;
-}
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-/* BACKGROUND */
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            brand: {
+              dark: '#0a0a0f',
+              glass: 'rgba(20, 20, 30, 0.65)',
+              border: 'rgba(255, 255, 255, 0.08)',
+              accent: '#8b5cf6', // Violet
+              glow: '#c4b5fd',
+              success: '#10b981',
+              cyan: '#06b6d4'
+            }
+          }
+        }
+      }
+    }
+  </script>
 
-#bg{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:-1;
-overflow:hidden;
-background:
-radial-gradient(circle at center,
-#0b1025 0%,
-#050714 60%,
-#000 100%);
-}
+  <style>
+    body {
+      background: radial-gradient(circle at 15% 50%, #1e1b4b, #0a0a0f 45%, #050505 100%);
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
 
-.p{
-position:absolute;
-border-radius:50%;
-opacity:.8;
+    /* Ambient Animated Orbs */
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      animation: float 20s infinite ease-in-out alternate;
+    }
+    .orb-1 { width: 400px; height: 400px; background: rgba(139, 92, 246, 0.15); top: -100px; left: -100px; }
+    .orb-2 { width: 500px; height: 500px; background: rgba(6, 182, 212, 0.1); bottom: -200px; right: -100px; animation-delay: -5s; }
 
-background:
-radial-gradient(circle at 30% 30%,
-rgba(255,255,255,.95),
-rgba(255,255,255,.4) 15%,
-rgba(0,229,255,.9) 40%,
-rgba(0,120,255,.6) 70%,
-rgba(0,0,0,.2) 100%);
+    @keyframes float {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(30px, 50px); }
+    }
 
-animation:
-float 20s linear infinite,
-pulse 4s ease-in-out infinite;
-}
+    /* Glassmorphism Panels */
+    .glass-panel {
+      background: var(--brand-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
 
-@keyframes float{
-0%{
-transform:translateY(110vh);
-}
-100%{
-transform:translateY(-20vh);
-}
-}
+    .glass-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+    }
+    .glass-btn:hover, .glass-btn.active {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+    }
 
-@keyframes pulse{
-0%{
-opacity:.3;
-scale:.8;
-}
-50%{
-opacity:1;
-scale:1.3;
-}
-100%{
-opacity:.4;
-scale:.9;
-}
-}
+    /* Terminal Typing Effect */
+    .typing-cursor::after {
+      content: '█';
+      animation: blink 1s step-start infinite;
+      color: #8b5cf6;
+      margin-left: 4px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
 
-/* SCREENS */
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
 
-.screen{
-display:none;
-width:100%;
-min-height:100vh;
-padding:20px;
-}
-
-.active{
-display:block;
-}
-
-/* HEADER */
-
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px;
-background:rgba(15,23,42,.8);
-border-bottom:1px solid #00e5ff;
-backdrop-filter:blur(10px);
-border-radius:10px;
-}
-
-/* GRID */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:15px;
-margin-top:20px;
-padding-bottom:40px;
-}
-
-/* CARDS */
-
-.card{
-background:rgba(255,255,255,.05);
-border:1px solid rgba(0,229,255,.25);
-border-radius:14px;
-padding:18px;
-cursor:pointer;
-transition:.3s;
-text-align:center;
-backdrop-filter:blur(10px);
-}
-
-.card:hover{
-transform:translateY(-4px) scale(1.03);
-box-shadow:0 0 20px #00e5ff;
-}
-
-/* BUTTONS */
-
-button{
-padding:10px 14px;
-margin:6px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-transition:.2s;
-}
-
-button:hover{
-transform:scale(1.08);
-}
-
-.neon{
-background:#00e5ff;
-color:black;
-}
-
-.red{
-background:#ff4d4d;
-color:white;
-}
-
-.green{
-background:#2ecc71;
-color:white;
-}
-
-.purple{
-background:#9b59b6;
-color:white;
-}
-
-.yellow{
-background:#f1c40f;
-color:black;
-}
-
-#content{
-margin-top:25px;
-font-size:22px;
-}
-
-#out{
-margin-top:20px;
-font-size:28px;
-color:#00e5ff;
-font-weight:bold;
-}
-
-@media(max-width:600px){
-
-header{
-flex-direction:column;
-gap:10px;
-text-align:center;
-}
-
-.grid{
-grid-template-columns:1fr;
-}
-
-button{
-width:100%;
-}
-
-}
-</style>
+    /* Boot Overlay */
+    #bootOverlay {
+      transition: opacity 0.8s ease;
+    }
+  </style>
 </head>
+<body class="font-sans antialiased min-h-screen relative flex flex-col selection:bg-violet-500/30 selection:text-violet-200">
 
-<body>
+  <!-- Background Ambience -->
+  <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiLz4KPC9zdmc+')] opacity-50"></div>
+  </div>
 
-<div id="bg"></div>
+  <!-- BOOT SEQUENCE OVERLAY -->
+  <div id="bootOverlay" class="fixed inset-0 z-50 bg-[#050508] flex flex-col justify-end p-8 font-mono text-sm text-brand-success">
+    <div id="bootTerminal" class="max-w-3xl space-y-1 mb-8 opacity-80"></div>
+  </div>
 
-<!-- MENU -->
+  <!-- NAVIGATION -->
+  <nav class="glass-panel border-b-0 border-x-0 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(139,92,246,0.4)]">
+            MP
+          </div>
+          <div>
+            <h1 class="font-semibold text-gray-100 tracking-wide text-sm">MEET V. PATEL</h1>
+            <p class="text-[10px] text-violet-400 font-mono tracking-widest uppercase">.NET Backend Engineer</p>
+          </div>
+        </div>
+        
+        <div class="flex gap-2">
+          <button onclick="switchTab('dashboard')" id="btn-dashboard" class="glass-btn active px-4 py-1.5 rounded-md text-xs font-medium tracking-wide">DASHBOARD</button>
+          <button onclick="switchTab('projects')" id="btn-projects" class="glass-btn px-4 py-1.5 rounded-md text-xs font-medium tracking-wide">PROJECTS</button>
+          <button onclick="switchTab('sandbox')" id="btn-sandbox" class="glass-btn px-4 py-1.5 rounded-md text-xs font-medium tracking-wide hidden sm:block">SANDBOX</button>
+        </div>
+      </div>
+    </div>
+  </nav>
 
-<div id="menu" class="screen active">
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 
-<header>
-<h2>⚡ AAA GAME ENGINE v2 PRO - 20 GAMES</h2>
-</header>
+    <!-- ==========================================
+         TAB: DASHBOARD
+    =========================================== -->
+    <section id="tab-dashboard" class="tab-content space-y-6">
+      
+      <!-- Top Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Profile Card -->
+        <div class="glass-panel rounded-xl p-6 lg:col-span-1 flex flex-col">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-16 h-16 rounded-full border-2 border-violet-500/30 p-1 flex items-center justify-center bg-violet-900/20">
+              <svg class="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            </div>
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-1">Meet V. Patel</h2>
+          <p class="text-sm text-gray-400 mb-4">Software Developer specializing in robust backend architectures, seamless API integrations, and efficient database management.</p>
+          
+          <div class="mt-auto space-y-3 pt-4 border-t border-white/5">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">CURRENT STATUS</span>
+              <span class="text-cyan-400 font-mono">DEPLOYING MODULES</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">LOCATION</span>
+              <span class="text-gray-300 font-mono">GUJARAT, INDIA</span>
+            </div>
+          </div>
+        </div>
 
-<div class="grid">
+        <!-- Tech Stack Matrix -->
+        <div class="glass-panel rounded-xl p-6 lg:col-span-2">
+          <h3 class="text-xs font-mono text-gray-400 uppercase tracking-widest mb-4">Core Competency Matrix</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#512bd4]/20 text-[#512bd4] flex items-center justify-center font-bold">.N</div>
+              <div>
+                <div class="text-sm font-semibold text-white">.NET Core</div>
+                <div class="text-[10px] text-gray-500">Architecture</div>
+              </div>
+            </div>
 
-<div class="card" onclick="loadGame('reaction')">🎯 Reaction</div>
-<div class="card" onclick="loadGame('click')">🖱 Click Speed</div>
-<div class="card" onclick="loadGame('math')">🧠 Math</div>
-<div class="card" onclick="loadGame('timing')">⏱ Timing</div>
-<div class="card" onclick="loadGame('aim')">🎯 Aim</div>
-<div class="card" onclick="loadGame('dice')">🎲 Dice</div>
-<div class="card" onclick="loadGame('memory')">🧩 Memory</div>
-<div class="card" onclick="loadGame('reflex')">⚡ Reflex</div>
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#239120]/20 text-[#239120] flex items-center justify-center font-bold text-lg">C#</div>
+              <div>
+                <div class="text-sm font-semibold text-white">C#</div>
+                <div class="text-[10px] text-gray-500">Primary Logic</div>
+              </div>
+            </div>
 
-<div class="card" onclick="loadGame('guess')">🔢 Number Guess</div>
-<div class="card" onclick="loadGame('coin')">🪙 Coin Flip</div>
-<div class="card" onclick="loadGame('rps')">✂ Rock Paper Scissors</div>
-<div class="card" onclick="loadGame('color')">🎨 Color Match</div>
-<div class="card" onclick="loadGame('counter')">➕ Counter Race</div>
-<div class="card" onclick="loadGame('typing')">⌨ Typing Test</div>
-<div class="card" onclick="loadGame('evenodd')">🔵 Even Odd</div>
-<div class="card" onclick="loadGame('highlow')">📈 High Low</div>
-<div class="card" onclick="loadGame('lottery')">🎟 Lottery</div>
-<div class="card" onclick="loadGame('sequence')">🔢 Sequence Memory</div>
-<div class="card" onclick="loadGame('target10')">🎯 Reach 10</div>
-<div class="card" onclick="loadGame('randommath')">🧮 Quick Math</div>
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#f29111]/20 text-[#f29111] flex items-center justify-center font-bold text-xs">SQL</div>
+              <div>
+                <div class="text-sm font-semibold text-white">SQL Server</div>
+                <div class="text-[10px] text-gray-500">Database</div>
+              </div>
+            </div>
 
-<div class="card" onclick="loadGame('prime')">🔢 Prime Check</div>
-<div class="card" onclick="loadGame('multiply')">✖ Multiply</div>
-<div class="card" onclick="loadGame('captcha')">🤖 Captcha</div>
-<div class="card" onclick="loadGame('shuffle')">🔀 Shuffle Number</div>
-<div class="card" onclick="loadGame('lucky')">🍀 Lucky Number</div>
-<div class="card" onclick="loadGame('fasttap')">⚡ Fast Tap</div>
-<div class="card" onclick="loadGame('randomcolor')">🌈 Random Color</div>
-<div class="card" onclick="loadGame('greater')">📊 Greater Number</div>
-<div class="card" onclick="loadGame('alphabet')">🔤 Alphabet</div>
-<div class="card" onclick="loadGame('triangle')">🔺 Triangle Quiz</div>
-<div class="card" onclick="loadGame('doubledice')">🎲 Double Dice</div>
-<div class="card" onclick="loadGame('calculator')">🧮 Calculator</div>
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#ff6c37]/20 text-[#ff6c37] flex items-center justify-center font-bold">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-white">Postman</div>
+                <div class="text-[10px] text-gray-500">API Testing</div>
+              </div>
+            </div>
 
-<div class="card" onclick="loadGame('car3d')">🏎 3D Racer</div>
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-[#f05032]/20 text-[#f05032] flex items-center justify-center font-bold">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.96 0C5.36 0 0 5.36 0 11.96c0 5.28 3.42 9.76 8.16 11.34.6.11.82-.26.82-.58 0-.29-.01-1.04-.01-2.04-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4 11.5 11.5 0 0 1 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.6-.01 2.89-.01 3.28 0 .32.22.7.83.58A12.02 12.02 0 0 0 24 11.96C24 5.36 18.64 0 11.96 0z"/></svg>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-white">Git / GitHub</div>
+                <div class="text-[10px] text-gray-500">Version Control</div>
+              </div>
+            </div>
+
+            <div class="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center gap-3 hover:border-violet-500/30 transition cursor-default">
+              <div class="w-8 h-8 rounded bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-white">Logic Design</div>
+                <div class="text-[10px] text-gray-500">DIY Engineering</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Contribution Graph (Canvas) -->
+      <div class="glass-panel rounded-xl p-6">
+        <div class="flex justify-between items-end mb-4">
+          <div>
+            <h3 class="text-xs font-mono text-gray-400 uppercase tracking-widest">Commit Activity Visualizer</h3>
+            <p class="text-sm text-gray-500 mt-1">Simulated high-frequency deployment grid</p>
+          </div>
+          <button onclick="scrambleGraph()" class="text-[10px] text-violet-400 hover:text-white transition font-mono border border-violet-500/30 px-2 py-1 rounded bg-violet-500/10">SCRAMBLE DATA</button>
+        </div>
+        
+        <div class="w-full overflow-x-auto">
+          <canvas id="contributionGraph" height="110" class="min-w-[600px] w-full"></canvas>
+        </div>
+        <div class="flex justify-end gap-2 items-center mt-2 text-[10px] font-mono text-gray-500">
+          <span>Less</span>
+          <span class="w-3 h-3 rounded-sm bg-[#161b22] border border-white/5"></span>
+          <span class="w-3 h-3 rounded-sm bg-[#0e4429]"></span>
+          <span class="w-3 h-3 rounded-sm bg-[#006d32]"></span>
+          <span class="w-3 h-3 rounded-sm bg-[#26a641]"></span>
+          <span class="w-3 h-3 rounded-sm bg-[#39d353]"></span>
+          <span>More</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         TAB: PROJECTS
+    =========================================== -->
+    <section id="tab-projects" class="tab-content hidden space-y-6">
+      
+      <div class="glass-panel rounded-xl p-6 mb-6">
+        <h2 class="text-xl font-bold text-white">Engineering Portfolio</h2>
+        <p class="text-sm text-gray-400 mt-1">A selection of enterprise integrations and hardware logic systems.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Project 1 -->
+        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-violet-500 hover:-translate-y-1 transition duration-300 group">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-bold text-white group-hover:text-violet-400 transition">Hotel Supplier Module Integration</h3>
+            <span class="px-2 py-1 rounded bg-violet-500/20 text-violet-300 text-[10px] font-mono border border-violet-500/20">ENTERPRISE API</span>
+          </div>
+          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
+            Engineered seamless B2B connectivity for hotel booking systems. Developed and optimized complex RESTful payloads via Postman, mapping JSON/XML vendor data into a unified .NET core ecosystem.
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">C#</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">.NET API</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">SQL Server</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Postman</span>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-cyan-500 hover:-translate-y-1 transition duration-300 group">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-bold text-white group-hover:text-cyan-400 transition">Solar IoT Filtration Controller</h3>
+            <span class="px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-mono border border-cyan-500/20">HARDWARE LOGIC</span>
+          </div>
+          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
+            Designed a resilient, off-grid 12V DC power routing system for a 500-liter aquatic biosphere. Integrated multimeter diagnostics with a 20W solar array to ensure continuous pump uptime and waterproofed fault tolerance.
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Circuit Logic</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">12V Diagnostics</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Fluid Dynamics</span>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="glass-panel rounded-xl p-6 border-t-2 border-t-emerald-500 hover:-translate-y-1 transition duration-300 group">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition">Database Query Optimizer</h3>
+            <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono border border-emerald-500/20">SQL TUNING</span>
+          </div>
+          <p class="text-sm text-gray-400 mb-6 leading-relaxed">
+            Refactored legacy stored procedures to eliminate N+1 query bottlenecks. Implemented strategic indexing and execution plan analysis, reducing average data retrieval latency by over 40% for high-volume transactions.
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">T-SQL</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Performance</span>
+            <span class="text-[10px] px-2 py-1 rounded-full bg-black/30 border border-white/10 text-gray-300">Git</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB: CODE SANDBOX (IDE)
+    =========================================== -->
+    <section id="tab-sandbox" class="tab-content hidden h-[calc(100vh-140px)]">
+      <div class="glass-panel rounded-xl flex flex-col h-full overflow-hidden border border-white/10">
+        
+        <div class="bg-black/40 border-b border-white/5 px-4 py-3 flex items-center justify-between">
+          <div class="flex gap-2 items-center">
+            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            <span class="ml-4 text-xs font-mono text-gray-400">workspace.html</span>
+          </div>
+          <button onclick="runCode()" class="bg-violet-600 hover:bg-violet-500 text-white text-xs px-4 py-1.5 rounded transition shadow-[0_0_10px_rgba(139,92,246,0.3)]">Run Compilation</button>
+        </div>
+
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 bg-[#0d0d12]">
+          <!-- Editor -->
+          <div class="border-r border-white/5 flex flex-col relative group">
+            <div class="absolute top-2 right-2 text-[10px] text-gray-500 font-mono">INPUT LAYER</div>
+            <textarea id="codeEditor" spellcheck="false" class="flex-1 w-full bg-transparent p-4 font-mono text-sm text-cyan-200 outline-none resize-none leading-relaxed selection:bg-violet-500/40 focus:ring-inset focus:ring-1 focus:ring-violet-500/50">
+<!-- Write HTML/JS here and hit Run -->
+<div style="text-align:center; padding-top:40px; font-family:sans-serif;">
+  <h2 style="color:#8b5cf6;">Systems Online</h2>
+  <p style="color:#94a3b8;">Testing API payloads in isolated DOM.</p>
   
-</div>
-</div>
-
-<!-- GAME SCREEN -->
-
-<div id="game" class="screen">
-
-<header>
-<button class="red" onclick="backMenu()">⬅ MENU</button>
-<button class="neon" onclick="restartGame()">RESTART</button>
-</header>
-
-<h2 id="title" style="margin-top:20px;">Game</h2>
-
-<div id="content"></div>
-
+  <button id="testBtn" style="padding:8px 16px; background:#06b6d4; border:none; border-radius:4px; color:#000; font-weight:bold; cursor:pointer; margin-top:20px;">
+    Ping Server
+  </button>
+  
+  <div id="output" style="margin-top:20px; font-family:monospace; color:#10b981;"></div>
 </div>
 
 <script>
-
-/* PARTICLES */
-
-const bg=document.getElementById("bg");
-
-for(let i=0;i<100;i++){
-
-const p=document.createElement("div");
-p.className="p";
-
-const size=4+Math.random()*18;
-
-p.style.width=size+"px";
-p.style.height=size+"px";
-
-p.style.left=Math.random()*100+"%";
-
-const hue=180+Math.random()*120;
-
-p.style.boxShadow=`
-0 0 10px hsl(${hue},100%,60%),
-0 0 25px hsl(${hue},100%,60%),
-0 0 50px hsl(${hue},100%,50%)
-`;
-
-p.style.animationDuration=
-(8+Math.random()*10)+"s";
-
-bg.appendChild(p);
-
-}
-
-/* ENGINE */
-
-let currentGame="";
-let clickCount=0;
-let aimCount=0;
-let reactionStart=0;
-let reactionReady=false;
-
-let guessNumber=0;
-let target10=0;
-let raceCount=0;
-let sequenceNums=[];
-
-const menu=document.getElementById("menu");
-const game=document.getElementById("game");
-const title=document.getElementById("title");
-const content=document.getElementById("content");
-
-let carGameRunning=false;
-let playerX=0;
-let roadOffset=0;
-let obstacles=[];
-let score=0;
-let carAngle=0;
-let roadCurve=0;
-
-  
-  function loadGame(g){
-currentGame=g;
-menu.classList.remove("active");
-game.classList.add("active");
-renderGame(g);
-}
-
-function backMenu(){
-game.classList.remove("active");
-menu.classList.add("active");
-}
-
-function restartGame(){
-renderGame(currentGame);
-}
-
-function renderGame(g){
-
-if(g==="reaction"){
-title.innerHTML="🎯 Reaction Engine";
-content.innerHTML=`
-<button class="green" onclick="startReaction()">START</button>
-<button class="neon" onclick="reactionClick()">CLICK</button>
-<p id="out">Ready</p>`;
-}
-
-if(g==="click"){
-title.innerHTML="🖱 Click Engine";
-content.innerHTML=`
-<button class="green" onclick="startClick()">START</button>
-<button class="neon" onclick="clickHit()">CLICK</button>
-<p id="out">0</p>`;
-}
-
-if(g==="math"){
-title.innerHTML="🧠 Math Engine";
-content.innerHTML=`
-<button class="purple" onclick="mathGame()">PLAY</button>
-<p id="out"></p>`;
-}
-
-if(g==="timing"){
-title.innerHTML="⏱ Timing Engine";
-content.innerHTML=`
-<button class="yellow" onclick="timingGame()">START</button>
-<p id="out"></p>`;
-}
-
-if(g==="aim"){
-title.innerHTML="🎯 Aim Engine";
-content.innerHTML=`
-<button class="green" onclick="aimHit()">HIT TARGET</button>
-<p id="out">0</p>`;
-}
-
-if(g==="dice"){
-title.innerHTML="🎲 Dice Engine";
-content.innerHTML=`
-<button class="neon" onclick="diceRoll()">ROLL</button>
-<p id="out"></p>`;
-}
-
-if(g==="memory"){
-title.innerHTML="🧩 Memory Engine";
-content.innerHTML=`
-<button class="purple" onclick="memoryGame()">START</button>
-<p id="out"></p>`;
-}
-
-if(g==="reflex"){
-title.innerHTML="⚡ Reflex Engine";
-content.innerHTML=`
-<button class="yellow" onclick="reflexGame()">START</button>
-<p id="out"></p>`;
-}
-
-/* NEW GAMES */
-
-if(g==="guess"){
-title.innerHTML="🔢 Number Guess";
-content.innerHTML=`
-<button class="green" onclick="startGuess()">NEW NUMBER</button>
-<button class="neon" onclick="guessGame()">GUESS</button>
-<p id="out"></p>`;
-}
-
-if(g==="coin"){
-title.innerHTML="🪙 Coin Flip";
-content.innerHTML=`
-<button class="yellow" onclick="coinFlip()">FLIP</button>
-<p id="out"></p>`;
-}
-
-if(g==="rps"){
-title.innerHTML="✂ Rock Paper Scissors";
-content.innerHTML=`
-<button onclick="playRPS('Rock')">ROCK</button>
-<button onclick="playRPS('Paper')">PAPER</button>
-<button onclick="playRPS('Scissors')">SCISSORS</button>
-<p id="out"></p>`;
-}
-
-if(g==="color"){
-title.innerHTML="🎨 Color Match";
-content.innerHTML=`
-<button class="purple" onclick="colorGame()">PLAY</button>
-<p id="out"></p>`;
-}
-
-if(g==="counter"){
-title.innerHTML="➕ Counter Race";
-content.innerHTML=`
-<button class="green" onclick="counterRace()">CLICK</button>
-<p id="out">0</p>`;
-}
-
-if(g==="typing"){
-title.innerHTML="⌨ Typing Test";
-content.innerHTML=`
-<button class="yellow" onclick="typingGame()">START</button>
-<p id="out"></p>`;
-}
-
-if(g==="evenodd"){
-title.innerHTML="🔵 Even Odd";
-content.innerHTML=`
-<button class="purple" onclick="evenOdd()">PLAY</button>
-<p id="out"></p>`;
-}
-
-if(g==="highlow"){
-title.innerHTML="📈 High Low";
-content.innerHTML=`
-<button class="green" onclick="highLow()">PLAY</button>
-<p id="out"></p>`;
-}
-
-if(g==="lottery"){
-title.innerHTML="🎟 Lottery";
-content.innerHTML=`
-<button class="neon" onclick="lottery()">DRAW</button>
-<p id="out"></p>`;
-}
-
-if(g==="sequence"){
-title.innerHTML="🔢 Sequence Memory";
-content.innerHTML=`
-<button class="purple" onclick="sequenceGame()">START</button>
-<p id="out"></p>`;
-}
-
-if(g==="target10"){
-title.innerHTML="🎯 Reach 10";
-content.innerHTML=`
-<button class="green" onclick="reach10()">+1</button>
-<p id="out">0</p>`;
-}
-
-if(g==="randommath"){
-title.innerHTML="🧮 Quick Math";
-content.innerHTML=`
-<button class="yellow" onclick="quickMath()">PLAY</button>
-<p id="out"></p>`;
-}
-if(g==="prime"){
-title.innerHTML="🔢 Prime Check";
-content.innerHTML=`<button onclick="primeGame()">PLAY</button><p id="out"></p>`;
-}
-
-if(g==="multiply"){
-title.innerHTML="✖ Multiply";
-content.innerHTML=`<button onclick="multiplyGame()">PLAY</button><p id="out"></p>`;
-}
-
-if(g==="captcha"){
-title.innerHTML="🤖 Captcha";
-content.innerHTML=`<button onclick="captchaGame()">START</button><p id="out"></p>`;
-}
-
-if(g==="shuffle"){
-title.innerHTML="🔀 Shuffle Number";
-content.innerHTML=`<button onclick="shuffleGame()">PLAY</button><p id="out"></p>`;
-}
-
-if(g==="lucky"){
-title.innerHTML="🍀 Lucky Number";
-content.innerHTML=`<button onclick="luckyGame()">TRY</button><p id="out"></p>`;
-}
-
-if(g==="fasttap"){
-title.innerHTML="⚡ Fast Tap";
-content.innerHTML=`<button onclick="fastTap()">TAP</button><p id="out">0</p>`;
-}
-
-if(g==="randomcolor"){
-title.innerHTML="🌈 Random Color";
-content.innerHTML=`<button onclick="randomColor()">GENERATE</button><p id="out"></p>`;
-}
-
-if(g==="greater"){
-title.innerHTML="📊 Greater Number";
-content.innerHTML=`<button onclick="greaterGame()">PLAY</button><p id="out"></p>`;
-}
-
-if(g==="alphabet"){
-title.innerHTML="🔤 Alphabet";
-content.innerHTML=`<button onclick="alphabetGame()">PLAY</button><p id="out"></p>`;
-}
-
-if(g==="triangle"){
-title.innerHTML="🔺 Triangle Quiz";
-content.innerHTML=`<button onclick="triangleGame()">PLAY</button><p id="out"></p>`;
-}
-
-if(g==="doubledice"){
-title.innerHTML="🎲 Double Dice";
-content.innerHTML=`<button onclick="doubleDice()">ROLL</button><p id="out"></p>`;
-}
-
-if(g==="calculator"){
-title.innerHTML="🧮 Calculator";
-content.innerHTML=`<button onclick="calculatorGame()">OPEN</button><p id="out"></p>`;
-}
-  
-if(g==="car3d"){
-title.innerHTML="🏎 3D Racer";
-
-content.innerHTML=`
-<canvas id="race" width="800" height="500"
-style="
-width:100%;
-max-width:900px;
-background:#111;
-border:2px solid #00e5ff;
-border-radius:12px;
-"></canvas>
-
-<p id="out">Arrow Keys ← → Move</p>
-`;
-
-setTimeout(startCarGame,50);
-}
-  
-} /* Main } */
-
-
-/* ORIGINAL GAMES */
-
-function startReaction(){
-
-const out=document.getElementById("out");
-
-out.innerHTML="WAIT...";
-
-reactionReady=false;
-
-setTimeout(()=>{
-
-reactionReady=true;
-reactionStart=Date.now();
-
-out.innerHTML="CLICK NOW!";
-
-},1000+Math.random()*3000);
-
-}
-
-function reactionClick(){
-
-const out=document.getElementById("out");
-
-if(!reactionReady)return;
-
-out.innerHTML=(Date.now()-reactionStart)+" ms";
-
-reactionReady=false;
-
-}
-
-function startClick(){
-clickCount=0;
-document.getElementById("out").innerHTML=clickCount;
-}
-
-function clickHit(){
-clickCount++;
-document.getElementById("out").innerHTML=clickCount;
-}
-
-function mathGame(){
-
-let a=Math.floor(Math.random()*20);
-let b=Math.floor(Math.random()*20);
-
-let ans=prompt(`Solve: ${a} + ${b}`);
-
-if(Number(ans)===a+b){
-out.innerHTML="✅ Correct";
-}else{
-out.innerHTML="❌ Answer: "+(a+b);
-}
-
-}
-  function timingGame(){
-
-out.innerHTML="3...";
-
-setTimeout(()=>out.innerHTML="2...",1000);
-setTimeout(()=>out.innerHTML="1...",2000);
-setTimeout(()=>out.innerHTML="GO!",3000);
-
-}
-
-function aimHit(){
-aimCount++;
-out.innerHTML=aimCount;
-}
-
-function diceRoll(){
-out.innerHTML="🎲 "+(Math.floor(Math.random()*6)+1);
-}
-
-function memoryGame(){
-
-let nums=[];
-
-for(let i=0;i<5;i++){
-nums.push(Math.floor(Math.random()*10));
-}
-
-out.innerHTML="Remember: "+nums.join(" ");
-
-}
-
-function reflexGame(){
-out.innerHTML="⚡ CLICK FAST!";
-}
-
-/* NUMBER GUESS */
-
-function startGuess(){
-guessNumber=Math.floor(Math.random()*10)+1;
-out.innerHTML="Number Ready (1-10)";
-}
-
-function guessGame(){
-
-let g=prompt("Guess 1-10");
-
-if(Number(g)===guessNumber){
-out.innerHTML="✅ Correct";
-}else{
-out.innerHTML="❌ Number was "+guessNumber;
-}
-
-}
-
-/* COIN FLIP */
-
-function coinFlip(){
-out.innerHTML=Math.random()<0.5?"🪙 Heads":"🪙 Tails";
-}
-
-/* ROCK PAPER SCISSORS */
-
-function playRPS(player){
-
-const arr=["Rock","Paper","Scissors"];
-
-const cpu=
-arr[Math.floor(Math.random()*3)];
-
-if(player===cpu){
-
-out.innerHTML=
-"🤝 Draw ("+cpu+")";
-
-}
-else if(
-
-(player==="Rock"&&cpu==="Scissors")||
-(player==="Paper"&&cpu==="Rock")||
-(player==="Scissors"&&cpu==="Paper")
-
-){
-
-out.innerHTML=
-"🏆 You Win ("+cpu+")";
-
-}
-else{
-
-out.innerHTML=
-"💀 CPU Wins ("+cpu+")";
-
-}
-
-}
-
-/* COLOR MATCH */
-
-function colorGame(){
-
-const colors=
-["Red","Blue","Green","Yellow"];
-
-const c=
-colors[Math.floor(Math.random()*colors.length)];
-
-let a=
-prompt("Type this color: "+c);
-
-if(a &&
-a.toLowerCase()===c.toLowerCase()){
-
-out.innerHTML="✅ Correct";
-
-}else{
-
-out.innerHTML="❌ Wrong";
-
-}
-
-}
-
-/* COUNTER RACE */
-
-function counterRace(){
-
-raceCount++;
-
-out.innerHTML=raceCount;
-
-if(raceCount>=20){
-
-out.innerHTML="🏆 Finished!";
-
-raceCount=0;
-
-}
-
-}
-
-/* TYPING TEST */
-
-function typingGame(){
-
-let word="ENGINE";
-
-let x=prompt("Type exactly: "+word);
-
-if(x===word){
-
-out.innerHTML="⚡ Perfect";
-
-}else{
-
-out.innerHTML="❌ Wrong";
-
-}
-
-}
-
-/* EVEN ODD */
-
-function evenOdd(){
-
-let n=
-Math.floor(Math.random()*100);
-
-let g=
-prompt(n+" : even or odd?");
-
-let ans=
-n%2===0 ? "even":"odd";
-
-if(g &&
-g.toLowerCase()===ans){
-
-out.innerHTML="✅ Correct";
-
-}else{
-
-out.innerHTML="❌ "+ans;
-
-}
-
-}
-
-/* HIGH LOW */
-
-function highLow(){
-
-let a=
-Math.floor(Math.random()*20);
-
-let b=
-Math.floor(Math.random()*20);
-
-let g=
-prompt(
-a+" vs ? Type higher or lower"
-);
-
-if(
-
-(g &&
-g.toLowerCase()==="higher" &&
-b>a)
-
-||
-
-(g &&
-g.toLowerCase()==="lower" &&
-b<a)
-
-){
-
-out.innerHTML=
-"✅ Correct ("+b+")";
-
-}else{
-
-out.innerHTML=
-"❌ Wrong ("+b+")";
-
-}
-
-}
-
-/* LOTTERY */
-
-function lottery(){
-
-let n=
-Math.floor(Math.random()*100)+1;
-
-if(n===50){
-
-out.innerHTML="🎉 JACKPOT!";
-
-}else{
-
-out.innerHTML=
-"🎟 Ticket #"+n;
-
-}
-
-}
-
-/* SEQUENCE MEMORY */
-
-function sequenceGame(){
-
-sequenceNums=[];
-
-for(let i=0;i<4;i++){
-
-sequenceNums.push(
-Math.floor(Math.random()*10)
-);
-
-}
-
-out.innerHTML=
-"Remember: "+
-sequenceNums.join(" ");
-
-}
-
-/* REACH 10 */
-
-function reach10(){
-
-target10++;
-
-out.innerHTML=target10;
-
-if(target10>=10){
-
-out.innerHTML="🏆 WINNER";
-
-target10=0;
-
-}
-
-}
-
-/* QUICK MATH */
-
-function quickMath(){
-
-let a=
-Math.floor(Math.random()*30);
-
-let b=
-Math.floor(Math.random()*10);
-
-let g=
-prompt(`${a} - ${b}`);
-
-if(Number(g)===(a-b)){
-
-out.innerHTML="✅ Correct";
-
-}else{
-
-out.innerHTML=
-"❌ "+(a-b);
-
-}
-
-}
-  function primeGame(){
-
-let n=Math.floor(Math.random()*50)+2;
-
-let g=prompt(n+" Prime? yes/no");
-
-let prime=true;
-
-for(let i=2;i<n;i++){
-if(n%i===0){
-prime=false;
-break;
-}
-}
-
-let ans=prime?"yes":"no";
-
-out.innerHTML=
-(g&&g.toLowerCase()===ans)
-?"✅ Correct"
-:"❌ "+ans;
-
-}
-
-function multiplyGame(){
-
-let a=Math.floor(Math.random()*12);
-let b=Math.floor(Math.random()*12);
-
-let g=prompt(`${a} × ${b}`);
-
-out.innerHTML=
-Number(g)===(a*b)
-?"✅ Correct"
-:"❌ "+(a*b);
-
-}
-
-function captchaGame(){
-
-let code=
-Math.random().toString(36)
-.substring(2,7)
-.toUpperCase();
-
-let g=prompt("Type: "+code);
-
-out.innerHTML=
-g===code
-?"✅ Verified"
-:"❌ Failed";
-
-}
-
-function shuffleGame(){
-
-let n=Math.floor(Math.random()*100)+1;
-
-let arr=n.toString().split('');
-
-arr.sort(()=>Math.random()-0.5);
-
-out.innerHTML=
-"Original: "+n+
-"<br>Shuffled: "+
-arr.join('');
-
-}
-
-function luckyGame(){
-
-let n=Math.floor(Math.random()*10)+1;
-
-out.innerHTML=
-n===7
-?"🍀 Lucky 7!"
-:"Number "+n;
-
-}
-
-let fastCount=0;
-
-function fastTap(){
-
-fastCount++;
-
-out.innerHTML=fastCount;
-
-if(fastCount>=50){
-
-out.innerHTML="🏆 Champion";
-
-fastCount=0;
-
-}
-
-}
-
-function randomColor(){
-
-let colors=[
-"Red",
-"Blue",
-"Green",
-"Yellow",
-"Purple",
-"Orange"
-];
-
-out.innerHTML=
-colors[
-Math.floor(
-Math.random()*colors.length
-)
-];
-
-}
-
-function greaterGame(){
-
-let a=Math.floor(Math.random()*100);
-let b=Math.floor(Math.random()*100);
-
-let g=
-prompt(
-a+" vs "+b+
-" : a or b?"
-);
-
-let ans=a>b?"a":"b";
-
-out.innerHTML=
-(g===ans)
-?"✅ Correct"
-:"❌ "+ans;
-
-}
-
-function alphabetGame(){
-
-let letters=
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-let i=
-Math.floor(Math.random()*25);
-
-let g=
-prompt(
-"What comes after "+
-letters[i]+" ?"
-);
-
-out.innerHTML=
-(g &&
-g.toUpperCase()===
-letters[i+1])
-?"✅ Correct"
-:"❌ "+letters[i+1];
-
-}
-
-function triangleGame(){
-
-let g=
-prompt(
-"How many sides does a triangle?"
-);
-
-out.innerHTML=
-Number(g)===3
-?"✅ Correct"
-:"❌ 3";
-
-}
-
-function doubleDice(){
-
-let a=
-Math.floor(Math.random()*6)+1;
-
-let b=
-Math.floor(Math.random()*6)+1;
-
-out.innerHTML=
-"🎲 "+a+
-" + 🎲 "+b+
-" = "+(a+b);
-
-}
-
-function calculatorGame(){
-
-let exp=
-prompt(
-"Enter expression\nExample: 5+10"
-);
-
-try{
-
-out.innerHTML=
-eval(exp);
-
-}catch{
-
-out.innerHTML=
-"❌ Invalid";
-
-}
-
-}
-  function startCarGame(){
-
-carGameRunning=true;
-
-const canvas=document.getElementById("race");
-
-if(!canvas) return;
-
-const ctx=canvas.getContext("2d");
-
-playerX=0;
-roadOffset=0;
-score=0;
-
-obstacles=[];
-
-for(let i=0;i<5;i++){
-
-obstacles.push({
-x:(Math.random()*2-1)*180,
-z:600+i*300
-});
-
-}
-
-document.onkeydown=(e)=>{
-
-if(!carGameRunning) return;
-
-if(e.key==="ArrowLeft"){
-playerX-=25;
-carAngle=-12;
-}
-
-if(e.key==="ArrowRight"){
-playerX+=25;
-carAngle=12;
-}
-
-};
-
-function drawRoad(){
-
-ctx.fillStyle="#111";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-const horizon=120;
-
-for(let y=horizon;y<canvas.height;y++){
-
-let p=(y-horizon)/(canvas.height-horizon);
-
-let roadWidth=80+p*600;
-
-let center=
-canvas.width/2+
-Math.sin(
-y*0.01+
-roadOffset*0.02
-)
-*roadCurve
-*300;
-
-ctx.fillStyle="#222";
-
-ctx.fillRect(
-center-roadWidth/2,
-y,
-roadWidth,
-2
-);
-
-ctx.fillStyle="#fff";
-
-if((y+roadOffset)%40<20){
-
-ctx.fillRect(
-center-3,
-y,
-6,
-8
-);
-
-}
-
-}
-
-}
-
-function drawPlayer(){
-
-ctx.save();
-
-ctx.translate(
-canvas.width/2+playerX,
-420
-);
-
-ctx.rotate(
-carAngle*Math.PI/180
-);
-
-/* shadow */
-
-ctx.fillStyle="rgba(0,0,0,.5)";
-
-ctx.beginPath();
-ctx.ellipse(
-0,
-35,
-35,
-10,
-0,
-0,
-Math.PI*2
-);
-ctx.fill();
-
-/* body */
-
-ctx.fillStyle="#00e5ff";
-
-ctx.fillRect(
--25,
--15,
-50,
-45
-);
-
-/* roof */
-
-ctx.fillStyle="#7ffcff";
-
-ctx.fillRect(
--15,
--35,
-30,
-25
-);
-
-/* glass */
-
-ctx.fillStyle="#001f3f";
-
-ctx.fillRect(
--12,
--30,
-24,
-12
-);
-
-/* wheels */
-
-ctx.fillStyle="#000";
-
-ctx.fillRect(-32,-10,8,18);
-ctx.fillRect(24,-10,8,18);
-
-ctx.fillRect(-32,18,8,18);
-ctx.fillRect(24,18,8,18);
-
-ctx.restore();
-
-}
-
-function drawObstacle(o){
-
-let z=Math.max(o.z,80);
-
-let scale=700/z;
-
-let x=
-canvas.width/2+
-o.x*scale;
-
-let y=
-canvas.height-
-(900/z)*100;
-
-let w=60*scale;
-let h=90*scale;
-
-ctx.fillStyle="#ff4444";
-
-ctx.fillRect(
-x-w/2,
-y-h,
-w,
-h
-);
-
-ctx.fillStyle="#ff8888";
-
-ctx.fillRect(
-x-w/2+5,
-y-h+5,
-w-10,
-15
-);
-
-}
-function update(){
-
-if(!carGameRunning) return;
-
-roadOffset+=8;
-roadCurve +=(Math.random()-0.5)*0.05;
-carAngle*=0.90;
-
-drawRoad();
-
-score++;
-
-for(let o of obstacles){
-
-o.z-=8;
-
-if(o.z<20){
-
-o.z=700;
-
-o.x=(Math.random()*2-1)*180;
-
-score+=100;
-
-}
-
-drawObstacle(o);
-
-let z=Math.max(o.z,80);
-let scale=600/z;
-
-let ox=o.x*scale;
-
-if(
-o.z<120 &&
-Math.abs(ox-playerX)<55
-)
-
-{
-
-carGameRunning=false;
-
-document.getElementById("out")
-.innerHTML=
-"💥 Crash! Score: "+score;
-
-return;
-
-}
-
-}
-
-drawPlayer();
-
-document.getElementById("out")
-.innerHTML=
-"🏁 Score: "+score;
-
-requestAnimationFrame(update);
-
-}
-
-update();
-
-}
-
+  document.getElementById('testBtn').addEventListener('click', () => {
+    const out = document.getElementById('output');
+    out.innerHTML = '> Transmitting request...<br>';
+    setTimeout(() => {
+      out.innerHTML += '> Code 200 OK<br>> Payload Received.';
+    }, 600);
+  });
 </script>
+</textarea>
+          </div>
 
+          <!-- Output -->
+          <div class="relative flex flex-col bg-white">
+            <div class="absolute top-2 right-2 text-[10px] text-gray-400 font-mono z-10 mix-blend-difference">OUTPUT FRAME</div>
+            <iframe id="codePreview" class="flex-1 w-full border-none bg-white"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // --- 1. BOOT SEQUENCE TERMINAL ---
+    const bootLines = [
+      "Initializing environment variables...",
+      "Mounting volume /dev/sda1... OK",
+      "Loading kernel modules...",
+      "Establishing secure connection to repository...",
+      "Resolving .NET Core dependencies...",
+      "Configuring Git SSH keys... SUCCESS",
+      "Starting SQL Server background daemon...",
+      "Compiling UI components...",
+      "MEET_V_PATEL framework loaded.",
+      "Access Granted."
+    ];
+
+    async function typeBootSequence() {
+      const term = document.getElementById('bootTerminal');
+      
+      for (let i = 0; i < bootLines.length; i++) {
+        const lineDiv = document.createElement('div');
+        term.appendChild(lineDiv);
+        
+        let text = bootLines[i];
+        if (i === bootLines.length - 1) {
+            lineDiv.classList.add('text-cyan-400', 'font-bold', 'mt-4');
+        }
+
+        // Type writer effect per character
+        lineDiv.classList.add('typing-cursor');
+        for (let j = 0; j <= text.length; j++) {
+          lineDiv.textContent = text.substring(0, j);
+          await new Promise(r => setTimeout(r, Math.random() * 15 + 5)); // very fast typing
+        }
+        lineDiv.classList.remove('typing-cursor');
+      }
+
+      await new Promise(r => setTimeout(r, 600));
+      const overlay = document.getElementById('bootOverlay');
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        initGraph(); // Initialize canvas after boot
+        runCode(); // Initialize iframe
+      }, 800);
+    }
+
+    // --- 2. TAB NAVIGATION ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.glass-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.getElementById(`btn-${tabId}`).classList.add('active');
+    }
+
+    // --- 3. GITHUB STYLE CONTRIBUTION GRAPH (CANVAS) ---
+    const canvas = document.getElementById('contributionGraph');
+    const ctx = canvas.getContext('2d');
+    const weeks = 52;
+    const days = 7;
+    const cellSize = 12;
+    const cellGap = 3;
+    let commitData = [];
+
+    // Colors: Empty -> Darkest Green -> Lightest Green
+    const colors = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
+
+    function generateGraphData() {
+      commitData = [];
+      for (let w = 0; w < weeks; w++) {
+        let weekCol = [];
+        for (let d = 0; d < days; d++) {
+          // Generate realistic looking data cluster
+          let intensity = 0;
+          let rand = Math.random();
+          if (rand > 0.5) intensity = 1;
+          if (rand > 0.8) intensity = 2;
+          if (rand > 0.9) intensity = 3;
+          if (rand > 0.96) intensity = 4;
+          
+          // Leave weekends mostly empty
+          if ((d === 0 || d === 6) && Math.random() > 0.2) intensity = 0;
+
+          weekCol.push(intensity);
+        }
+        commitData.push(weekCol);
+      }
+    }
+
+    function drawGraph() {
+      if (!canvas || !canvas.parentElement) return;
+      
+      // Responsive sizing
+      canvas.width = canvas.parentElement.clientWidth;
+      
+      // Calculate how many weeks can fit
+      const fitWeeks = Math.floor((canvas.width - 20) / (cellSize + cellGap));
+      const startWeek = Math.max(0, weeks - fitWeeks);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      let xOffset = 10;
+      for (let w = startWeek; w < weeks; w++) {
+        let yOffset = 10;
+        for (let d = 0; d < days; d++) {
+          let intensity = commitData[w][d];
+          
+          ctx.fillStyle = colors[intensity];
+          ctx.beginPath();
+          ctx.roundRect(xOffset, yOffset, cellSize, cellSize, 2);
+          ctx.fill();
+          
+          // Border
+          ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          yOffset += cellSize + cellGap;
+        }
+        xOffset += cellSize + cellGap;
+      }
+    }
+
+    function scrambleGraph() {
+      generateGraphData();
+      drawGraph();
+    }
+
+    function initGraph() {
+      generateGraphData();
+      drawGraph();
+      window.addEventListener('resize', drawGraph);
+    }
+
+    // --- 4. CODE SANDBOX RUNNER ---
+    function runCode() {
+      const code = document.getElementById('codeEditor').value;
+      const iframe = document.getElementById('codePreview');
+      iframe.srcdoc = code;
+    }
+
+    // Initialize App
+    window.onload = () => {
+      // Start typing animation on load
+      typeBootSequence();
+    };
+  </script>
 </body>
 </html>
