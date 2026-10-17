@@ -96,6 +96,7 @@
       </form>
     </div>
   </div>
+
 <!-- MAIN APP CONTAINER -->
   <div id="app-container" class="hidden">
     <header class="h-14 border-b theme-border theme-surface flex items-center justify-between px-3 shrink-0 z-20">
@@ -133,7 +134,8 @@
       <div id="tab-reels" class="w-full h-full hidden flex flex-col bg-black text-white relative">
         <div id="reels-container" class="flex-1 overflow-y-scroll snap-y snap-mandatory hide-scrollbar"></div>
       </div>
-<!-- EXPLORE TAB -->
+
+      <!-- EXPLORE TAB -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4 pb-20">
         <input type="text" id="searchUsers" placeholder="Search users, captions, or mood tags..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-3 focus:outline-none">
         <div class="mb-3">
@@ -241,7 +243,8 @@
         </div>
         <div id="profile-grid" class="grid grid-cols-3 gap-1"></div>
       </div>
-<!-- ACTIVE CHAT VIEW -->
+
+      <!-- ACTIVE CHAT VIEW -->
       <div id="active-chat-view" class="absolute inset-0 bg-black z-30 hidden flex flex-col">
         <div class="h-14 border-b theme-border flex items-center justify-between px-4 theme-surface shrink-0">
           <div class="flex items-center gap-3">
@@ -606,7 +609,6 @@
   messagingSenderId: "417846424762",
   appId: "1:417846424762:web:24573a7abf942dfffefe83"
 };
-
     let app, db, isFirebaseActive = false;
     let DB = JSON.parse(localStorage.getItem('viu_local_db_v6')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {} };
     let currentUser = localStorage.getItem('viu_auth_user') || null;
@@ -683,8 +685,10 @@
     window.toggleDNDMode = () => {
       dndModeActive = !dndModeActive;
       const btn = document.getElementById('dndToggleBtn');
-      btn.innerText = dndModeActive ? 'ON' : 'OFF';
-      btn.className = dndModeActive ? 'px-3 py-1.5 rounded-lg font-bold bg-amber-500/20 text-amber-400' : 'px-3 py-1.5 rounded-lg font-bold bg-white/10 text-gray-300';
+      if(btn) {
+        btn.innerText = dndModeActive ? 'ON' : 'OFF';
+        btn.className = dndModeActive ? 'px-3 py-1.5 rounded-lg font-bold bg-amber-500/20 text-amber-400' : 'px-3 py-1.5 rounded-lg font-bold bg-white/10 text-gray-300';
+      }
       document.body.classList.toggle('dnd-dimmed', dndModeActive);
       window.showToast(dndModeActive ? "Focus DND Mode Enabled 🌙" : "DND Disabled");
     };
@@ -696,11 +700,13 @@
 
     window.openAdminModal = () => {
       const box = document.getElementById('adminUsersList');
-      box.innerHTML = Object.values(DB.users || {}).map(u => `
-        <div class="flex items-center justify-between p-2 rounded bg-black/40 border theme-border text-xs">
-          <span>@${u.username} ${badgeHTML(u.username)}</span>
-          <button onclick="window.adminDirectToggle('${u.username}')" class="bg-white/10 px-2.5 py-1 rounded">Toggle Tick</button>
-        </div>`).join('');
+      if(box) {
+        box.innerHTML = Object.values(DB.users || {}).map(u => `
+          <div class="flex items-center justify-between p-2 rounded bg-black/40 border theme-border text-xs">
+            <span>@${u.username} ${badgeHTML(u.username)}</span>
+            <button onclick="window.adminDirectToggle('${u.username}')" class="bg-white/10 px-2.5 py-1 rounded">Toggle Tick</button>
+          </div>`).join('');
+      }
       document.getElementById('adminModal').classList.remove('hidden');
     };
     window.adminDirectToggle = (uname) => {
@@ -729,14 +735,22 @@
     function startDraw(x, y) { isDrawing = true; lastX = x; lastY = y; }
     function drawLine(x, y) {
       if(!isDrawing || !ctx) return;
-      ctx.strokeStyle = document.getElementById('drawColorPicker').value;
-      ctx.lineWidth = document.getElementById('drawBrushSize').value;
+      const colPicker = document.getElementById('drawColorPicker');
+      const brushSize = document.getElementById('drawBrushSize');
+      ctx.strokeStyle = colPicker ? colPicker.value : '#00f3ff';
+      ctx.lineWidth = brushSize ? brushSize.value : 5;
       ctx.lineCap = 'round';
       ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
       lastX = x; lastY = y;
     }
     window.clearDrawCanvas = () => { if(ctx) { ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height); } };
-    window.fillDrawCanvas = () => { if(ctx) { ctx.fillStyle = document.getElementById('drawColorPicker').value; ctx.fillRect(0, 0, canvas.width, canvas.height); } };
+    window.fillDrawCanvas = () => { 
+      if(ctx) { 
+        const colPicker = document.getElementById('drawColorPicker');
+        ctx.fillStyle = colPicker ? colPicker.value : '#00f3ff'; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height); 
+      } 
+    };
 
     function getUserXP(u) {
       const uPosts = Object.values(normMap(DB.posts)).filter(p => p.author === u);
@@ -771,8 +785,10 @@
         const d = snap.val() || {};
         DB = { users: d.users||{}, posts: d.posts||{}, stories: d.stories||{}, messages: d.messages||{}, typing: d.typing||{}, notifications: d.notifications||{}, notes: d.notes||{}, calls: d.calls||{} };
         isFirebaseActive = true;
-        document.getElementById('db-status').innerText = '● Live Server Connected';
-        document.getElementById('loginBtn').disabled = false;
+        const dbStatus = document.getElementById('db-status');
+        if(dbStatus) dbStatus.innerText = '● Live Server Connected';
+        const loginBtn = document.getElementById('loginBtn');
+        if(loginBtn) loginBtn.disabled = false;
         if(currentUser && DB.users[currentUser]) { document.getElementById('login-view').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); }
         checkIncomingCalls();
         updateUI();
@@ -780,8 +796,10 @@
     } else enableLocalMode();
 
     function enableLocalMode() {
-      document.getElementById('db-status').innerHTML = '<span class="text-sky-400">● Local Mode Active</span>';
-      document.getElementById('loginBtn').disabled = false;
+      const dbStatus = document.getElementById('db-status');
+      if(dbStatus) dbStatus.innerHTML = '<span class="text-sky-400">● Local Mode Active</span>';
+      const loginBtn = document.getElementById('loginBtn');
+      if(loginBtn) loginBtn.disabled = false;
       if(currentUser && DB.users[currentUser]) { document.getElementById('login-view').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); }
       updateUI();
     }
@@ -824,8 +842,12 @@
 
     window.setHashtagFilter = (tag) => {
       activeHashtag = tag;
-      document.getElementById('hashtagFilterBar').classList.toggle('hidden', !tag);
-      if(tag) document.getElementById('activeHashtagText').innerText = tag;
+      const bar = document.getElementById('hashtagFilterBar');
+      if(bar) bar.classList.toggle('hidden', !tag);
+      if(tag) {
+        const txt = document.getElementById('activeHashtagText');
+        if(txt) txt.innerText = tag;
+      }
       if(activeTab !== 'feed') window.switchTab('feed'); else renderFeed();
     };
 
@@ -840,20 +862,24 @@
     window.openLeaderboard = () => {
       const usersList = Object.keys(DB.users || {});
       const ranked = usersList.map(u => ({ username: u, xp: getUserXP(u), level: getUserLevel(getUserXP(u)) })).sort((a,b) => b.xp - a.xp);
-      document.getElementById('leaderboardList').innerHTML = ranked.map((r, idx) => `
-        <div class="flex items-center justify-between p-3 rounded-xl bg-black/40 border theme-border">
-          <div class="flex items-center gap-3">
-            <span class="font-heading font-bold text-sm ${idx===0?'text-amber-400':(idx===1?'text-slate-300':'text-amber-700')}">#${idx+1}</span>
-            ${generateAvatar(r.username, "w-9 h-9", true)}
-            <div><div class="font-bold text-xs">${r.username} ${badgeHTML(r.username)}</div><div class="text-[10px] text-gray-400">Level ${r.level} • ${r.xp} XP</div></div>
-          </div>
-          <button onclick="document.getElementById('leaderboardModal').classList.add('hidden'); window.openUserProfile('${r.username}')" class="bg-white/10 px-3 py-1 rounded-lg text-xs font-bold">Profile</button>
-        </div>`).join('') || `<div class="text-center text-gray-500 text-xs py-6">No users found.</div>`;
+      const list = document.getElementById('leaderboardList');
+      if(list) {
+        list.innerHTML = ranked.map((r, idx) => `
+          <div class="flex items-center justify-between p-3 rounded-xl bg-black/40 border theme-border">
+            <div class="flex items-center gap-3">
+              <span class="font-heading font-bold text-sm ${idx===0?'text-amber-400':(idx===1?'text-slate-300':'text-amber-700')}">#${idx+1}</span>
+              ${generateAvatar(r.username, "w-9 h-9", true)}
+              <div><div class="font-bold text-xs">${r.username} ${badgeHTML(r.username)}</div><div class="text-[10px] text-gray-400">Level ${r.level} • ${r.xp} XP</div></div>
+            </div>
+            <button onclick="document.getElementById('leaderboardModal').classList.add('hidden'); window.openUserProfile('${r.username}')" class="bg-white/10 px-3 py-1 rounded-lg text-xs font-bold">Profile</button>
+          </div>`).join('') || `<div class="text-center text-gray-500 text-xs py-6">No users found.</div>`;
+      }
       document.getElementById('leaderboardModal').classList.remove('hidden');
     };
 
     window.openIdCardModal = () => {
       const canvasId = document.getElementById('idCardCanvas');
+      if(!canvasId) return;
       const ctxId = canvasId.getContext('2d');
       const xp = getUserXP(currentUser), lvl = getUserLevel(xp);
       ctxId.fillStyle = '#0b0f19'; ctxId.fillRect(0, 0, canvasId.width, canvasId.height);
@@ -865,7 +891,8 @@
       ctxId.fillStyle = '#a855f7'; ctxId.font = '11px sans-serif'; ctxId.fillText(`Status: ${DB.users[currentUser]?.mood || 'Active'}`, 20, 142);
       ctxId.fillStyle = '#1e293b'; ctxId.fillRect(230, 30, 90, 120);
       ctxId.fillStyle = '#00f3ff'; ctxId.font = 'bold 36px sans-serif'; ctxId.fillText(currentUser.charAt(0).toUpperCase(), 258, 105);
-      document.getElementById('downloadIdCardBtn').href = canvasId.toDataURL('image/png');
+      const dlBtn = document.getElementById('downloadIdCardBtn');
+      if(dlBtn) dlBtn.href = canvasId.toDataURL('image/png');
       document.getElementById('idCardModal').classList.remove('hidden');
     };
 
@@ -885,8 +912,10 @@
     window.toggleBurnMode = () => {
       burnModeActive = !burnModeActive;
       const btn = document.getElementById('burnModeBtn');
-      btn.className = burnModeActive ? "text-[10px] px-2 py-0.5 rounded-full border border-rose-500 bg-rose-500/20 text-rose-300 shrink-0 animate-pulse" : "text-[10px] px-2 py-0.5 rounded-full border theme-border text-gray-400 shrink-0";
-      btn.innerText = burnModeActive ? "⏱️ 15s Burn: ON" : "⏱️ 15s Burn: OFF";
+      if(btn) {
+        btn.className = burnModeActive ? "text-[10px] px-2 py-0.5 rounded-full border border-rose-500 bg-rose-500/20 text-rose-300 shrink-0 animate-pulse" : "text-[10px] px-2 py-0.5 rounded-full border theme-border text-gray-400 shrink-0";
+        btn.innerText = burnModeActive ? "⏱️ 15s Burn: ON" : "⏱️ 15s Burn: OFF";
+      }
     };
 
     window.editChatMessage = (msgId, oldText) => {
@@ -898,19 +927,28 @@
       if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP' || currentChatTarget === 'ViuAI') return;
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: withVideo, audio: true });
-        document.getElementById('localCallVideo').srcObject = localStream;
-        document.getElementById('localCallVideo').classList.toggle('hidden', !withVideo);
+        const localVid = document.getElementById('localCallVideo');
+        if(localVid) { localVid.srcObject = localStream; localVid.classList.toggle('hidden', !withVideo); }
       } catch(e) { return; }
 
-      document.getElementById('callModal').classList.remove('hidden');
-      document.getElementById('callTypeLabel').innerText = withVideo ? '📹 VIDEO CALL' : '📞 AUDIO CALL';
-      document.getElementById('callPartnerName').innerText = currentChatTarget;
-      document.getElementById('callAvatarFallback').innerHTML = generateAvatar(currentChatTarget, "w-24 h-24 text-3xl", true);
-      document.getElementById('callTimerText').innerText = "Ringing...";
+      const callModal = document.getElementById('callModal');
+      if(callModal) callModal.classList.remove('hidden');
+      const callLbl = document.getElementById('callTypeLabel');
+      if(callLbl) callLbl.innerText = withVideo ? '📹 VIDEO CALL' : '📞 AUDIO CALL';
+      const callPart = document.getElementById('callPartnerName');
+      if(callPart) callPart.innerText = currentChatTarget;
+      const callAv = document.getElementById('callAvatarFallback');
+      if(callAv) callAv.innerHTML = generateAvatar(currentChatTarget, "w-24 h-24 text-3xl", true);
+      const callTim = document.getElementById('callTimerText');
+      if(callTim) callTim.innerText = "Ringing...";
 
       peerConnection = new RTCPeerConnection(rtcServers);
       localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-      peerConnection.ontrack = (event) => { document.getElementById('remoteCallVideo').srcObject = event.streams[0]; startCallTimer(); };
+      peerConnection.ontrack = (event) => { 
+        const remVid = document.getElementById('remoteCallVideo');
+        if(remVid) remVid.srcObject = event.streams[0]; 
+        startCallTimer(); 
+      };
       peerConnection.onicecandidate = (event) => { if (event.candidate && activeCallId) apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON()); };
 
       const callId = 'call_' + Date.now() + '_' + Math.floor(Math.random()*1000);
@@ -949,32 +987,47 @@
           foundActive = true;
           if (!incomingCallData || incomingCallData.id !== cId) {
             incomingCallData = { id: cId, ...cData };
-            document.getElementById('incomingCallerName').innerText = cData.caller;
-            document.getElementById('incomingCallerAvatar').innerHTML = generateAvatar(cData.caller, "w-20 h-20 text-2xl", true);
-            document.getElementById('incomingCallModal').classList.remove('hidden');
+            const incName = document.getElementById('incomingCallerName');
+            if(incName) incName.innerText = cData.caller;
+            const incAv = document.getElementById('incomingCallerAvatar');
+            if(incAv) incAv.innerHTML = generateAvatar(cData.caller, "w-20 h-20 text-2xl", true);
+            const incModal = document.getElementById('incomingCallModal');
+            if(incModal) incModal.classList.remove('hidden');
           }
           break;
         }
       }
-      if (!foundActive && incomingCallData) document.getElementById('incomingCallModal').classList.add('hidden');
+      if (!foundActive && incomingCallData) {
+        const incModal = document.getElementById('incomingCallModal');
+        if(incModal) incModal.classList.add('hidden');
+      }
     }
 
     window.acceptIncomingCall = async () => {
       if (!incomingCallData) return;
       activeCallId = incomingCallData.id;
-      document.getElementById('incomingCallModal').classList.add('hidden');
-      document.getElementById('callModal').classList.remove('hidden');
-      document.getElementById('callPartnerName').innerText = incomingCallData.caller;
-      document.getElementById('callAvatarFallback').innerHTML = generateAvatar(incomingCallData.caller, "w-24 h-24 text-3xl", true);
+      const incModal = document.getElementById('incomingCallModal');
+      if(incModal) incModal.classList.add('hidden');
+      const callModal = document.getElementById('callModal');
+      if(callModal) callModal.classList.remove('hidden');
+      const callPart = document.getElementById('callPartnerName');
+      if(callPart) callPart.innerText = incomingCallData.caller;
+      const callAv = document.getElementById('callAvatarFallback');
+      if(callAv) callAv.innerHTML = generateAvatar(incomingCallData.caller, "w-24 h-24 text-3xl", true);
 
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        document.getElementById('localCallVideo').srcObject = localStream;
+        const localVid = document.getElementById('localCallVideo');
+        if(localVid) localVid.srcObject = localStream;
       } catch(e) { localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true }); }
 
       peerConnection = new RTCPeerConnection(rtcServers);
       localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-      peerConnection.ontrack = (event) => { document.getElementById('remoteCallVideo').srcObject = event.streams[0]; startCallTimer(); };
+      peerConnection.ontrack = (event) => { 
+        const remVid = document.getElementById('remoteCallVideo');
+        if(remVid) remVid.srcObject = event.streams[0]; 
+        startCallTimer(); 
+      };
       peerConnection.onicecandidate = (event) => { if (event.candidate && activeCallId) apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON()); };
 
       await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
@@ -988,7 +1041,8 @@
 
     window.rejectIncomingCall = () => {
       if (incomingCallData) apiSet(`calls/${incomingCallData.id}/status`, 'rejected');
-      document.getElementById('incomingCallModal').classList.add('hidden');
+      const incModal = document.getElementById('incomingCallModal');
+      if(incModal) incModal.classList.add('hidden');
       incomingCallData = null;
     };
 
@@ -996,7 +1050,8 @@
       let sec = 0; clearInterval(callTimerInt);
       callTimerInt = setInterval(() => {
         sec++;
-        document.getElementById('callTimerText').innerText = `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+        const t = document.getElementById('callTimerText');
+        if(t) t.innerText = `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
       }, 1000);
     }
 
@@ -1011,8 +1066,10 @@
       }
     };
     window.endCall = () => {
-      document.getElementById('callModal').classList.add('hidden');
-      document.getElementById('incomingCallModal').classList.add('hidden');
+      const callModal = document.getElementById('callModal');
+      if(callModal) callModal.classList.add('hidden');
+      const incModal = document.getElementById('incomingCallModal');
+      if(incModal) incModal.classList.add('hidden');
       clearInterval(callTimerInt);
       if(localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
       if(peerConnection) { peerConnection.close(); peerConnection = null; }
@@ -1050,6 +1107,7 @@
   </script>
 </body>
 </html>
+
 <script type="module">
     const formatTime = (ts) => ts ? new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
     const normMap = (obj) => { const o = {}; if(obj) Object.entries(obj).forEach(([k,v]) => { if(v && typeof v === 'object') o[k] = { ...v, id: k }; }); return o; };
@@ -1066,8 +1124,10 @@
       });
 
       if(!currentUser || !DB.users[currentUser]) return;
-      document.getElementById('nav-username').innerHTML = `${currentUser} ${badgeHTML(currentUser)}`;
-      document.getElementById('nav-avatar').innerHTML = generateAvatar(currentUser, "w-5 h-5", true);
+      const navUser = document.getElementById('nav-username');
+      if(navUser) navUser.innerHTML = `${currentUser} ${badgeHTML(currentUser)}`;
+      const navAv = document.getElementById('nav-avatar');
+      if(navAv) navAv.innerHTML = generateAvatar(currentUser, "w-5 h-5", true);
       
       const myXP = getUserXP(currentUser), myLv = getUserLevel(myXP);
       const lvlEl = document.getElementById('profile-level-badge');
@@ -1129,8 +1189,11 @@
     }
 
     function renderFeed() {
-      document.getElementById('feed-filter-all').className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='all' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
-      document.getElementById('feed-filter-following').className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='following' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+      const fAll = document.getElementById('feed-filter-all');
+      if(fAll) fAll.className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='all' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+      const fFol = document.getElementById('feed-filter-following');
+      if(fFol) fFol.className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='following' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+      
       const c = document.getElementById('feed-container'); if(!c) return; c.innerHTML = '';
       const myBlocked = DB.users[currentUser]?.blocked || {};
       let arr = Object.values(normMap(DB.posts)).filter(p => !myBlocked[p.author]).sort((a,b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.timestamp - a.timestamp);
@@ -1216,8 +1279,10 @@
       const combinedTags = Array.from(new Set([...topTags, ...defaultTags]));
       tBar.innerHTML = combinedTags.map(tag => `<button onclick="window.setHashtagFilter('${tag}')" class="px-3 py-1 rounded-full border theme-border text-xs bg-black/40 whitespace-nowrap theme-accent-text font-semibold">${tag}</button>`).join('');
 
-      document.getElementById('exp-tab-users').className = `flex-1 py-2 font-bold border-b-2 ${exploreSubTab==='users' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
-      document.getElementById('exp-tab-grid').className = `flex-1 py-2 font-bold border-b-2 ${exploreSubTab==='grid' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+      const expUsr = document.getElementById('exp-tab-users');
+      if(expUsr) expUsr.className = `flex-1 py-2 font-bold border-b-2 ${exploreSubTab==='users' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+      const expGrd = document.getElementById('exp-tab-grid');
+      if(expGrd) expGrd.className = `flex-1 py-2 font-bold border-b-2 ${exploreSubTab==='grid' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
 
       const uCont = document.getElementById('explore-container');
       const gCont = document.getElementById('explore-grid-container');
@@ -1297,6 +1362,37 @@
       });
     }
 
+    function renderMessages() {
+      const c = document.getElementById('chat-messages'), allM = Object.values(normMap(DB.messages)); if(!c) return; c.innerHTML = '';
+      const isGroup = currentChatTarget === 'GLOBAL_GROUP';
+      const th = allM.filter(m => isGroup ? m.receiver === 'GLOBAL_GROUP' : ((m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser))).sort((a,b) => a.timestamp - b.timestamp);
+      th.forEach(m => {
+        const isMe = m.sender === currentUser;
+        if(!isMe && !isGroup && !m.read) { setNested(DB, `messages/${m.id}/read`, true); saveLocalDB(); if(isFirebaseActive) set(ref(db, `messages/${m.id}/read`), true); }
+        const safeTxt = (m.text || '').replace(/'/g, "");
+        c.innerHTML += `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} group w-full">
+            ${isGroup && !isMe ? `<span class="text-[10px] text-sky-400 font-bold mb-0.5 ml-1">${m.sender}</span>` : ''}
+            <div class="chat-bubble ${isMe ? 'chat-sent' : 'chat-recv'}">
+              ${m.replyTo ? `<div class="text-[10px] bg-black/30 border-l-2 border-white/60 pl-2 py-0.5 mb-1 rounded opacity-85">${m.replyTo}</div>` : ''}
+              ${m.image ? `<img src="${m.image}" class="rounded-lg max-h-48 mb-1">` : ''}
+              ${m.audio ? `<audio controls src="${m.audio}" class="h-8 w-48 my-1"></audio>` : ''}
+              ${m.text ? `<div>${formatRichText(m.text)}</div>` : ''}
+              <div class="flex justify-end gap-1 items-center mt-1"><span class="text-[9px] opacity-70">${formatTime(m.timestamp)}</span>${isMe && !isGroup ? `<span class="${m.read ? 'tick-blue' : 'tick-gray'} text-[11px]">✓✓</span>` : ''}</div>
+              ${m.reaction ? `<span class="absolute -bottom-2 ${isMe ? 'left-2' : 'right-2'} bg-black border border-white/20 rounded-full px-1.5 text-xs">${m.reaction}</span>` : ''}
+            </div>
+            <div class="flex gap-2 mt-1 opacity-0 group-hover:opacity-100 transition text-xs items-center">
+              <button onclick="window.reactMessage('${m.id}','❤️')">❤️</button><button onclick="window.reactMessage('${m.id}','🔥')">🔥</button><button onclick="window.reactMessage('${m.id}','😂')">😂</button>
+              <button onclick="window.setReplyMsg('${m.sender}','${safeTxt}')" class="text-[10px] text-sky-400">↩️ Reply</button>
+              ${isMe ? `<button onclick="window.editChatMessage('${m.id}','${safeTxt}')" class="text-[10px] text-amber-400">Edit</button><button onclick="window.deleteMessage('${m.id}')" class="text-[10px] text-rose-400">Unsend</button>` : ''}
+            </div>
+          </div>`;
+      });
+      c.scrollTop = c.scrollHeight;
+      const typingInd = document.getElementById('typing-indicator');
+      if(typingInd) typingInd.classList.toggle('hidden', isGroup || !(DB.typing?.[currentChatTarget]?.[currentUser]));
+    }
+
     const chatInputEl = document.getElementById('chatInput');
     if(chatInputEl) {
       chatInputEl.oninput = () => {
@@ -1373,7 +1469,9 @@
               document.getElementById('imagePlaceholder').classList.add('hidden'); document.getElementById('filterBar').classList.remove('hidden');
             }
             const badge = document.getElementById('multiCountBadge');
-            if(multiImagesList.length > 1) { badge.innerText = `🖼️ ${multiImagesList.length} photos selected`; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
+            if(badge) {
+              if(multiImagesList.length > 1) { badge.innerText = `🖼️ ${multiImagesList.length} photos selected`; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
+            }
           });
         });
       };
@@ -1413,12 +1511,16 @@
         }
         document.getElementById('uploadModal').classList.add('hidden');
         if(capEl) capEl.value = ''; 
-        document.getElementById('pollOpt1').value = ''; document.getElementById('pollOpt2').value = ''; document.getElementById('pollOpt3').value = '';
+        const p1 = document.getElementById('pollOpt1'); if(p1) p1.value = '';
+        const p2 = document.getElementById('pollOpt2'); if(p2) p2.value = '';
+        const p3 = document.getElementById('pollOpt3'); if(p3) p3.value = '';
         document.getElementById('imagePreview').classList.add('hidden'); document.getElementById('imagePlaceholder').classList.remove('hidden'); document.getElementById('filterBar').classList.add('hidden');
         document.getElementById('multiCountBadge').classList.add('hidden');
         currentImageBase64 = null; multiImagesList = []; activeArSticker = ''; window.switchTab('feed');
       };
     }
+
+    updateUI();
   </script>
 </body>
 </html>
