@@ -387,15 +387,16 @@
       </div>
     </div>
   </div>
-
-  <!-- CORE SCRIPT -->
+  
+<!-- CORE SCRIPT (AUTO-UNLOCK FIX) -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-
     const $ = (id) => document.getElementById(id);
 
-    // 🔴 PASTE YOUR FIREBASE KEYS HERE 🔴
+    // 1. Turant Login Button Unlock karein taaki kabhi "Connecting..." par na atke
+    $('loginBtn').disabled = false;
+    $('db-status').innerHTML = '<span class="text-emerald-400">● System Ready (Instant Login)</span>';
+
+    // 🔴 APNE FIREBASE KEYS YAHAN DALEIN 🔴
     const firebaseConfig = {
   apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
   authDomain: "mark-9bc95.firebaseapp.com",
@@ -406,7 +407,7 @@
   appId: "1:417846424762:web:24573a7abf942dfffefe83"
 };
 
-    let app, db, isFirebaseActive = false;
+    let app, db, isFirebaseActive = false, ref, onValue, set, remove;
     let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users:{}, posts:{}, stories:{}, messages:{}, typing:{}, notifications:{}, notes:{} };
     let currentUser = localStorage.getItem('viu_auth_user') || null;
     let currentChatTarget = null, activeTab = 'feed', feedFilter = 'all', activeHashtag = null, profileSubTab = 'my', uploadType = 'post';
@@ -420,19 +421,42 @@
     window.setTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('viu_theme', t); updateUI(); };
     window.getCurrentChatTarget = () => currentChatTarget;
 
-    try { if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") { app = initializeApp(firebaseConfig); db = getDatabase(app); } } catch(e) {}
+    function enableLocalMode() {
+      $('loginBtn').disabled = false;
+      if(currentUser && DB.users[currentUser]) {
+        $('login-view').classList.add('hidden');
+        $('app-container').classList.remove('hidden');
+      }
+      setTimeout(() => { if(typeof updateUI === 'function') updateUI(); }, 50);
+    }
 
-    if(db) {
-      onValue(ref(db, '/'), (snap) => {
-        const d = snap.val() || {};
-        DB = { users:d.users||{}, posts:d.posts||{}, stories:d.stories||{}, messages:d.messages||{}, typing:d.typing||{}, notifications:d.notifications||{}, notes:d.notes||{} };
-        isFirebaseActive = true;
-        $('db-status').innerText = '● Live Server Connected';
-        $('loginBtn').disabled = false;
-        if(currentUser && DB.users[currentUser]) { $('login-view').classList.add('hidden'); $('app-container').classList.remove('hidden'); }
-        updateUI();
-      }, () => enableLocalMode());
-    } else enableLocalMode();
+    // Pehle Local Mode chalu karein taaki Login turant kaam kare
+    enableLocalMode();
+
+    // Background mein Firebase connect karein (bina app ko roke)
+    (async () => {
+      try {
+        if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+          const fbApp = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js");
+          const fbDb = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js");
+          ref = fbDb.ref; onValue = fbDb.onValue; set = fbDb.set; remove = fbDb.remove;
+          app = fbApp.initializeApp(firebaseConfig);
+          db = fbDb.getDatabase(app);
+          onValue(ref(db, '/'), (snap) => {
+            const d = snap.val() || {};
+            DB = { users:d.users||{}, posts:d.posts||{}, stories:d.stories||{}, messages:d.messages||{}, typing:d.typing||{}, notifications:d.notifications||{}, notes:d.notes||{} };
+            isFirebaseActive = true;
+            $('db-status').innerText = '● Live Server Connected';
+            enableLocalMode();
+          }, (err) => {
+            $('db-status').innerHTML = '<span class="text-amber-400">● Local Mode (' + err.code + ')</span>';
+          });
+        }
+      } catch(e) {
+        $('db-status').innerHTML = '<span class="text-sky-400">● Offline / Local Mode Active</span>';
+      }
+    })();
+
 
     function enableLocalMode() {
       $('db-status').innerHTML = '<span class="text-sky-400">● Local Mode Active</span>';
