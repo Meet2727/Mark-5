@@ -3,13 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Viu // Ultimate Social Network</title>
+  <title>Viu // Ultimate Social Network v3.0</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root, [data-theme="ig-dark"] {
-      --bg-main: #000; --bg-surface: #121212; --bg-card: #000; --border-col: #262626;
+      --bg-main: #000000; --bg-surface: #121212; --bg-card: #000000; --border-col: #262626;
       --accent: #0095f6; --accent-rgb: 0, 149, 246; --text-main: #f5f5f5;
+      --font-body: 'Inter', sans-serif; --font-heading: 'Inter', sans-serif;
+      --story-ring: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+    [data-theme="ig-light"] {
+      --bg-main: #f8fafc; --bg-surface: #ffffff; --bg-card: #ffffff; --border-col: #cbd5e1;
+      --accent: #0284c7; --accent-rgb: 2, 132, 199; --text-main: #0f172a;
       --font-body: 'Inter', sans-serif; --font-heading: 'Inter', sans-serif;
       --story-ring: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
     }
@@ -31,20 +37,26 @@
       --font-body: 'Share Tech Mono', monospace; --font-heading: 'Orbitron', sans-serif;
       --story-ring: linear-gradient(135deg, #00ff88, #00b8ff);
     }
+    [data-theme="cyber-gold"] {
+      --bg-main: #090701; --bg-surface: #161103; --bg-card: rgba(24, 19, 4, 0.94); --border-col: rgba(250, 204, 21, 0.4);
+      --accent: #facc15; --accent-rgb: 250, 204, 21; --text-main: #fef9c3;
+      --font-body: 'Share Tech Mono', monospace; --font-heading: 'Orbitron', sans-serif;
+      --story-ring: linear-gradient(135deg, #facc15, #f97316);
+    }
     body { background-color: var(--bg-main); color: var(--text-main); font-family: var(--font-body); overflow: hidden; }
-    [data-theme^="jarvis"] body {
+    [data-theme^="jarvis"] body, [data-theme="cyber-gold"] body {
       background-image: linear-gradient(rgba(var(--accent-rgb), 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--accent-rgb), 0.04) 1px, transparent 1px);
       background-size: 26px 26px;
     }
     .font-heading { font-family: var(--font-heading); }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    #app-container { max-width: 480px; margin: 0 auto; height: 100vh; height: 100dvh; position: relative; display: flex; flex-direction: column; border-left: 1px solid var(--border-col); border-right: 1px solid var(--border-col); }
+    #app-container { max-width: 480px; margin: 0 auto; height: 100vh; height: 100dvh; position: relative; display: flex; flex-direction: column; border-left: 1px solid var(--border-col); border-right: 1px solid var(--border-col); background-color: var(--bg-main); }
     .theme-surface { background-color: var(--bg-surface); border-color: var(--border-col); }
     .theme-card { background-color: var(--bg-card); border-color: var(--border-col); position: relative; }
     .theme-border { border-color: var(--border-col); }
     .theme-accent-bg { background-color: var(--accent); color: #000; }
-    [data-theme="ig-dark"] .theme-accent-bg { color: #fff; }
+    [data-theme="ig-dark"] .theme-accent-bg, [data-theme="ig-light"] .theme-accent-bg { color: #fff; }
     .theme-accent-text { color: var(--accent); }
     .story-ring { background: var(--story-ring); padding: 2.5px; border-radius: 9999px; }
     .fade-in { animation: fadeIn 0.25s ease-out forwards; }
@@ -53,13 +65,17 @@
     @keyframes popHeart { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); } 30% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.4); } }
     .chat-bubble { max-width: 80%; padding: 9px 13px; border-radius: 16px; font-size: 13.5px; word-wrap: break-word; position: relative; }
     .chat-sent { background-color: var(--accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
-    [data-theme^="jarvis"] .chat-sent { background-color: rgba(var(--accent-rgb), 0.18); border: 1px solid var(--accent); color: var(--text-main); }
+    [data-theme^="jarvis"] .chat-sent, [data-theme="cyber-gold"] .chat-sent { background-color: rgba(var(--accent-rgb), 0.18); border: 1px solid var(--accent); color: var(--text-main); }
     .chat-recv { background-color: #262626; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
+    [data-theme="ig-light"] .chat-recv { background-color: #e2e8f0; color: #0f172a; }
     .tick-blue { color: #38bdf8; font-weight: bold; text-shadow: 0 0 5px rgba(56,189,248,0.8); }
     .tick-gray { color: rgba(255,255,255,0.55); }
   </style>
 </head>
 <body>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-[10001] flex flex-col gap-2 pointer-events-none w-max max-w-xs"></div>
 
   <!-- LOGIN VIEW -->
   <div id="login-view" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 bg-black/95">
@@ -90,7 +106,7 @@
         <button onclick="window.openNotifications()" class="p-1.5 rounded-lg border theme-border hover:opacity-80 relative">
           🔔<span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
         </button>
-        <div class="flex items-center gap-1.5 bg-black/50 pl-1 pr-2.5 py-1 rounded-full border theme-border cursor-pointer" onclick="window.switchTab('profile')">
+        <div class="flex items-center gap-1.5 bg-black/50 pl-1 pr-2.5 py-1 rounded-full border theme-border cursor-pointer text-white" onclick="window.switchTab('profile')">
           <div id="nav-avatar" class="w-6 h-6"></div>
           <span id="nav-username" class="text-xs font-semibold truncate max-w-[85px]">User</span>
         </div>
@@ -102,7 +118,7 @@
       <div id="tab-feed" class="w-full min-h-full pb-20">
         <div class="flex gap-4 p-4 overflow-x-auto hide-scrollbar border-b theme-border bg-black/20" id="stories-container"></div>
         <div class="flex border-b theme-border bg-black/30 text-xs">
-          <button onclick="window.setFeedFilter('all')" id="feed-filter-all" class="flex-1 py-2 font-bold border-b-2 border-white text-white">For You (All)</button>
+          <button onclick="window.setFeedFilter('all')" id="feed-filter-all" class="flex-1 py-2 font-bold border-b-2 theme-accent-text border-current">For You (All)</button>
           <button onclick="window.setFeedFilter('following')" id="feed-filter-following" class="flex-1 py-2 font-bold border-b-2 border-transparent text-gray-500">Following</button>
         </div>
         <div id="hashtagFilterBar" class="hidden bg-sky-500/20 border-b border-sky-500/40 px-4 py-2 flex justify-between items-center text-xs">
@@ -114,12 +130,17 @@
 
       <!-- EXPLORE TAB -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4 pb-20">
-        <input type="text" id="searchUsers" placeholder="Search users or mood tags..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-3 focus:outline-none text-white">
-        <div class="mb-4">
+        <input type="text" id="searchUsers" placeholder="Search users, captions, or mood tags..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-3 focus:outline-none">
+        <div class="mb-3">
           <div class="text-[11px] text-gray-400 mb-1.5 font-semibold uppercase tracking-wider">🔥 Trending Hashtags</div>
           <div id="trendingTagsBar" class="flex gap-2 overflow-x-auto hide-scrollbar pb-1"></div>
         </div>
+        <div class="flex border-b theme-border mb-3 text-xs">
+          <button onclick="window.setExploreSubTab('users')" id="exp-tab-users" class="flex-1 py-2 font-bold border-b-2 theme-accent-text border-current">👥 PEOPLE</button>
+          <button onclick="window.setExploreSubTab('grid')" id="exp-tab-grid" class="flex-1 py-2 font-bold border-b-2 border-transparent text-gray-500">🖼️ MEDIA GRID</button>
+        </div>
         <div id="explore-container" class="space-y-2.5"></div>
+        <div id="explore-grid-container" class="hidden grid grid-cols-3 gap-1"></div>
       </div>
 
       <!-- MESSAGES TAB -->
@@ -128,12 +149,21 @@
           <div class="text-[11px] text-gray-400 mb-2 font-semibold uppercase tracking-wider">💭 24h Thought Notes</div>
           <div id="notes-container" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1"></div>
         </div>
-        <h2 class="font-heading font-bold text-base mb-3 theme-accent-text">Messages & Group Lounge</h2>
-        <div onclick="window.openChat('GLOBAL_GROUP')" class="theme-surface flex items-center p-3 rounded-xl border-2 border-sky-500/40 cursor-pointer gap-3 mb-3 bg-gradient-to-r from-sky-500/10 to-purple-500/10">
+        <h2 class="font-heading font-bold text-base mb-3 theme-accent-text">Messages & AI Lounge</h2>
+        <!-- GLOBAL GROUP -->
+        <div onclick="window.openChat('GLOBAL_GROUP')" class="theme-surface flex items-center p-3 rounded-xl border-2 border-sky-500/40 cursor-pointer gap-3 mb-2.5 bg-gradient-to-r from-sky-500/10 to-purple-500/10">
           <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-lg shrink-0">🌐</div>
           <div class="flex-1 overflow-hidden">
             <div class="font-bold text-sm flex items-center gap-1.5">Global Lounge <span class="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-full">Public Group</span></div>
             <div class="text-xs text-gray-400 truncate" id="global-chat-preview">Tap to join live group chat!</div>
+          </div>
+        </div>
+        <!-- VIU AI COMPANION -->
+        <div onclick="window.openChat('ViuAI')" class="theme-surface flex items-center p-3 rounded-xl border-2 border-emerald-500/40 cursor-pointer gap-3 mb-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-600 flex items-center justify-center text-lg shrink-0">🤖</div>
+          <div class="flex-1 overflow-hidden">
+            <div class="font-bold text-sm flex items-center gap-1.5">Viu AI Assistant <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full">Smart Bot</span></div>
+            <div class="text-xs text-gray-400 truncate">Ask for post captions, ideas, or chat anytime!</div>
           </div>
         </div>
         <div id="chatlist-container" class="space-y-2"></div>
@@ -141,46 +171,57 @@
 
       <!-- PROFILE TAB -->
       <div id="tab-profile" class="w-full min-h-full hidden p-4 pb-20">
-        <div class="theme-surface border theme-border p-5 rounded-2xl flex flex-col items-center text-center mb-4">
-          <div class="relative cursor-pointer mb-2" onclick="document.getElementById('avatarFileInput').click()">
-            <div class="story-ring w-24 h-24 rounded-full flex items-center justify-center">
-              <div id="profile-avatar-container" class="w-full h-full rounded-full overflow-hidden bg-black flex items-center justify-center"></div>
+        <div class="theme-surface border theme-border rounded-2xl overflow-hidden flex flex-col items-center text-center mb-4">
+          <!-- PROFILE COVER BANNER -->
+          <div id="profile-banner" onclick="document.getElementById('bannerFileInput').click()" class="w-full h-28 bg-gradient-to-r from-sky-600 via-indigo-600 to-purple-700 relative cursor-pointer bg-cover bg-center">
+            <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full">🖼️ Edit Cover</span>
+            <input type="file" id="bannerFileInput" accept="image/*" class="hidden">
+          </div>
+
+          <div class="px-5 pb-5 w-full flex flex-col items-center -mt-12">
+            <div class="relative cursor-pointer mb-2" onclick="document.getElementById('avatarFileInput').click()">
+              <div class="story-ring w-24 h-24 rounded-full flex items-center justify-center shadow-xl">
+                <div id="profile-avatar-container" class="w-full h-full rounded-full overflow-hidden bg-black flex items-center justify-center"></div>
+              </div>
+              <div class="absolute bottom-0 right-0 theme-accent-bg p-1.5 rounded-full border-2 border-black text-xs">📷</div>
+              <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
             </div>
-            <div class="absolute bottom-0 right-0 theme-accent-bg p-1.5 rounded-full border-2 border-black text-xs">📷</div>
-            <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
-          </div>
-          <div class="flex items-center gap-1 justify-center">
-            <h2 class="text-lg font-heading font-bold" id="profile-username">User</h2>
-            <span id="profile-verified" class="hidden text-sky-400 text-sm">☑️</span>
-          </div>
-          <span id="profile-mood" class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/10 text-gray-300 mt-1">✨ Using Viu</span>
-          <p class="text-xs text-gray-400 mt-2 mb-4" id="profile-bio">Tap 'Edit Profile' to customize.</p>
-
-          <div class="grid grid-cols-4 gap-2 w-full border-y theme-border py-2.5 mb-4 text-xs">
-            <div><span class="font-bold text-sm block" id="stat-posts">0</span>Posts</div>
-            <div class="cursor-pointer" onclick="window.openFollowListModal('followers')"><span class="font-bold text-sm block theme-accent-text" id="stat-followers">0</span>Followers</div>
-            <div class="cursor-pointer" onclick="window.openFollowListModal('following')"><span class="font-bold text-sm block theme-accent-text" id="stat-following">0</span>Following</div>
-            <div><span class="font-bold text-sm block" id="stat-Saved">0</span>Saved</div>
-          </div>
-
-          <div class="w-full mb-4">
-            <p class="text-[10px] text-gray-400 mb-2 uppercase tracking-wider font-semibold">Select App Theme</p>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <button onclick="window.setTheme('ig-dark')" class="py-2 px-2 rounded-lg border theme-border bg-black text-white font-semibold">📸 Instagram Dark</button>
-              <button onclick="window.setTheme('jarvis')" class="py-2 px-2 rounded-lg border theme-border bg-[#030a16] text-[#00f3ff] font-semibold">🤖 J.A.R.V.I.S HUD</button>
-              <button onclick="window.setTheme('jarvis-crimson')" class="py-2 px-2 rounded-lg border theme-border bg-[#140205] text-[#ff0055] font-semibold">🔴 Crimson HUD</button>
-              <button onclick="window.setTheme('jarvis-emerald')" class="py-2 px-2 rounded-lg border theme-border bg-[#021409] text-[#00ff88] font-semibold">🟢 Matrix HUD</button>
+            <div class="flex items-center gap-1 justify-center">
+              <h2 class="text-lg font-heading font-bold" id="profile-username">User</h2>
+              <span id="profile-verified" class="hidden text-sky-400 text-sm">☑️</span>
             </div>
-          </div>
+            <span id="profile-mood" class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/10 text-gray-400 mt-1">✨ Using Viu</span>
+            <p class="text-xs text-gray-400 mt-2 mb-4" id="profile-bio">Tap 'Edit Profile' to customize.</p>
 
-          <div class="flex gap-2 w-full">
-            <button onclick="window.openBioModal()" class="flex-1 bg-white/10 py-2 rounded-lg text-xs font-semibold">Edit Profile & Badge</button>
-            <button onclick="window.logoutUser()" class="flex-1 bg-rose-500/20 text-rose-400 py-2 rounded-lg text-xs font-semibold">Log Out</button>
+            <div class="grid grid-cols-4 gap-2 w-full border-y theme-border py-2.5 mb-4 text-xs">
+              <div><span class="font-bold text-sm block" id="stat-posts">0</span>Posts</div>
+              <div class="cursor-pointer" onclick="window.openFollowListModal('followers')"><span class="font-bold text-sm block theme-accent-text" id="stat-followers">0</span>Followers</div>
+              <div class="cursor-pointer" onclick="window.openFollowListModal('following')"><span class="font-bold text-sm block theme-accent-text" id="stat-following">0</span>Following</div>
+              <div><span class="font-bold text-sm block" id="stat-Saved">0</span>Saved</div>
+            </div>
+
+            <div class="w-full mb-4">
+              <p class="text-[10px] text-gray-400 mb-2 uppercase tracking-wider font-semibold">Select App Theme</p>
+              <div class="grid grid-cols-3 gap-1.5 text-[11px]">
+                <button onclick="window.setTheme('ig-dark')" class="py-2 px-1.5 rounded-lg border theme-border bg-black text-white font-semibold">📸 IG Dark</button>
+                <button onclick="window.setTheme('ig-light')" class="py-2 px-1.5 rounded-lg border theme-border bg-white text-slate-900 font-semibold">☀️ Light</button>
+                <button onclick="window.setTheme('jarvis')" class="py-2 px-1.5 rounded-lg border theme-border bg-[#030a16] text-[#00f3ff] font-semibold">🤖 Jarvis</button>
+                <button onclick="window.setTheme('jarvis-crimson')" class="py-2 px-1.5 rounded-lg border theme-border bg-[#140205] text-[#ff0055] font-semibold">🔴 Crimson</button>
+                <button onclick="window.setTheme('jarvis-emerald')" class="py-2 px-1.5 rounded-lg border theme-border bg-[#021409] text-[#00ff88] font-semibold">🟢 Matrix</button>
+                <button onclick="window.setTheme('cyber-gold')" class="py-2 px-1.5 rounded-lg border theme-border bg-[#161103] text-[#facc15] font-semibold">⚡ Gold</button>
+              </div>
+            </div>
+
+            <div class="flex gap-2 w-full">
+              <button onclick="window.openBioModal()" class="flex-1 bg-white/10 py-2 rounded-lg text-xs font-semibold">✏️ Edit Profile</button>
+              <button onclick="window.openInsightsModal()" class="flex-1 bg-sky-500/20 text-sky-400 py-2 rounded-lg text-xs font-semibold">📊 Insights</button>
+              <button onclick="window.logoutUser()" class="px-3 bg-rose-500/20 text-rose-400 py-2 rounded-lg text-xs font-semibold">Exit</button>
+            </div>
           </div>
         </div>
 
         <div class="flex border-b theme-border mb-2">
-          <button onclick="window.setProfileSubTab('my')" id="prof-tab-my" class="flex-1 py-2 text-xs font-bold border-b-2 border-white text-white">MY POSTS</button>
+          <button onclick="window.setProfileSubTab('my')" id="prof-tab-my" class="flex-1 py-2 text-xs font-bold border-b-2 theme-accent-text border-current">MY POSTS</button>
           <button onclick="window.setProfileSubTab('saved')" id="prof-tab-saved" class="flex-1 py-2 text-xs font-bold border-b-2 border-transparent text-gray-500">SAVED 🔖</button>
         </div>
         <div id="profile-grid" class="grid grid-cols-3 gap-1"></div>
@@ -190,7 +231,7 @@
       <div id="active-chat-view" class="absolute inset-0 bg-black z-30 hidden flex flex-col">
         <div class="h-14 border-b theme-border flex items-center justify-between px-4 theme-surface shrink-0">
           <div class="flex items-center gap-3">
-            <button onclick="window.closeChat()" class="text-white text-lg">←</button>
+            <button onclick="window.closeChat()" class="text-lg">←</button>
             <div id="active-chat-avatar" class="w-8 h-8 cursor-pointer" onclick="window.openUserProfile(window.getCurrentChatTarget())"></div>
             <div class="cursor-pointer" onclick="window.openUserProfile(window.getCurrentChatTarget())">
               <span id="active-chat-name" class="font-bold text-sm block leading-none">User</span>
@@ -198,15 +239,27 @@
               <span id="typing-indicator" class="text-[10px] theme-accent-text hidden ml-1">typing...</span>
             </div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5">
             <button onclick="window.startCall(false)" class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-xs" title="Audio Call">📞</button>
             <button onclick="window.startCall(true)" class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-xs" title="Video Call">📹</button>
+            <button onclick="window.clearChatHistory()" class="p-2 rounded-full bg-rose-500/20 text-rose-400 text-xs" title="Clear Chat">🗑️</button>
           </div>
         </div>
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar space-y-3 bg-black"></div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar space-y-3 bg-black/95"></div>
         <div id="replyPreviewBar" class="hidden px-4 py-1.5 bg-white/10 border-t theme-border flex justify-between items-center text-xs">
           <div class="truncate text-gray-300"><span class="theme-accent-text font-bold">Replying:</span> <span id="replyPreviewText"></span></div>
           <button type="button" onclick="window.cancelReply()" class="text-gray-400 ml-2">✕</button>
+        </div>
+        <!-- QUICK EMOJI BAR -->
+        <div class="px-3 py-1 bg-black/80 border-t theme-border flex gap-3 overflow-x-auto hide-scrollbar text-sm">
+          <button type="button" onclick="window.insertChatEmoji('❤️')">❤️</button>
+          <button type="button" onclick="window.insertChatEmoji('🔥')">🔥</button>
+          <button type="button" onclick="window.insertChatEmoji('😂')">😂</button>
+          <button type="button" onclick="window.insertChatEmoji('😍')">😍</button>
+          <button type="button" onclick="window.insertChatEmoji('🙌')">🙌</button>
+          <button type="button" onclick="window.insertChatEmoji('🚀')">🚀</button>
+          <button type="button" onclick="window.insertChatEmoji('✨')">✨</button>
+          <button type="button" onclick="window.insertChatEmoji('💯')">💯</button>
         </div>
         <form id="chatForm" class="p-2.5 border-t theme-border theme-surface shrink-0 flex gap-1.5 items-center">
           <label class="p-2 rounded-full bg-white/10 cursor-pointer text-sm shrink-0">📷<input type="file" id="chatImageInput" accept="image/*" class="hidden"></label>
@@ -227,7 +280,8 @@
       <button onclick="window.switchTab('profile')" id="navbtn-profile" class="p-2 text-gray-500">👤</button>
     </nav>
   </div>
-<!-- ACTIVE CALL MODAL -->
+
+  <!-- ACTIVE CALL MODAL -->
   <div id="callModal" class="hidden fixed inset-0 z-[9999] bg-black/95 flex flex-col justify-between items-center p-6 text-center select-none">
     <div class="mt-6">
       <span class="text-[11px] uppercase tracking-widest theme-accent-text font-bold block mb-1" id="callTypeLabel">LIVE P2P CALL</span>
@@ -241,13 +295,14 @@
       <div id="callAvatarFallback" class="flex flex-col items-center"></div>
     </div>
 
-    <div class="flex gap-6 mb-6">
-      <button onclick="window.toggleCallCam()" class="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center text-lg">📷</button>
+    <div class="flex gap-5 mb-6 items-center">
+      <button id="micToggleBtn" onclick="window.toggleCallMic()" class="w-12 h-12 rounded-full bg-white/15 text-white flex items-center justify-center text-lg">🎤</button>
       <button onclick="window.endCall()" class="w-14 h-14 rounded-full bg-rose-600 text-white flex items-center justify-center text-xl font-bold shadow-lg">📴</button>
+      <button id="camToggleBtn" onclick="window.toggleCallCam()" class="w-12 h-12 rounded-full bg-white/15 text-white flex items-center justify-center text-lg">📷</button>
     </div>
   </div>
 
-  <!-- INCOMING CALL RINGING ALERT (STABLE & STATIC) -->
+  <!-- INCOMING CALL RINGING ALERT -->
   <div id="incomingCallModal" class="hidden fixed inset-0 z-[10000] bg-black/90 flex flex-col items-center justify-center p-6 text-center">
     <div class="theme-surface border theme-border p-6 rounded-2xl w-full max-w-xs space-y-4">
       <div id="incomingCallerAvatar" class="w-20 h-20 mx-auto"></div>
@@ -283,7 +338,7 @@
     <div class="p-3 z-20 bg-black/90 border-t border-white/10 space-y-2" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center text-xs text-gray-300 px-1">
         <div class="flex gap-4"><span id="storyViewsCount">👁️ 0</span><span id="storyLikesCount">❤️ 0</span></div>
-        <button onclick="window.toggleStoryLike()" class="bg-white/10 px-3 py-1 rounded-full text-xs font-bold"><span id="storyLikeIcon">🤍</span> Like</button>
+        <button onclick="window.toggleStoryLike()" class="bg-white/10 px-3 py-1 rounded-full text-xs font-bold text-white"><span id="storyLikeIcon">🤍</span> Like</button>
       </div>
       <div class="flex gap-2">
         <input type="text" id="storyReplyInput" placeholder="Reply to story..." class="flex-1 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs text-white focus:outline-none">
@@ -299,19 +354,30 @@
         <h2 class="font-heading font-bold text-base">Create Content</h2>
         <button onclick="window.closeUploadModal()" class="text-gray-400">✕</button>
       </div>
-      <div class="flex gap-1.5 mb-3 bg-black/50 p-1 rounded-lg border theme-border">
-        <button type="button" onclick="window.setUploadType('post')" id="type-post" class="flex-1 py-1.5 rounded text-xs font-bold">📷 POST</button>
-        <button type="button" onclick="window.setUploadType('story')" id="type-story" class="flex-1 py-1.5 rounded text-xs font-bold">⚡ STORY</button>
-        <button type="button" onclick="window.setUploadType('poll')" id="type-poll" class="flex-1 py-1.5 rounded text-xs font-bold">📊 POLL</button>
+      <div class="grid grid-cols-4 gap-1 mb-3 bg-black/50 p-1 rounded-lg border theme-border">
+        <button type="button" onclick="window.setUploadType('post')" id="type-post" class="py-1.5 rounded text-xs font-bold">📷 PHOTO</button>
+        <button type="button" onclick="window.setUploadType('quote')" id="type-quote" class="py-1.5 rounded text-xs font-bold">📝 QUOTE</button>
+        <button type="button" onclick="window.setUploadType('story')" id="type-story" class="py-1.5 rounded text-xs font-bold">⚡ STORY</button>
+        <button type="button" onclick="window.setUploadType('poll')" id="type-poll" class="py-1.5 rounded text-xs font-bold">📊 POLL</button>
       </div>
       <form id="uploadForm" class="space-y-3">
-        <textarea id="postCaption" rows="2" placeholder="Write caption (use #hashtags or @mentions)..." class="w-full bg-black/40 border theme-border rounded-lg p-2.5 text-sm outline-none text-white"></textarea>
-        <div id="storyMusicSection" class="hidden">
+        <textarea id="postCaption" rows="2" placeholder="Write caption, quote, or question (use #hashtags or @mentions)..." class="w-full bg-black/40 border theme-border rounded-lg p-2.5 text-sm outline-none text-white"></textarea>
+        <div id="storyMusicSection">
           <select id="storyMusicInput" class="w-full bg-black border theme-border rounded-lg p-2 text-xs text-white">
             <option value="">🎵 No Music Sticker</option>
             <option value="🎵 Night Drive - Synthwave">🎵 Night Drive - Synthwave</option>
             <option value="🔥 Phonky Drift - Bass">🔥 Phonky Drift - Bass</option>
             <option value="🎸 Midnight Lo-Fi Chill">🎸 Midnight Lo-Fi Chill</option>
+            <option value="⚡ Cyberpunk 2077 Vibes">⚡ Cyberpunk 2077 Vibes</option>
+          </select>
+        </div>
+        <div id="quoteBgSection" class="hidden">
+          <p class="text-[10px] text-gray-400 mb-1">Select Quote Background Gradient:</p>
+          <select id="quoteBgInput" class="w-full bg-black border theme-border rounded-lg p-2 text-xs text-white">
+            <option value="from-pink-600 via-purple-600 to-indigo-700">🌌 Cosmic Purple & Pink</option>
+            <option value="from-cyan-500 via-blue-600 to-indigo-900">🌊 Deep Cyber Ocean</option>
+            <option value="from-rose-600 via-orange-500 to-amber-500">🔥 Sunset Blaze</option>
+            <option value="from-emerald-500 via-teal-600 to-slate-900">🟢 Matrix Emerald</option>
           </select>
         </div>
         <div id="photoUploadSection">
@@ -322,7 +388,7 @@
             <div id="imagePlaceholder" class="text-gray-400 text-xs py-5">📷 Tap to choose 1 or multiple photos</div>
           </div>
           <div id="filterBar" class="hidden flex gap-2 overflow-x-auto hide-scrollbar py-2">
-            <button type="button" onclick="window.applyImageFilter('none')" class="px-3 py-1 rounded border theme-border bg-black text-xs shrink-0">Normal</button>
+            <button type="button" onclick="window.applyImageFilter('none')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-white shrink-0">Normal</button>
             <button type="button" onclick="window.applyImageFilter('vivid')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-pink-400 shrink-0">✨ Vivid</button>
             <button type="button" onclick="window.applyImageFilter('bw')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-gray-300 shrink-0">🖤 B&W</button>
             <button type="button" onclick="window.applyImageFilter('cyber')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-cyan-400 shrink-0">⚡ Cyber</button>
@@ -336,6 +402,35 @@
         </div>
         <button type="submit" id="submitUploadBtn" class="w-full theme-accent-bg font-bold rounded-lg py-3 text-sm">Publish</button>
       </form>
+    </div>
+  </div>
+
+  <!-- CREATOR INSIGHTS MODAL (NEW) -->
+  <div id="insightsModal" class="hidden fixed inset-0 z-[210] bg-black/85 flex items-center justify-center p-4" onclick="if(event.target===this) this.classList.add('hidden')">
+    <div class="theme-surface border theme-border rounded-2xl w-full max-w-sm p-5 space-y-4">
+      <div class="flex justify-between items-center border-b theme-border pb-3">
+        <h3 class="font-heading font-bold text-sm theme-accent-text">📊 Creator Studio Insights</h3>
+        <button onclick="document.getElementById('insightsModal').classList.add('hidden')">✕</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 text-center">
+        <div class="p-3 rounded-xl bg-black/40 border theme-border">
+          <span class="text-xl font-bold theme-accent-text block" id="ins-likes">0</span>
+          <span class="text-[11px] text-gray-400">Total Likes Received</span>
+        </div>
+        <div class="p-3 rounded-xl bg-black/40 border theme-border">
+          <span class="text-xl font-bold text-emerald-400 block" id="ins-comments">0</span>
+          <span class="text-[11px] text-gray-400">Total Comments</span>
+        </div>
+        <div class="p-3 rounded-xl bg-black/40 border theme-border">
+          <span class="text-xl font-bold text-purple-400 block" id="ins-views">0</span>
+          <span class="text-[11px] text-gray-400">Story Views</span>
+        </div>
+        <div class="p-3 rounded-xl bg-black/40 border theme-border">
+          <span class="text-xl font-bold text-amber-400 block" id="ins-score">100%</span>
+          <span class="text-[11px] text-gray-400">Engagement Score</span>
+        </div>
+      </div>
+      <button onclick="document.getElementById('insightsModal').classList.add('hidden')" class="w-full theme-accent-bg py-2.5 rounded-xl text-xs font-bold">Done</button>
     </div>
   </div>
 
@@ -412,6 +507,7 @@
         <option value="🎮 Gaming">🎮 Gaming</option>
         <option value="🎵 Listening to Music">🎵 Listening to Music</option>
         <option value="🚀 Working on Project">🚀 Working on Project</option>
+        <option value="☕ Coffee Break">☕ Coffee Break</option>
       </select>
       <textarea id="bioInput" rows="2" placeholder="Your Bio..." class="w-full bg-black border theme-border rounded-lg p-2.5 text-sm text-white"></textarea>
       <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" id="verifiedInput"> Enable Verified Badge (☑️)</label>
@@ -421,8 +517,7 @@
       </div>
     </div>
   </div>
-
-  <!-- CORE SCRIPT -->
+<!-- CORE SCRIPT (PART 2) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -437,10 +532,11 @@
   messagingSenderId: "417846424762",
   appId: "1:417846424762:web:24573a7abf942dfffefe83"
 };
+
     let app, db, isFirebaseActive = false;
     let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {} };
     let currentUser = localStorage.getItem('viu_auth_user') || null;
-    let currentChatTarget = null, activeTab = 'feed', feedFilter = 'all', activeHashtag = null, profileSubTab = 'my', uploadType = 'post';
+    let currentChatTarget = null, activeTab = 'feed', feedFilter = 'all', activeHashtag = null, profileSubTab = 'my', exploreSubTab = 'users', uploadType = 'post';
     let rawUploadImageBase64 = null, currentImageBase64 = null, multiImagesList = [], carouselIdx = {};
     let activeCommentPostId = null, activeStoryId = null, viewingProfileUser = null, replyToText = null;
     let storyTimer = null, storyInterval = null, typingTimeout = null;
@@ -454,9 +550,26 @@
 
     const rtcServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
+    // CUSTOM TOAST NOTIFICATION
+    window.showToast = (msg, type = 'info') => {
+      const box = document.getElementById('toast-container');
+      if (!box) return;
+      const el = document.createElement('div');
+      const col = type === 'error' ? 'border-rose-500 bg-rose-950/90 text-rose-200' : 'theme-border theme-surface text-white';
+      el.className = `px-4 py-2 rounded-full border ${col} text-xs font-bold shadow-lg fade-in flex items-center gap-2`;
+      el.innerHTML = `<span>${type === 'error' ? '⚠️' : '✨'}</span> <span>${msg}</span>`;
+      box.appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2600);
+    };
+
     const saveLocalDB = () => localStorage.setItem('viu_local_db', JSON.stringify(DB));
     document.documentElement.setAttribute('data-theme', localStorage.getItem('viu_theme') || 'ig-dark');
-    window.setTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('viu_theme', t); updateUI(); };
+    window.setTheme = (t) => {
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('viu_theme', t);
+      window.showToast(`Theme switched to ${t.toUpperCase()}`);
+      updateUI();
+    };
     window.getCurrentChatTarget = () => currentChatTarget;
 
     try { if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") { app = initializeApp(firebaseConfig); db = getDatabase(app); } } catch(e) {}
@@ -494,11 +607,34 @@
     function apiSet(path, data) { setNested(DB, path, data); saveLocalDB(); updateUI(); if(isFirebaseActive) set(ref(db, path), data); }
     function apiRemove(path) { delNested(DB, path); saveLocalDB(); updateUI(); if(isFirebaseActive) remove(ref(db, path)); }
     function apiPush(path, data) { const id = Date.now().toString() + Math.floor(Math.random()*999); apiSet(`${path}/${id}`, { ...data, id }); return id; }
-    function notify(target, text) { if(target && target !== currentUser && target !== 'GLOBAL_GROUP') apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false }); }
+    function notify(target, text) { if(target && target !== currentUser && target !== 'GLOBAL_GROUP' && target !== 'ViuAI') apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false }); }
+
+    // SMART VIU AI BOT ENGINE
+    function triggerViuAI(userMsg) {
+      const q = userMsg.toLowerCase();
+      let reply = "Main Viu AI Assistant hoon! 🤖 Aap mujhse post captions, coding tips, ya app features ke baare me puch sakte hain.";
+      if (q.includes('caption') || q.includes('quote')) {
+        const caps = [
+          "✨ 'Collecting moments, not things. #ViuVibes #Life'",
+          "🔥 'Code, Create, Conquer. 🚀 #TechLife #Viu'",
+          "🌌 'Lost in the right direction. 💫 #NightVibes'"
+        ];
+        reply = "Ye lijiye ek mast caption idea:\n" + caps[Math.floor(Math.random() * caps.length)];
+      } else if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('kaise')) {
+        reply = `Hey @${currentUser}! 👋 Main bilkul badhiya hoon. Aaj aap Viu par kya naya post karne wale hain?`;
+      } else if (q.includes('theme') || q.includes('jarvis')) {
+        reply = "🎨 Aap Profile tab me jaakar 6 themes choose kar sakte hain—Instagram Dark, Clean Light, Jarvis HUD, Crimson, Matrix, aur Cyber Gold!";
+      } else if (q.includes('joke')) {
+        reply = "😂 Programmer ka favourite hangout place konsa hota hai? ... 'Foo Bar'!";
+      }
+      setTimeout(() => {
+        apiPush('messages', { sender: 'ViuAI', receiver: currentUser, text: reply, timestamp: Date.now(), read: currentChatTarget === 'ViuAI' });
+      }, 650);
+    }
 
     setInterval(() => { if(currentUser && DB.users[currentUser]) apiSet(`users/${currentUser}/lastSeen`, Date.now()); }, 25000);
-    const isUserOnline = (u) => { const ls = DB.users?.[u]?.lastSeen; return ls && (Date.now() - ls < 120000); };
-    const badgeHTML = (u) => DB.users?.[u]?.verified ? `<span class="text-sky-400 text-[11px] ml-0.5">☑️</span>` : '';
+    const isUserOnline = (u) => { if(u === 'ViuAI') return true; const ls = DB.users?.[u]?.lastSeen; return ls && (Date.now() - ls < 120000); };
+    const badgeHTML = (u) => (u === 'ViuAI' || DB.users?.[u]?.verified) ? `<span class="text-sky-400 text-[11px] ml-0.5">☑️</span>` : '';
 
     function formatRichText(txt) {
       if(!txt) return '';
@@ -517,18 +653,22 @@
       const cur = DB.notes?.[currentUser]?.text || '';
       const txt = prompt("Share a 24h Thought Note (max 50 chars):", cur);
       if(txt === null) return;
-      if(txt.trim() === '') apiRemove(`notes/${currentUser}`);
-      else apiSet(`notes/${currentUser}`, { author: currentUser, text: txt.trim().slice(0, 50), timestamp: Date.now() });
+      if(txt.trim() === '') { apiRemove(`notes/${currentUser}`); window.showToast("Note removed"); }
+      else { apiSet(`notes/${currentUser}`, { author: currentUser, text: txt.trim().slice(0, 50), timestamp: Date.now() }); window.showToast("Thought Note updated! 💭"); }
     };
 
+    // WEBRTC CALLING SYSTEM (WITH MIC & CAM CONTROLS)
     window.startCall = async (withVideo) => {
-      if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP') return;
+      if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP' || currentChatTarget === 'ViuAI') {
+        window.showToast("Direct P2P call sirf real users ke sath available hai!", "error");
+        return;
+      }
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: withVideo, audio: true });
         document.getElementById('localCallVideo').srcObject = localStream;
         document.getElementById('localCallVideo').classList.toggle('hidden', !withVideo);
       } catch(e) {
-        alert("Camera/Microphone permission denied or unavailable.");
+        window.showToast("Camera/Microphone permission denied!", "error");
         return;
       }
 
@@ -569,9 +709,7 @@
       if (isFirebaseActive && db) {
         onValue(ref(db, `calls/${callId}`), async (snapshot) => {
           const callData = snapshot.val();
-          if (callData && (callData.status === 'ended' || callData.status === 'rejected')) {
-            window.endCall();
-          }
+          if (callData && (callData.status === 'ended' || callData.status === 'rejected')) window.endCall();
         });
 
         onValue(ref(db, `calls/${callId}/answer`), async (snapshot) => {
@@ -603,7 +741,6 @@
           window.endCall();
           return;
         }
-
         if (cData.receiver === currentUser && cData.status === 'ringing') {
           foundActive = true;
           if (!incomingCallData || incomingCallData.id !== cId) {
@@ -615,7 +752,6 @@
           break;
         }
       }
-
       if (!foundActive && incomingCallData) {
         document.getElementById('incomingCallModal').classList.add('hidden');
       }
@@ -660,9 +796,7 @@
       if (isFirebaseActive && db) {
         onValue(ref(db, `calls/${activeCallId}`), async (snapshot) => {
           const callData = snapshot.val();
-          if (callData && (callData.status === 'ended' || callData.status === 'rejected')) {
-            window.endCall();
-          }
+          if (callData && (callData.status === 'ended' || callData.status === 'rejected')) window.endCall();
         });
 
         onValue(ref(db, `calls/${activeCallId}/candidates/${incomingCallData.caller}`), (snapshot) => {
@@ -678,9 +812,7 @@
     };
 
     window.rejectIncomingCall = () => {
-      if (incomingCallData) {
-        apiSet(`calls/${incomingCallData.id}/status`, 'rejected');
-      }
+      if (incomingCallData) apiSet(`calls/${incomingCallData.id}/status`, 'rejected');
       document.getElementById('incomingCallModal').classList.add('hidden');
       incomingCallData = null;
     };
@@ -693,9 +825,21 @@
       }, 1000);
     }
 
+    window.toggleCallMic = () => {
+      if(localStream && localStream.getAudioTracks()[0]) {
+        const track = localStream.getAudioTracks()[0];
+        track.enabled = !track.enabled;
+        document.getElementById('micToggleBtn').innerText = track.enabled ? '🎤' : '🔇';
+        window.showToast(track.enabled ? "Microphone Unmuted" : "Microphone Muted");
+      }
+    };
+
     window.toggleCallCam = () => { 
       if(localStream && localStream.getVideoTracks()[0]) {
-        localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
+        const track = localStream.getVideoTracks()[0];
+        track.enabled = !track.enabled;
+        document.getElementById('camToggleBtn').innerText = track.enabled ? '📷' : '🚫';
+        window.showToast(track.enabled ? "Camera On" : "Camera Off");
       }
     };
 
@@ -703,26 +847,17 @@
       document.getElementById('callModal').classList.add('hidden');
       document.getElementById('incomingCallModal').classList.add('hidden');
       clearInterval(callTimerInt);
-
-      if(localStream) { 
-        localStream.getTracks().forEach(t => t.stop()); 
-        localStream = null; 
-      }
-      if(peerConnection) { 
-        peerConnection.close(); 
-        peerConnection = null; 
-      }
-      if(activeCallId) {
-        apiSet(`calls/${activeCallId}/status`, 'ended');
-        activeCallId = null;
-      }
+      if(localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+      if(peerConnection) { peerConnection.close(); peerConnection = null; }
+      if(activeCallId) { apiSet(`calls/${activeCallId}/status`, 'ended'); activeCallId = null; }
       incomingCallData = null;
     };
 
     window.toggleBlockUser = (target) => {
       if(!target || target === currentUser) return;
       const isB = DB.users[currentUser]?.blocked && DB.users[currentUser].blocked[target];
-      if(isB) apiRemove(`users/${currentUser}/blocked/${target}`); else apiSet(`users/${currentUser}/blocked/${target}`, true);
+      if(isB) { apiRemove(`users/${currentUser}/blocked/${target}`); window.showToast(`Unblocked @${target}`); }
+      else { apiSet(`users/${currentUser}/blocked/${target}`, true); window.showToast(`Blocked @${target}`, "error"); }
       window.openUserProfile(target);
     };
 
@@ -762,6 +897,7 @@
     function generateAvatar(u, cls = "w-8 h-8", showOnline = false) {
       if(!u) return '';
       if(u === 'GLOBAL_GROUP') return `<div class="inline-flex ${cls} rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 items-center justify-center text-white font-bold text-xs shrink-0">🌐</div>`;
+      if(u === 'ViuAI') return `<div class="inline-flex ${cls} rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-600 items-center justify-center text-white font-bold text-xs shrink-0">🤖</div>`;
       const usr = DB.users && DB.users[u];
       const dot = (showOnline && isUserOnline(u)) ? `<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-black rounded-full"></span>` : '';
       if(usr && usr.avatar && usr.avatar.startsWith('data:image')) return `<div class="relative inline-flex ${cls} shrink-0"><img src="${usr.avatar}" class="w-full h-full rounded-full object-cover border border-white/20">${dot}</div>`;
@@ -786,11 +922,32 @@
     window.openSinglePost = (postId) => {
       const p = DB.posts[postId]; if(!p) return;
       document.getElementById('sp-author').innerText = `@${p.author}`;
-      document.getElementById('sp-img').src = p.image;
-      document.getElementById('sp-download').href = p.image;
+      document.getElementById('sp-img').src = p.image || '';
+      document.getElementById('sp-download').href = p.image || '#';
       document.getElementById('sp-likes').innerText = `❤️ ${p.likes ? Object.keys(p.likes).length : 0} likes`;
       document.getElementById('sp-caption').innerHTML = formatRichText(p.caption || '');
       document.getElementById('singlePostModal').classList.remove('hidden');
+    };
+
+    // CREATOR INSIGHTS MODAL
+    window.openInsightsModal = () => {
+      const myPosts = Object.values(normMap(DB.posts)).filter(p => p.author === currentUser);
+      const myStories = Object.values(normMap(DB.stories)).filter(s => s.author === currentUser);
+      let totalLikes = 0, totalComments = 0, totalViews = 0;
+      myPosts.forEach(p => {
+        totalLikes += p.likes ? Object.keys(p.likes).length : 0;
+        totalComments += p.comments ? Object.keys(p.comments).length : 0;
+      });
+      myStories.forEach(s => {
+        totalViews += s.views ? Object.keys(s.views).length : 0;
+      });
+      document.getElementById('ins-likes').innerText = totalLikes;
+      document.getElementById('ins-comments').innerText = totalComments;
+      document.getElementById('ins-views').innerText = totalViews;
+      const followersCnt = Object.keys(DB.users[currentUser]?.followers || {}).length || 1;
+      const score = Math.min(100, Math.round(((totalLikes + totalComments * 2 + totalViews) / followersCnt) * 25) + 40);
+      document.getElementById('ins-score').innerText = `${score}%`;
+      document.getElementById('insightsModal').classList.remove('hidden');
     };
 
     window.setReplyMsg = (sender, txt) => {
@@ -800,6 +957,23 @@
       document.getElementById('chatInput').focus();
     };
     window.cancelReply = () => { replyToText = null; document.getElementById('replyPreviewBar').classList.add('hidden'); };
+
+    window.insertChatEmoji = (em) => {
+      const inp = document.getElementById('chatInput');
+      inp.value += em;
+      inp.focus();
+    };
+
+    window.clearChatHistory = () => {
+      if(!currentChatTarget) return;
+      if(!confirm(`Clear chat messages with ${currentChatTarget}?`)) return;
+      Object.values(normMap(DB.messages)).forEach(m => {
+        if((m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser)) {
+          apiRemove(`messages/${m.id}`);
+        }
+      });
+      window.showToast("Chat history cleared! 🗑️");
+    };
 
     window.openShareModal = (postId) => {
       const box = document.getElementById('shareUsersList'); box.innerHTML = '';
@@ -829,9 +1003,12 @@
     window.editPostCaption = (postId) => {
       const p = DB.posts[postId]; if(!p) return;
       const newCap = prompt("Edit your post caption:", p.caption || "");
-      if(newCap !== null) apiSet(`posts/${postId}/caption`, newCap.trim());
+      if(newCap !== null) { apiSet(`posts/${postId}/caption`, newCap.trim()); window.showToast("Caption updated! ✏️"); }
     };
-    window.togglePinPost = (postId) => { const p = DB.posts[postId]; if(p) apiSet(`posts/${postId}/pinned`, !p.pinned); };
+    window.togglePinPost = (postId) => {
+      const p = DB.posts[postId];
+      if(p) { apiSet(`posts/${postId}/pinned`, !p.pinned); window.showToast(p.pinned ? "Post Unpinned" : "Post Pinned to Top 📌"); }
+    };
 
     window.toggleVoiceRecording = async () => {
       if(!currentChatTarget) return;
@@ -849,7 +1026,7 @@
         };
         mediaRecorder.start(); isRecording = true;
         btn.className = "p-2 rounded-full bg-rose-600 text-white text-xs font-bold animate-pulse shrink-0"; btn.innerText = "⏹";
-      } catch(err) { alert("Microphone permission needed."); }
+      } catch(err) { window.showToast("Microphone permission needed!", "error"); }
     };
 
     window.votePoll = (postId, optIdx) => { const p = DB.posts[postId]; if(p) { apiSet(`posts/${postId}/pollVotes/${currentUser}`, optIdx); notify(p.author, `voted on your poll 📊`); } };
@@ -866,12 +1043,12 @@
       if(!target || target === currentUser) return;
       const isF = DB.users[currentUser]?.following && DB.users[currentUser].following[target];
       if(isF) { apiRemove(`users/${currentUser}/following/${target}`); apiRemove(`users/${target}/followers/${currentUser}`); }
-      else { apiSet(`users/${currentUser}/following/${target}`, true); apiSet(`users/${target}/followers/${currentUser}`, true); notify(target, 'started following you.'); }
+      else { apiSet(`users/${currentUser}/following/${target}`, true); apiSet(`users/${target}/followers/${currentUser}`, true); notify(target, 'started following you.'); window.showToast(`Following @${target}`); }
       if(viewingProfileUser === target) window.openUserProfile(target);
     };
 
     window.openUserProfile = (u) => {
-      if(!u || u === 'GLOBAL_GROUP' || !DB.users[u]) return;
+      if(!u || u === 'GLOBAL_GROUP' || u === 'ViuAI' || !DB.users[u]) return;
       if(u === currentUser) { window.closeUserProfile(); window.switchTab('profile'); return; }
       viewingProfileUser = u;
       const usr = DB.users[u], posts = Object.values(normMap(DB.posts)).filter(p => p.author === u && p.image);
@@ -885,7 +1062,7 @@
       document.getElementById('modal-prof-bio').innerText = usr.bio || 'Available on Viu.';
       document.getElementById('modal-prof-actions').innerHTML = `
         <button onclick="window.toggleFollow('${u}')" class="flex-1 py-2 rounded-lg text-xs font-bold ${isF ? 'bg-white/15 text-white' : 'theme-accent-bg'}">${isF ? 'Following ✓' : 'Follow'}</button>
-        <button onclick="window.closeUserProfile(); window.openChat('${u}')" class="flex-1 py-2 rounded-lg bg-white/10 text-xs font-bold text-white">Message</button>
+        <button onclick="window.closeUserProfile(); window.openChat('${u}')" class="flex-1 py-2 rounded-lg bg-white/10 text-xs font-bold">Message</button>
         <button onclick="window.toggleBlockUser('${u}')" class="px-3 py-2 rounded-lg bg-rose-500/20 text-rose-400 text-xs font-bold">${isB ? 'Unblock' : '🚫 Block'}</button>`;
       document.getElementById('modal-prof-grid').innerHTML = posts.map(p => `<div onclick="window.openSinglePost('${p.id}')" class="aspect-square bg-gray-900 rounded overflow-hidden cursor-pointer"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-6">No photo posts yet.</div>`;
       document.getElementById('userProfileModal').classList.remove('hidden');
@@ -904,12 +1081,8 @@
     window.togglePostReaction = (postId, emoji) => {
       const p = DB.posts[postId]; if(!p) return;
       const curUserReaction = p.reactions?.[currentUser];
-      if (curUserReaction === emoji) {
-        apiRemove(`posts/${postId}/reactions/${currentUser}`);
-      } else {
-        apiSet(`posts/${postId}/reactions/${currentUser}`, emoji);
-        notify(p.author, `reacted ${emoji} to your post`);
-      }
+      if (curUserReaction === emoji) apiRemove(`posts/${postId}/reactions/${currentUser}`);
+      else { apiSet(`posts/${postId}/reactions/${currentUser}`, emoji); notify(p.author, `reacted ${emoji} to your post`); }
     };
 
     window.toggleLike = (id) => {
@@ -927,7 +1100,8 @@
 
     window.toggleBookmark = (id) => {
       const s = DB.users[currentUser]?.saved && DB.users[currentUser].saved[id];
-      if(s) apiRemove(`users/${currentUser}/saved/${id}`); else apiSet(`users/${currentUser}/saved/${id}`, true);
+      if(s) { apiRemove(`users/${currentUser}/saved/${id}`); window.showToast("Removed from Saved"); }
+      else { apiSet(`users/${currentUser}/saved/${id}`, true); window.showToast("Post Saved 🔖"); }
     };
 
     window.openComments = (id) => { activeCommentPostId = id; document.getElementById('commentsDrawer').classList.remove('hidden'); window.renderCommentsList(); };
@@ -948,10 +1122,11 @@
     window.closeUploadModal = () => document.getElementById('uploadModal').classList.add('hidden');
     window.setUploadType = (t) => {
       uploadType = t;
-      ['post', 'story', 'poll'].forEach(k => document.getElementById(`type-${k}`).className = `flex-1 py-1.5 rounded text-xs font-bold ${t===k ? 'theme-accent-bg' : 'text-gray-400'}`);
-      document.getElementById('photoUploadSection').classList.toggle('hidden', t === 'poll');
+      ['post', 'quote', 'story', 'poll'].forEach(k => document.getElementById(`type-${k}`).className = `py-1.5 rounded text-xs font-bold ${t===k ? 'theme-accent-bg' : 'text-gray-400'}`);
+      document.getElementById('photoUploadSection').classList.toggle('hidden', t === 'poll' || t === 'quote');
       document.getElementById('pollOptionsSection').classList.toggle('hidden', t !== 'poll');
-      document.getElementById('storyMusicSection').classList.toggle('hidden', t !== 'story');
+      document.getElementById('quoteBgSection').classList.toggle('hidden', t !== 'quote');
+      document.getElementById('storyMusicSection').classList.toggle('hidden', t === 'poll');
     };
 
     window.viewStory = (id) => {
@@ -987,7 +1162,13 @@
     };
     window.closeStoryViewer = () => { document.getElementById('storyViewerModal').classList.add('hidden'); activeStoryId = null; clearInterval(storyInterval); clearTimeout(storyTimer); };
 
-    document.getElementById('avatarFileInput').onchange = (e) => { if(e.target.files[0]) compressImage(e.target.files[0], 300, (b64) => apiSet(`users/${currentUser}/avatar`, b64)); };
+    document.getElementById('avatarFileInput').onchange = (e) => {
+      if(e.target.files[0]) compressImage(e.target.files[0], 300, (b64) => { apiSet(`users/${currentUser}/avatar`, b64); window.showToast("Profile Photo Updated!"); });
+    };
+    document.getElementById('bannerFileInput').onchange = (e) => {
+      if(e.target.files[0]) compressImage(e.target.files[0], 700, (b64) => { apiSet(`users/${currentUser}/banner`, b64); window.showToast("Profile Cover Updated! 🖼️"); });
+    };
+
     window.openBioModal = () => {
       const u = DB.users[currentUser] || {};
       document.getElementById('bioInput').value = u.bio || '';
@@ -1000,8 +1181,10 @@
       apiSet(`users/${currentUser}/mood`, document.getElementById('moodInput').value);
       apiSet(`users/${currentUser}/verified`, document.getElementById('verifiedInput').checked);
       document.getElementById('bioModal').classList.add('hidden');
+      window.showToast("Profile Saved!");
     };
     window.setProfileSubTab = (sub) => { profileSubTab = sub; renderProfile(); };
+    window.setExploreSubTab = (sub) => { exploreSubTab = sub; renderExplore(); };
     window.setFeedFilter = (f) => { feedFilter = f; renderFeed(); };
 
     window.switchTab = (t) => {
@@ -1019,6 +1202,10 @@
         document.getElementById('active-chat-name').innerHTML = `🌐 Global Lounge`;
         document.getElementById('active-chat-avatar').innerHTML = generateAvatar('GLOBAL_GROUP', "w-8 h-8");
         document.getElementById('active-chat-status').innerText = `${Object.keys(DB.users || {}).length} members`;
+      } else if(target === 'ViuAI') {
+        document.getElementById('active-chat-name').innerHTML = `Viu AI Assistant ${badgeHTML('ViuAI')}`;
+        document.getElementById('active-chat-avatar').innerHTML = generateAvatar('ViuAI', "w-8 h-8");
+        document.getElementById('active-chat-status').innerText = `● Always Active Bot`;
       } else {
         document.getElementById('active-chat-name').innerHTML = `${target} ${badgeHTML(target)}`;
         document.getElementById('active-chat-avatar').innerHTML = generateAvatar(target, "w-8 h-8", true);
@@ -1030,15 +1217,15 @@
     window.closeChat = () => { document.getElementById('active-chat-view').classList.add('hidden'); currentChatTarget = null; updateUI(); };
     window.reactMessage = (id, em) => apiSet(`messages/${id}/reaction`, em);
     window.deleteMessage = (id) => apiRemove(`messages/${id}`);
-    window.deletePost = (id) => { if(confirm("Delete post?")) apiRemove(`posts/${id}`); };
+    window.deletePost = (id) => { if(confirm("Delete post?")) { apiRemove(`posts/${id}`); window.showToast("Post deleted"); } };
     window.logoutUser = () => { localStorage.removeItem('viu_auth_user'); location.reload(); };
-
+// UI RENDERING & EVENT LISTENERS (PART 3)
     function updateUI() {
       const box = document.getElementById('existing-users'); box.innerHTML = '';
       Object.values(DB.users || {}).forEach(u => {
         if(!u?.username) return;
         const b = document.createElement('button'); b.type = "button";
-        b.className = "px-2.5 py-1 theme-surface border theme-border rounded-full text-xs flex items-center gap-1";
+        b.className = "px-2.5 py-1 theme-surface border theme-border rounded-full text-xs flex items-center gap-1 text-white";
         b.innerHTML = `${generateAvatar(u.username, "w-4 h-4 text-[9px]")}<span>${u.username}</span>`;
         b.onclick = () => { document.getElementById('usernameInput').value = u.username; document.getElementById('passwordInput').focus(); };
         box.appendChild(b);
@@ -1064,7 +1251,7 @@
 
     function renderStories() {
       const c = document.getElementById('stories-container');
-      c.innerHTML = `<div class="flex flex-col items-center gap-1 cursor-pointer shrink-0" onclick="window.openUploadModal('story')"><div class="relative w-16 h-16 rounded-full border-2 border-dashed theme-border flex items-center justify-center">${generateAvatar(currentUser, "w-14 h-14 opacity-70")}<span class="absolute bottom-0 right-0 theme-accent-bg w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">+</span></div><span class="text-[11px] text-gray-300">Add Story</span></div>`;
+      c.innerHTML = `<div class="flex flex-col items-center gap-1 cursor-pointer shrink-0" onclick="window.openUploadModal('story')"><div class="relative w-16 h-16 rounded-full border-2 border-dashed theme-border flex items-center justify-center">${generateAvatar(currentUser, "w-14 h-14 opacity-70")}<span class="absolute bottom-0 right-0 theme-accent-bg w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">+</span></div><span class="text-[11px] text-gray-400">Add Story</span></div>`;
       Object.values(normMap(DB.stories)).sort((a,b) => b.timestamp - a.timestamp).forEach(s => {
         if((Date.now() - s.timestamp) > 86400000) return;
         c.insertAdjacentHTML('beforeend', `<div class="flex flex-col items-center gap-1 cursor-pointer shrink-0" onclick="window.viewStory('${s.id}')"><div class="story-ring w-16 h-16 rounded-full"><img src="${s.image}" class="w-full h-full rounded-full object-cover border-2 border-black"></div><span class="text-[11px] truncate w-16 text-center">${s.author}</span></div>`);
@@ -1072,28 +1259,33 @@
     }
 
     function renderFeed() {
-      document.getElementById('feed-filter-all').className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='all' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
-      document.getElementById('feed-filter-following').className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='following' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
+      document.getElementById('feed-filter-all').className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='all' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+      document.getElementById('feed-filter-following').className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='following' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
       const c = document.getElementById('feed-container'); c.innerHTML = '';
       const myBlocked = DB.users[currentUser]?.blocked || {};
       let arr = Object.values(normMap(DB.posts)).filter(p => !myBlocked[p.author]).sort((a,b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.timestamp - a.timestamp);
       const myF = DB.users[currentUser]?.following || {};
       if(feedFilter === 'following') arr = arr.filter(p => myF[p.author] || p.author === currentUser);
       if(activeHashtag) arr = arr.filter(p => (p.caption || '').toLowerCase().includes(activeHashtag.toLowerCase()));
-      if(arr.length === 0) { c.innerHTML = `<div class="text-center text-gray-500 text-xs py-12">No posts found.</div>`; return; }
+      if(arr.length === 0) { c.innerHTML = `<div class="text-center text-gray-500 text-xs py-12">No posts found. Tap ➕ to create one!</div>`; return; }
       const saved = DB.users[currentUser]?.saved || {};
 
       arr.forEach(p => {
         const likes = p.likes ? Object.keys(p.likes) : [], isL = likes.includes(currentUser), isS = !!saved[p.id], cCnt = p.comments ? Object.keys(p.comments).length : 0;
         const uMood = DB.users[p.author]?.mood || '';
+        const musicTag = p.music ? `<div class="px-3 pb-2 text-[11px] theme-accent-text flex items-center gap-1 font-semibold"><span>${p.music}</span></div>` : '';
         let mediaHTML = '';
+
         if(p.isPoll && p.pollOptions) {
           const votesMap = p.pollVotes || {}, totalVotes = Object.keys(votesMap).length, myVote = votesMap[currentUser];
           const optsHTML = p.pollOptions.map((opt, idx) => {
             const cnt = Object.values(votesMap).filter(v => v === idx).length, pct = totalVotes > 0 ? Math.round((cnt / totalVotes) * 100) : 0, picked = myVote === idx;
-            return `<button onclick="window.votePoll('${p.id}', ${idx})" class="w-full text-left relative overflow-hidden rounded-xl border ${picked ? 'border-sky-400' : 'theme-border'} bg-black/50 p-3 text-xs font-semibold"><div class="absolute inset-y-0 left-0 bg-sky-500/25" style="width:${pct}%"></div><div class="relative flex justify-between"><span>${opt} ${picked ? '✓' : ''}</span><span>${pct}% (${cnt})</span></div></button>`;
+            return `<button onclick="window.votePoll('${p.id}', ${idx})" class="w-full text-left relative overflow-hidden rounded-xl border ${picked ? 'border-sky-400' : 'theme-border'} bg-black/50 p-3 text-xs font-semibold text-white"><div class="absolute inset-y-0 left-0 bg-sky-500/25" style="width:${pct}%"></div><div class="relative flex justify-between"><span>${opt} ${picked ? '✓' : ''}</span><span>${pct}% (${cnt})</span></div></button>`;
           }).join('');
           mediaHTML = `<div class="p-4 space-y-2 bg-white/5 border-y theme-border"><div class="font-bold text-sm mb-2">📊 ${formatRichText(p.caption)}</div>${optsHTML}<div class="text-[10px] text-gray-400 pt-1">${totalVotes} total votes</div></div>`;
+        } else if(p.isQuote) {
+          const bgGrad = p.quoteBg || 'from-pink-600 via-purple-600 to-indigo-700';
+          mediaHTML = `<div id="post-img-${p.id}" ondblclick="window.doubleTapLike('${p.id}')" class="relative min-h-[240px] p-8 flex items-center justify-center text-center bg-gradient-to-br ${bgGrad} text-white font-heading font-bold text-lg leading-relaxed shadow-inner select-none"><div>“${formatRichText(p.caption)}”</div></div>`;
         } else {
           const imgs = (p.images && p.images.length) ? p.images : [p.image];
           const idx = carouselIdx[p.id] || 0, activeImg = imgs[idx] || p.image;
@@ -1112,9 +1304,10 @@
             <div class="flex items-center justify-between p-3">
               <div class="flex items-center gap-2 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${generateAvatar(p.author, "w-8 h-8", true)}<div><span class="font-bold text-sm">${p.author}</span>${badgeHTML(p.author)}${uMood ? `<span class="text-[10px] text-gray-400 block leading-none">${uMood}</span>` : ''}</div></div>
               <div class="flex items-center gap-2">
-                ${p.author !== currentUser ? `<button onclick="window.toggleFollow('${p.author}')" class="text-xs font-bold px-2 py-0.5 rounded border theme-border ${myF[p.author] ? 'text-gray-400' : 'theme-accent-text'}">${myF[p.author] ? 'Following' : '+ Follow'}</button>` : `<button onclick="window.togglePinPost('${p.id}')" class="text-xs">📌</button><button onclick="window.editPostCaption('${p.id}')" class="text-xs">✏️</button><button onclick="window.deletePost('${p.id}')" class="text-xs text-rose-500">Delete</button>`}
+                ${p.author !== currentUser ? `<button onclick="window.toggleFollow('${p.author}')" class="text-xs font-bold px-2 py-0.5 rounded border theme-border ${myF[p.author] ? 'text-gray-400' : 'theme-accent-text'}">${myF[p.author] ? 'Following' : '+ Follow'}</button>` : `<button onclick="window.togglePinPost('${p.id}')" class="text-xs" title="Pin">📌</button><button onclick="window.editPostCaption('${p.id}')" class="text-xs" title="Edit">✏️</button><button onclick="window.deletePost('${p.id}')" class="text-xs text-rose-500">Delete</button>`}
               </div>
             </div>
+            ${musicTag}
             ${mediaHTML}
             <div class="p-3">
               <div class="flex justify-between mb-1.5 items-center">
@@ -1132,7 +1325,7 @@
               </div>
               <div class="flex flex-wrap gap-1 mb-1">${reactionsHTML}</div>
               <button onclick="window.openLikesModal('${p.id}')" class="text-xs font-bold mb-1 block hover:underline">${likes.length} likes</button>
-              ${!p.isPoll ? `<div class="text-sm"><b class="mr-1.5 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${p.author}</b>${formatRichText(p.caption || '')}</div>` : ''}
+              ${(!p.isPoll && !p.isQuote) ? `<div class="text-sm"><b class="mr-1.5 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${p.author}</b>${formatRichText(p.caption || '')}</div>` : ''}
               <div class="text-[10px] text-gray-500 mt-1">${formatTime(p.timestamp)}</div>
             </div>
           </div>`);
@@ -1151,20 +1344,37 @@
       const combinedTags = Array.from(new Set([...topTags, ...defaultTags]));
       tBar.innerHTML = combinedTags.map(tag => `<button onclick="window.setHashtagFilter('${tag}')" class="px-3 py-1 rounded-full border theme-border text-xs bg-black/40 whitespace-nowrap theme-accent-text font-semibold">${tag}</button>`).join('');
 
-      const c = document.getElementById('explore-container'), q = document.getElementById('searchUsers').value.toLowerCase(), myF = DB.users[currentUser]?.following || {};
-      c.innerHTML = '';
-      Object.values(DB.users || {}).forEach(u => {
-        if(!u?.username || u.username === currentUser) return;
-        const match = u.username.toLowerCase().includes(q) || (u.mood && u.mood.toLowerCase().includes(q));
-        if(q && !match) return;
-        c.innerHTML += `<div class="theme-surface p-3 flex items-center justify-between rounded-xl border theme-border"><div class="flex items-center gap-3 cursor-pointer" onclick="window.openUserProfile('${u.username}')">${generateAvatar(u.username, "w-10 h-10", true)}<div><div class="font-bold text-sm">${u.username} ${badgeHTML(u.username)}</div><div class="text-[11px] text-gray-400">${u.mood || '✨ Using Viu'} • ${u.followers ? Object.keys(u.followers).length : 0} followers</div></div></div><div class="flex gap-1.5"><button onclick="window.toggleFollow('${u.username}')" class="px-3 py-1.5 rounded-lg text-xs font-bold ${myF[u.username] ? 'bg-white/10' : 'theme-accent-bg'}">${myF[u.username] ? 'Following' : 'Follow'}</button><button onclick="window.openChat('${u.username}')" class="px-3 py-1.5 rounded-lg bg-white/10 text-xs font-bold">Chat</button></div></div>`;
-      });
+      document.getElementById('exp-tab-users').className = `flex-1 py-2 font-bold border-b-2 ${exploreSubTab==='users' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+      document.getElementById('exp-tab-grid').className = `flex-1 py-2 font-bold border-b-2 ${exploreSubTab==='grid' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+
+      const uCont = document.getElementById('explore-container');
+      const gCont = document.getElementById('explore-grid-container');
+      const q = document.getElementById('searchUsers').value.toLowerCase(), myF = DB.users[currentUser]?.following || {};
+
+      uCont.classList.toggle('hidden', exploreSubTab !== 'users');
+      gCont.classList.toggle('hidden', exploreSubTab !== 'grid');
+
+      if(exploreSubTab === 'users') {
+        uCont.innerHTML = '';
+        Object.values(DB.users || {}).forEach(u => {
+          if(!u?.username || u.username === currentUser) return;
+          const match = u.username.toLowerCase().includes(q) || (u.mood && u.mood.toLowerCase().includes(q));
+          if(q && !match) return;
+          uCont.innerHTML += `<div class="theme-surface p-3 flex items-center justify-between rounded-xl border theme-border"><div class="flex items-center gap-3 cursor-pointer" onclick="window.openUserProfile('${u.username}')">${generateAvatar(u.username, "w-10 h-10", true)}<div><div class="font-bold text-sm">${u.username} ${badgeHTML(u.username)}</div><div class="text-[11px] text-gray-400">${u.mood || '✨ Using Viu'} • ${u.followers ? Object.keys(u.followers).length : 0} followers</div></div></div><div class="flex gap-1.5"><button onclick="window.toggleFollow('${u.username}')" class="px-3 py-1.5 rounded-lg text-xs font-bold ${myF[u.username] ? 'bg-white/10' : 'theme-accent-bg'}">${myF[u.username] ? 'Following' : 'Follow'}</button><button onclick="window.openChat('${u.username}')" class="px-3 py-1.5 rounded-lg bg-white/10 text-xs font-bold">Chat</button></div></div>`;
+        });
+      } else {
+        const photoPosts = Object.values(normMap(DB.posts)).filter(p => p.image && (!q || (p.caption||'').toLowerCase().includes(q) || p.author.toLowerCase().includes(q))).sort((a,b) => b.timestamp - a.timestamp);
+        gCont.innerHTML = photoPosts.map(p => `<div onclick="window.openSinglePost('${p.id}')" class="aspect-square bg-gray-900 rounded overflow-hidden relative cursor-pointer group"><img src="${p.image}" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition">❤️ ${p.likes ? Object.keys(p.likes).length : 0}</div></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-8">No media posts found.</div>`;
+      }
     }
 
     function renderProfile() {
       const u = DB.users[currentUser] || {}, postsMap = normMap(DB.posts);
-      const myP = Object.values(postsMap).filter(p => p.author === currentUser && p.image).sort((a,b) => b.timestamp - a.timestamp);
-      const savP = Object.keys(u.saved || {}).map(id => postsMap[id]).filter(p => p && p.image);
+      const myP = Object.values(postsMap).filter(p => p.author === currentUser && (p.image || p.isQuote)).sort((a,b) => b.timestamp - a.timestamp);
+      const savP = Object.keys(u.saved || {}).map(id => postsMap[id]).filter(p => p && (p.image || p.isQuote));
+      const bannerEl = document.getElementById('profile-banner');
+      if(u.banner) bannerEl.style.backgroundImage = `url(${u.banner})`; else bannerEl.style.backgroundImage = '';
+
       document.getElementById('profile-username').innerText = currentUser;
       document.getElementById('profile-verified').classList.toggle('hidden', !u.verified);
       document.getElementById('profile-mood').innerText = u.mood || '✨ Using Viu';
@@ -1174,10 +1384,13 @@
       document.getElementById('stat-followers').innerText = u.followers ? Object.keys(u.followers).length : 0;
       document.getElementById('stat-following').innerText = u.following ? Object.keys(u.following).length : 0;
       document.getElementById('stat-Saved').innerText = savP.length;
-      document.getElementById('prof-tab-my').className = `flex-1 py-2 text-xs font-bold border-b-2 ${profileSubTab==='my' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
-      document.getElementById('prof-tab-saved').className = `flex-1 py-2 text-xs font-bold border-b-2 ${profileSubTab==='saved' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
+      document.getElementById('prof-tab-my').className = `flex-1 py-2 text-xs font-bold border-b-2 ${profileSubTab==='my' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
+      document.getElementById('prof-tab-saved').className = `flex-1 py-2 text-xs font-bold border-b-2 ${profileSubTab==='saved' ? 'theme-accent-text border-current' : 'border-transparent text-gray-500'}`;
       const list = profileSubTab === 'my' ? myP : savP;
-      document.getElementById('profile-grid').innerHTML = list.map(p => `<div onclick="window.openSinglePost('${p.id}')" class="aspect-square bg-gray-900 rounded overflow-hidden relative cursor-pointer"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-8">No photo posts here.</div>`;
+      document.getElementById('profile-grid').innerHTML = list.map(p => {
+        if(p.isQuote) return `<div class="aspect-square bg-gradient-to-br ${p.quoteBg || 'from-pink-600 to-indigo-700'} rounded overflow-hidden p-2 flex items-center justify-center text-center text-[10px] font-bold text-white">${(p.caption||'').slice(0,45)}</div>`;
+        return `<div onclick="window.openSinglePost('${p.id}')" class="aspect-square bg-gray-900 rounded overflow-hidden relative cursor-pointer"><img src="${p.image}" class="w-full h-full object-cover"></div>`;
+      }).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-8">No posts here yet.</div>`;
     }
 
     function renderChatList() {
@@ -1233,7 +1446,7 @@
     }
 
     document.getElementById('chatInput').oninput = () => {
-      if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP') return;
+      if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP' || currentChatTarget === 'ViuAI') return;
       apiSet(`typing/${currentUser}/${currentChatTarget}`, true);
       clearTimeout(typingTimeout); typingTimeout = setTimeout(() => apiSet(`typing/${currentUser}/${currentChatTarget}`, false), 1600);
     };
@@ -1251,14 +1464,17 @@
       currentUser = u; localStorage.setItem('viu_auth_user', u);
       apiSet(`users/${u}/lastSeen`, Date.now());
       document.getElementById('login-view').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden');
+      window.showToast(`Welcome back, @${u}!`);
       updateUI();
     };
 
     document.getElementById('chatForm').onsubmit = (e) => {
       e.preventDefault();
-      const inp = document.getElementById('chatInput'); if(!inp.value.trim() || !currentChatTarget) return;
-      apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: inp.value.trim(), replyTo: replyToText, timestamp: Date.now(), read: false });
-      if(currentChatTarget !== 'GLOBAL_GROUP') apiSet(`typing/${currentUser}/${currentChatTarget}`, false);
+      const inp = document.getElementById('chatInput'), txt = inp.value.trim();
+      if(!txt || !currentChatTarget) return;
+      apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: txt, replyTo: replyToText, timestamp: Date.now(), read: currentChatTarget === 'ViuAI' });
+      if(currentChatTarget === 'ViuAI') triggerViuAI(txt);
+      else if(currentChatTarget !== 'GLOBAL_GROUP') apiSet(`typing/${currentUser}/${currentChatTarget}`, false);
       inp.value = ''; window.cancelReply();
     };
 
@@ -1282,16 +1498,23 @@
     document.getElementById('uploadForm').onsubmit = (e) => {
       e.preventDefault();
       const id = Date.now().toString(), cap = document.getElementById('postCaption').value.trim();
+      const music = document.getElementById('storyMusicInput').value;
       if(uploadType === 'poll') {
         const o1 = document.getElementById('pollOpt1').value.trim(), o2 = document.getElementById('pollOpt2').value.trim(), o3 = document.getElementById('pollOpt3').value.trim();
-        if(!cap || !o1 || !o2) { alert("Enter question and 2 options!"); return; }
+        if(!cap || !o1 || !o2) { window.showToast("Enter question and 2 options!", "error"); return; }
         const opts = [o1, o2]; if(o3) opts.push(o3);
         apiSet('posts/' + id, { id, author: currentUser, isPoll: true, caption: cap, pollOptions: opts, timestamp: Date.now() });
+        window.showToast("Poll Published! 📊");
+      } else if(uploadType === 'quote') {
+        if(!cap) { window.showToast("Write a quote or status first!", "error"); return; }
+        const quoteBg = document.getElementById('quoteBgInput').value;
+        apiSet('posts/' + id, { id, author: currentUser, isQuote: true, quoteBg, caption: cap, music, timestamp: Date.now() });
+        window.showToast("Quote Card Published! 📝");
       } else {
-        if(!currentImageBase64) { alert("Select a photo!"); return; }
-        const music = document.getElementById('storyMusicInput').value;
-        const payload = { id, author: currentUser, image: currentImageBase64, images: multiImagesList.length ? multiImagesList : [currentImageBase64], caption: cap, music: uploadType==='story' ? music : '', timestamp: Date.now() };
+        if(!currentImageBase64) { window.showToast("Select a photo first!", "error"); return; }
+        const payload = { id, author: currentUser, image: currentImageBase64, images: multiImagesList.length ? multiImagesList : [currentImageBase64], caption: cap, music, timestamp: Date.now() };
         apiSet((uploadType === 'post' ? 'posts/' : 'stories/') + id, payload);
+        window.showToast(uploadType === 'post' ? "Post Published! 📷" : "Story Added! ⚡");
       }
       document.getElementById('uploadModal').classList.add('hidden');
       document.getElementById('postCaption').value = ''; document.getElementById('pollOpt1').value = ''; document.getElementById('pollOpt2').value = ''; document.getElementById('pollOpt3').value = '';
