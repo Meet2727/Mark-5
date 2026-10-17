@@ -57,7 +57,6 @@
     .chat-recv { background-color: #262626; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
     .tick-blue { color: #38bdf8; font-weight: bold; text-shadow: 0 0 5px rgba(56,189,248,0.8); }
     .tick-gray { color: rgba(255,255,255,0.55); }
-    audio::-webkit-media-controls-panel { background-color: #e5e7eb; }
   </style>
 </head>
 <body>
@@ -115,7 +114,14 @@
 
       <!-- EXPLORE TAB -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4 pb-20">
-        <input type="text" id="searchUsers" placeholder="Search users or mood tags..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none text-white">
+        <input type="text" id="searchUsers" placeholder="Search users or mood tags..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-3 focus:outline-none text-white">
+        
+        <!-- NEW FEATURE: Trending Tags Bar -->
+        <div class="mb-4">
+          <div class="text-[11px] text-gray-400 mb-1.5 font-semibold uppercase tracking-wider">🔥 Trending Hashtags</div>
+          <div id="trendingTagsBar" class="flex gap-2 overflow-x-auto hide-scrollbar pb-1"></div>
+        </div>
+
         <div id="explore-container" class="space-y-2.5"></div>
       </div>
 
@@ -321,7 +327,7 @@
     </div>
   </div>
 
-  <!-- MODALS: SHARE, FOLLOW LIST, SINGLE POST, NOTIFS, USER PROFILE, COMMENTS, BIO -->
+  <!-- MODALS -->
   <div id="sharePostModal" class="hidden fixed inset-0 z-[190] flex flex-col justify-end bg-black/75" onclick="if(event.target===this) this.classList.add('hidden')">
     <div class="theme-surface border-t theme-border w-full max-w-md mx-auto h-[50vh] flex flex-col rounded-t-2xl p-4">
       <div class="flex justify-between items-center pb-3 border-b theme-border"><h3 class="font-bold text-sm theme-accent-text">✈️ Share Post</h3><button onclick="document.getElementById('sharePostModal').classList.add('hidden')">✕</button></div>
@@ -409,7 +415,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // 🔴 PASTE YOUR FIREBASE KEYS HERE IN CODE 🔴
     const firebaseConfig = {
   apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
   authDomain: "mark-9bc95.firebaseapp.com",
@@ -419,6 +424,7 @@
   messagingSenderId: "417846424762",
   appId: "1:417846424762:web:24573a7abf942dfffefe83"
 };
+
 
     let app, db, isFirebaseActive = false;
     let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {} };
@@ -920,6 +926,18 @@
     }
 
     function renderExplore() {
+      // NEW FEATURE: Populate trending hashtags bar
+      const tBar = document.getElementById('trendingTagsBar');
+      const tagsCount = {};
+      Object.values(DB.posts || {}).forEach(p => {
+        const matches = (p.caption || '').match(/#(\w+)/g);
+        if(matches) matches.forEach(t => { tagsCount[t] = (tagsCount[t] || 0) + 1; });
+      });
+      const topTags = Object.keys(tagsCount).sort((a,b) => tagsCount[b] - tagsCount[a]).slice(0, 8);
+      const defaultTags = ['#Viu', '#Coding', '#Design', '#Tech', '#Life'];
+      const combinedTags = Array.from(new Set([...topTags, ...defaultTags]));
+      tBar.innerHTML = combinedTags.map(tag => `<button onclick="window.setHashtagFilter('${tag}')" class="px-3 py-1 rounded-full border theme-border text-xs bg-black/40 whitespace-nowrap theme-accent-text font-semibold">${tag}</button>`).join('');
+
       const c = document.getElementById('explore-container'), q = document.getElementById('searchUsers').value.toLowerCase(), myF = DB.users[currentUser]?.following || {};
       c.innerHTML = '';
       Object.values(DB.users || {}).forEach(u => {
