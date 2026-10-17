@@ -115,13 +115,10 @@
       <!-- EXPLORE TAB -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4 pb-20">
         <input type="text" id="searchUsers" placeholder="Search users or mood tags..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-3 focus:outline-none text-white">
-        
-        <!-- NEW FEATURE: Trending Tags Bar -->
         <div class="mb-4">
           <div class="text-[11px] text-gray-400 mb-1.5 font-semibold uppercase tracking-wider">🔥 Trending Hashtags</div>
           <div id="trendingTagsBar" class="flex gap-2 overflow-x-auto hide-scrollbar pb-1"></div>
         </div>
-
         <div id="explore-container" class="space-y-2.5"></div>
       </div>
 
@@ -231,20 +228,36 @@
     </nav>
   </div>
 
-  <!-- LIVE AUDIO/VIDEO CALL MODAL -->
+  <!-- INCOMING / OUTGOING WEB_RTC CALL MODAL -->
   <div id="callModal" class="hidden fixed inset-0 z-[9999] bg-black/95 flex flex-col justify-between items-center p-6 text-center select-none">
     <div class="mt-6">
-      <span class="text-[11px] uppercase tracking-widest theme-accent-text font-bold block mb-1" id="callTypeLabel">LIVE CALL</span>
+      <span class="text-[11px] uppercase tracking-widest theme-accent-text font-bold block mb-1" id="callTypeLabel">LIVE P2P CALL</span>
       <h2 class="text-2xl font-heading font-bold text-white" id="callPartnerName">User</h2>
-      <p class="text-xs text-emerald-400 mt-1 font-mono" id="callTimerText">00:00</p>
+      <p class="text-xs text-emerald-400 mt-1 font-mono" id="callTimerText">Connecting...</p>
     </div>
+    
     <div class="relative w-full max-w-xs aspect-[3/4] rounded-2xl overflow-hidden border-2 theme-border bg-gray-900 flex items-center justify-center">
-      <video id="localCallVideo" autoplay playsinline muted class="hidden w-full h-full object-cover"></video>
+      <video id="remoteCallVideo" autoplay playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+      <video id="localCallVideo" autoplay playsinline muted class="absolute bottom-3 right-3 w-24 h-32 object-cover rounded-lg border border-white/40 shadow-lg z-10"></video>
       <div id="callAvatarFallback" class="flex flex-col items-center"></div>
     </div>
+
     <div class="flex gap-6 mb-6">
       <button onclick="window.toggleCallCam()" class="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center text-lg">📷</button>
       <button onclick="window.endCall()" class="w-14 h-14 rounded-full bg-rose-600 text-white flex items-center justify-center text-xl font-bold shadow-lg">📴</button>
+    </div>
+  </div>
+
+  <!-- INCOMING CALL RINGING ALERT -->
+  <div id="incomingCallModal" class="hidden fixed inset-0 z-[10000] bg-black/90 flex flex-col items-center justify-center p-6 text-center">
+    <div class="theme-surface border theme-border p-6 rounded-2xl w-full max-w-xs space-y-4 animate-bounce">
+      <div id="incomingCallerAvatar" class="w-20 h-20 mx-auto"></div>
+      <h3 class="text-lg font-bold text-white" id="incomingCallerName">Caller</h3>
+      <p class="text-xs theme-accent-text">Incoming Video/Audio Call...</p>
+      <div class="flex gap-3 pt-2">
+        <button onclick="window.rejectIncomingCall()" class="flex-1 bg-rose-600/20 text-rose-400 py-2.5 rounded-xl text-xs font-bold">Decline ❌</button>
+        <button onclick="window.acceptIncomingCall()" class="flex-1 theme-accent-bg py-2.5 rounded-xl text-xs font-bold">Accept 📞</button>
+      </div>
     </div>
   </div>
 
@@ -410,10 +423,10 @@
     </div>
   </div>
 
-  <!-- CORE SCRIPT -->
+  <!-- CORE SCRIPT WITH WEB_RTC P2P CALLS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
   apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
@@ -425,15 +438,23 @@
   appId: "1:417846424762:web:24573a7abf942dfffefe83"
 };
 
-
     let app, db, isFirebaseActive = false;
-    let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {} };
+    let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {} };
     let currentUser = localStorage.getItem('viu_auth_user') || null;
     let currentChatTarget = null, activeTab = 'feed', feedFilter = 'all', activeHashtag = null, profileSubTab = 'my', uploadType = 'post';
     let rawUploadImageBase64 = null, currentImageBase64 = null, multiImagesList = [], carouselIdx = {};
     let activeCommentPostId = null, activeStoryId = null, viewingProfileUser = null, replyToText = null;
     let storyTimer = null, storyInterval = null, typingTimeout = null;
-    let mediaRecorder = null, audioChunks = [], isRecording = false, callStream = null, callTimerInt = null;
+    let mediaRecorder = null, audioChunks = [], isRecording = false;
+
+    // WebRTC Peer Connection States
+    let peerConnection = null;
+    let localStream = null;
+    let activeCallId = null;
+    let incomingCallData = null;
+    let callTimerInt = null;
+
+    const rtcServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
     const saveLocalDB = () => localStorage.setItem('viu_local_db', JSON.stringify(DB));
     document.documentElement.setAttribute('data-theme', localStorage.getItem('viu_theme') || 'ig-dark');
@@ -445,11 +466,12 @@
     if(db) {
       onValue(ref(db, '/'), (snap) => {
         const d = snap.val() || {};
-        DB = { users: d.users||{}, posts: d.posts||{}, stories: d.stories||{}, messages: d.messages||{}, typing: d.typing||{}, notifications: d.notifications||{}, notes: d.notes||{} };
+        DB = { users: d.users||{}, posts: d.posts||{}, stories: d.stories||{}, messages: d.messages||{}, typing: d.typing||{}, notifications: d.notifications||{}, notes: d.notes||{}, calls: d.calls||{} };
         isFirebaseActive = true;
         document.getElementById('db-status').innerText = '● Live Server Connected';
         document.getElementById('loginBtn').disabled = false;
         if(currentUser && DB.users[currentUser]) { document.getElementById('login-view').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); }
+        checkIncomingCalls();
         updateUI();
       }, () => enableLocalMode());
     } else enableLocalMode();
@@ -473,7 +495,7 @@
     }
     function apiSet(path, data) { setNested(DB, path, data); saveLocalDB(); updateUI(); if(isFirebaseActive) set(ref(db, path), data); }
     function apiRemove(path) { delNested(DB, path); saveLocalDB(); updateUI(); if(isFirebaseActive) remove(ref(db, path)); }
-    function apiPush(path, data) { const id = Date.now().toString() + Math.floor(Math.random()*999); apiSet(`${path}/${id}`, { ...data, id }); }
+    function apiPush(path, data) { const id = Date.now().toString() + Math.floor(Math.random()*999); apiSet(`${path}/${id}`, { ...data, id }); return id; }
     function notify(target, text) { if(target && target !== currentUser && target !== 'GLOBAL_GROUP') apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false }); }
 
     setInterval(() => { if(currentUser && DB.users[currentUser]) apiSet(`users/${currentUser}/lastSeen`, Date.now()); }, 25000);
@@ -501,31 +523,170 @@
       else apiSet(`notes/${currentUser}`, { author: currentUser, text: txt.trim().slice(0, 50), timestamp: Date.now() });
     };
 
+    // ==================== WEB_RTC REAL P2P CALL IMPLEMENTATION ====================
     window.startCall = async (withVideo) => {
-      if(!currentChatTarget) return;
-      document.getElementById('callModal').classList.remove('hidden');
-      document.getElementById('callTypeLabel').innerText = withVideo ? '📹 LIVE VIDEO CALL' : '📞 AUDIO CALL';
-      document.getElementById('callPartnerName').innerText = currentChatTarget === 'GLOBAL_GROUP' ? 'Global Lounge' : currentChatTarget;
-      document.getElementById('callAvatarFallback').innerHTML = generateAvatar(currentChatTarget, "w-24 h-24 text-3xl", true);
-      const vid = document.getElementById('localCallVideo');
-      vid.classList.toggle('hidden', !withVideo);
-      if(withVideo) {
-        try { callStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); vid.srcObject = callStream; }
-        catch(e) { vid.classList.add('hidden'); }
+      if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP') return;
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: withVideo, audio: true });
+        document.getElementById('localCallVideo').srcObject = localStream;
+        document.getElementById('localCallVideo').classList.toggle('hidden', !withVideo);
+      } catch(e) {
+        alert("Camera/Microphone permission denied or unavailable.");
+        return;
       }
+
+      document.getElementById('callModal').classList.remove('hidden');
+      document.getElementById('callTypeLabel').innerText = withVideo ? '📹 VIDEO CALL' : '📞 AUDIO CALL';
+      document.getElementById('callPartnerName').innerText = currentChatTarget;
+      document.getElementById('callAvatarFallback').innerHTML = generateAvatar(currentChatTarget, "w-24 h-24 text-3xl", true);
+      document.getElementById('callTimerText').innerText = "Ringing...";
+
+      peerConnection = new RTCPeerConnection(rtcServers);
+      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+      peerConnection.ontrack = (event) => {
+        document.getElementById('remoteCallVideo').srcObject = event.streams[0];
+        startCallTimer();
+      };
+
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate && activeCallId) {
+          apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON());
+        }
+      };
+
+      const callId = 'call_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+      activeCallId = callId;
+
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+
+      apiSet(`calls/${callId}`, {
+        caller: currentUser,
+        receiver: currentChatTarget,
+        offer: { type: offer.type, sdp: offer.sdp },
+        status: 'ringing',
+        timestamp: Date.now()
+      });
+
+      // Listen for answer
+      if (isFirebaseActive && db) {
+        onValue(ref(db, `calls/${callId}/answer`), async (snapshot) => {
+          const answer = snapshot.val();
+          if (answer && peerConnection && !peerConnection.currentRemoteDescription) {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+            startCallTimer();
+          }
+        });
+        onValue(ref(db, `calls/${callId}/candidates/${currentChatTarget}`), (snapshot) => {
+          const candidates = snapshot.val();
+          if (candidates) {
+            Object.values(candidates).forEach(async (cand) => {
+              if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(cand));
+            });
+          }
+        });
+      }
+    };
+
+    function checkIncomingCalls() {
+      if (!currentUser || activeCallId) return;
+      const calls = DB.calls || {};
+      for (const [cId, cData] of Object.entries(calls)) {
+        if (cData.receiver === currentUser && cData.status === 'ringing' && (!incomingCallData || incomingCallData.id !== cId)) {
+          incomingCallData = { id: cId, ...cData };
+          document.getElementById('incomingCallerName').innerText = cData.caller;
+          document.getElementById('incomingCallerAvatar').innerHTML = generateAvatar(cData.caller, "w-20 h-20 text-2xl", true);
+          document.getElementById('incomingCallModal').classList.remove('hidden');
+          break;
+        }
+      }
+    }
+
+    window.acceptIncomingCall = async () => {
+      if (!incomingCallData) return;
+      activeCallId = incomingCallData.id;
+      document.getElementById('incomingCallModal').classList.add('hidden');
+      document.getElementById('callModal').classList.remove('hidden');
+      document.getElementById('callPartnerName').innerText = incomingCallData.caller;
+      document.getElementById('callAvatarFallback').innerHTML = generateAvatar(incomingCallData.caller, "w-24 h-24 text-3xl", true);
+
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('localCallVideo').srcObject = localStream;
+      } catch(e) {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+      }
+
+      peerConnection = new RTCPeerConnection(rtcServers);
+      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+      peerConnection.ontrack = (event) => {
+        document.getElementById('remoteCallVideo').srcObject = event.streams[0];
+        startCallTimer();
+      };
+
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate && activeCallId) {
+          apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON());
+        }
+      };
+
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+
+      apiSet(`calls/${activeCallId}/answer`, { type: answer.type, sdp: answer.sdp });
+      apiSet(`calls/${activeCallId}/status`, 'connected');
+
+      // Listen for caller candidates
+      if (isFirebaseActive && db) {
+        onValue(ref(db, `calls/${activeCallId}/candidates/${incomingCallData.caller}`), (snapshot) => {
+          const candidates = snapshot.val();
+          if (candidates) {
+            Object.values(candidates).forEach(async (cand) => {
+              if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(cand));
+            });
+          }
+        });
+      }
+    };
+
+    window.rejectIncomingCall = () => {
+      if (incomingCallData) {
+        apiSet(`calls/${incomingCallData.id}/status`, 'rejected');
+      }
+      document.getElementById('incomingCallModal').classList.add('hidden');
+      incomingCallData = null;
+    };
+
+    function startCallTimer() {
       let sec = 0; clearInterval(callTimerInt);
       callTimerInt = setInterval(() => {
         sec++;
         document.getElementById('callTimerText').innerText = `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
       }, 1000);
+    }
+
+    window.toggleCallCam = () => { 
+      if(localStream && localStream.getVideoTracks()[0]) {
+        localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
+      }
     };
 
-    window.toggleCallCam = () => { if(callStream && callStream.getVideoTracks()[0]) callStream.getVideoTracks()[0].enabled = !callStream.getVideoTracks()[0].enabled; };
     window.endCall = () => {
       document.getElementById('callModal').classList.add('hidden');
+      document.getElementById('incomingCallModal').classList.add('hidden');
       clearInterval(callTimerInt);
-      if(callStream) { callStream.getTracks().forEach(t => t.stop()); callStream = null; }
+      if(localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+      if(peerConnection) { peerConnection.close(); peerConnection = null; }
+      if(activeCallId) {
+        apiSet(`calls/${activeCallId}/status`, 'ended');
+        activeCallId = null;
+      }
+      incomingCallData = null;
     };
+    // ==============================================================================
 
     window.toggleBlockUser = (target) => {
       if(!target || target === currentUser) return;
@@ -708,6 +869,18 @@
     };
     window.closeNotifications = () => document.getElementById('notificationsDrawer').classList.add('hidden');
     window.clearNotifications = () => { apiRemove(`notifications/${currentUser}`); window.openNotifications(); };
+
+    // NEW FEATURE: Multi Emoji Reactions for Posts
+    window.togglePostReaction = (postId, emoji) => {
+      const p = DB.posts[postId]; if(!p) return;
+      const curUserReaction = p.reactions?.[currentUser];
+      if (curUserReaction === emoji) {
+        apiRemove(`posts/${postId}/reactions/${currentUser}`);
+      } else {
+        apiSet(`posts/${postId}/reactions/${currentUser}`, emoji);
+        notify(p.author, `reacted ${emoji} to your post`);
+      }
+    };
 
     window.toggleLike = (id) => {
       const p = DB.posts[id]; if(!p) return;
@@ -898,6 +1071,12 @@
           mediaHTML = `<div id="post-img-${p.id}" class="relative bg-black flex justify-center overflow-hidden" ondblclick="window.doubleTapLike('${p.id}')"><img src="${activeImg}" class="w-full object-cover max-h-[460px]">${navBtns}</div>`;
         }
 
+        // Aggregate reactions
+        const reactionsMap = p.reactions || {};
+        const reactionCounts = {};
+        Object.values(reactionsMap).forEach(emoji => { reactionCounts[emoji] = (reactionCounts[emoji] || 0) + 1; });
+        const reactionsHTML = Object.entries(reactionCounts).map(([em, cnt]) => `<span class="bg-white/10 px-2 py-0.5 rounded-full text-[10px] mr-1">${em} ${cnt}</span>`).join('');
+
         c.insertAdjacentHTML('beforeend', `
           <div class="theme-card border-b theme-border pb-3 fade-in">
             ${p.pinned ? `<div class="px-3 pt-2 text-[10px] theme-accent-text font-bold">📌 Pinned Post</div>` : ''}
@@ -909,14 +1088,21 @@
             </div>
             ${mediaHTML}
             <div class="p-3">
-              <div class="flex justify-between mb-1.5">
+              <div class="flex justify-between mb-1.5 items-center">
                 <div class="flex gap-4 items-center">
                   <button onclick="window.toggleLike('${p.id}')" class="text-lg">${isL ? '❤️' : '🤍'}</button>
                   <button onclick="window.openComments('${p.id}')" class="flex items-center gap-1 text-sm font-bold">💬 ${cCnt}</button>
                   <button onclick="window.openShareModal('${p.id}')" class="text-sm font-bold">✈️</button>
                 </div>
+                <!-- Emoji Reaction Bar -->
+                <div class="flex gap-1 text-xs">
+                  <button onclick="window.togglePostReaction('${p.id}', '🔥')" title="Fire">🔥</button>
+                  <button onclick="window.togglePostReaction('${p.id}', '👏')" title="Clap">👏</button>
+                  <button onclick="window.togglePostReaction('${p.id}', '🚀')" title="Rocket">🚀</button>
+                </div>
                 <button onclick="window.toggleBookmark('${p.id}')" class="text-lg">${isS ? '🔖' : '📑'}</button>
               </div>
+              <div class="flex flex-wrap gap-1 mb-1">${reactionsHTML}</div>
               <button onclick="window.openLikesModal('${p.id}')" class="text-xs font-bold mb-1 block hover:underline">${likes.length} likes</button>
               ${!p.isPoll ? `<div class="text-sm"><b class="mr-1.5 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${p.author}</b>${formatRichText(p.caption || '')}</div>` : ''}
               <div class="text-[10px] text-gray-500 mt-1">${formatTime(p.timestamp)}</div>
@@ -926,7 +1112,6 @@
     }
 
     function renderExplore() {
-      // NEW FEATURE: Populate trending hashtags bar
       const tBar = document.getElementById('trendingTagsBar');
       const tagsCount = {};
       Object.values(DB.posts || {}).forEach(p => {
