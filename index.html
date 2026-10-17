@@ -227,8 +227,7 @@
       <button onclick="window.switchTab('profile')" id="navbtn-profile" class="p-2 text-gray-500">👤</button>
     </nav>
   </div>
-
-  <!-- INCOMING / OUTGOING WEB_RTC CALL MODAL -->
+<!-- ACTIVE CALL MODAL -->
   <div id="callModal" class="hidden fixed inset-0 z-[9999] bg-black/95 flex flex-col justify-between items-center p-6 text-center select-none">
     <div class="mt-6">
       <span class="text-[11px] uppercase tracking-widest theme-accent-text font-bold block mb-1" id="callTypeLabel">LIVE P2P CALL</span>
@@ -248,7 +247,7 @@
     </div>
   </div>
 
-  <!-- INCOMING CALL RINGING ALERT (STABLE FIXED POPUP) -->
+  <!-- INCOMING CALL RINGING ALERT (STABLE & STATIC) -->
   <div id="incomingCallModal" class="hidden fixed inset-0 z-[10000] bg-black/90 flex flex-col items-center justify-center p-6 text-center">
     <div class="theme-surface border theme-border p-6 rounded-2xl w-full max-w-xs space-y-4">
       <div id="incomingCallerAvatar" class="w-20 h-20 mx-auto"></div>
@@ -340,7 +339,7 @@
     </div>
   </div>
 
-  <!-- MODALS -->
+  <!-- OTHER MODALS -->
   <div id="sharePostModal" class="hidden fixed inset-0 z-[190] flex flex-col justify-end bg-black/75" onclick="if(event.target===this) this.classList.add('hidden')">
     <div class="theme-surface border-t theme-border w-full max-w-md mx-auto h-[50vh] flex flex-col rounded-t-2xl p-4">
       <div class="flex justify-between items-center pb-3 border-b theme-border"><h3 class="font-bold text-sm theme-accent-text">✈️ Share Post</h3><button onclick="document.getElementById('sharePostModal').classList.add('hidden')">✕</button></div>
@@ -423,11 +422,12 @@
     </div>
   </div>
 
-  <!-- CORE SCRIPT WITH FIXED CALL LIFECYCLE & MODALS -->
+  <!-- CORE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+    // 🔴 PLACE YOUR FIREBASE KEYS HERE 🔴
     const firebaseConfig = {
   apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
   authDomain: "mark-9bc95.firebaseapp.com",
@@ -437,7 +437,6 @@
   messagingSenderId: "417846424762",
   appId: "1:417846424762:web:24573a7abf942dfffefe83"
 };
-
     let app, db, isFirebaseActive = false;
     let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {} };
     let currentUser = localStorage.getItem('viu_auth_user') || null;
@@ -447,7 +446,6 @@
     let storyTimer = null, storyInterval = null, typingTimeout = null;
     let mediaRecorder = null, audioChunks = [], isRecording = false;
 
-    // WebRTC Peer Connection States
     let peerConnection = null;
     let localStream = null;
     let activeCallId = null;
@@ -523,7 +521,6 @@
       else apiSet(`notes/${currentUser}`, { author: currentUser, text: txt.trim().slice(0, 50), timestamp: Date.now() });
     };
 
-    // ==================== WEB_RTC REAL P2P CALL IMPLEMENTATION ====================
     window.startCall = async (withVideo) => {
       if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP') return;
       try {
@@ -569,14 +566,11 @@
         timestamp: Date.now()
       });
 
-      // Listen for call state updates (answer & status)
       if (isFirebaseActive && db) {
         onValue(ref(db, `calls/${callId}`), async (snapshot) => {
           const callData = snapshot.val();
-          if (callData) {
-            if (callData.status === 'ended' || callData.status === 'rejected') {
-              window.endCall();
-            }
+          if (callData && (callData.status === 'ended' || callData.status === 'rejected')) {
+            window.endCall();
           }
         });
 
@@ -605,7 +599,6 @@
       let foundActive = false;
 
       for (const [cId, cData] of Object.entries(calls)) {
-        // Check if status is ended or rejected globally for current active call
         if (activeCallId === cId && (cData.status === 'ended' || cData.status === 'rejected')) {
           window.endCall();
           return;
@@ -623,7 +616,6 @@
         }
       }
 
-      // If no ringing call found from database, clear incoming modal if it was closed
       if (!foundActive && incomingCallData) {
         document.getElementById('incomingCallModal').classList.add('hidden');
       }
@@ -665,7 +657,6 @@
       apiSet(`calls/${activeCallId}/answer`, { type: answer.type, sdp: answer.sdp });
       apiSet(`calls/${activeCallId}/status`, 'connected');
 
-      // Listen for updates and caller candidates
       if (isFirebaseActive && db) {
         onValue(ref(db, `calls/${activeCallId}`), async (snapshot) => {
           const callData = snapshot.val();
@@ -709,7 +700,6 @@
     };
 
     window.endCall = () => {
-      // Forcefully hide all call modals
       document.getElementById('callModal').classList.add('hidden');
       document.getElementById('incomingCallModal').classList.add('hidden');
       clearInterval(callTimerInt);
@@ -728,7 +718,6 @@
       }
       incomingCallData = null;
     };
-    // ==============================================================================
 
     window.toggleBlockUser = (target) => {
       if(!target || target === currentUser) return;
