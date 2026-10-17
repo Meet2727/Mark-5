@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Viu / Ultimate Social Network</title>
+  <title>Viu // Ultimate Social Network</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -14,19 +14,19 @@
       --story-ring: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
     }
     [data-theme="jarvis"] {
-      --bg-main: #010409; --bg-surface: #030a16; --bg-card: rgba(3, 12, 26, 0.9); --border-col: rgba(0, 243, 255, 0.35);
+      --bg-main: #010409; --bg-surface: #030a16; --bg-card: rgba(3, 12, 26, 0.92); --border-col: rgba(0, 243, 255, 0.35);
       --accent: #00f3ff; --accent-rgb: 0, 243, 255; --text-main: #e0f7ff;
       --font-body: 'Share Tech Mono', monospace; --font-heading: 'Orbitron', sans-serif;
       --story-ring: linear-gradient(135deg, #00f3ff, #0066ff);
     }
     [data-theme="jarvis-crimson"] {
-      --bg-main: #080102; --bg-surface: #140205; --bg-card: rgba(22, 3, 7, 0.9); --border-col: rgba(255, 0, 85, 0.4);
+      --bg-main: #080102; --bg-surface: #140205; --bg-card: rgba(22, 3, 7, 0.92); --border-col: rgba(255, 0, 85, 0.4);
       --accent: #ff0055; --accent-rgb: 255, 0, 85; --text-main: #ffe5ec;
       --font-body: 'Share Tech Mono', monospace; --font-heading: 'Orbitron', sans-serif;
       --story-ring: linear-gradient(135deg, #ff0055, #ff7b00);
     }
     [data-theme="jarvis-emerald"] {
-      --bg-main: #010804; --bg-surface: #021409; --bg-card: rgba(3, 22, 10, 0.9); --border-col: rgba(0, 255, 136, 0.4);
+      --bg-main: #010804; --bg-surface: #021409; --bg-card: rgba(3, 22, 10, 0.92); --border-col: rgba(0, 255, 136, 0.4);
       --accent: #00ff88; --accent-rgb: 0, 255, 136; --text-main: #e0ffef;
       --font-body: 'Share Tech Mono', monospace; --font-heading: 'Orbitron', sans-serif;
       --story-ring: linear-gradient(135deg, #00ff88, #00b8ff);
@@ -120,7 +120,15 @@
 
       <!-- MESSAGES TAB -->
       <div id="tab-chatlist" class="w-full min-h-full hidden p-4 pb-20">
-        <h2 class="font-heading font-bold text-base mb-3 theme-accent-text">Direct Messages</h2>
+        <h2 class="font-heading font-bold text-base mb-3 theme-accent-text">Messages & Group Lounge</h2>
+        <!-- Pinned Global Group Chat -->
+        <div onclick="window.openChat('GLOBAL_GROUP')" class="theme-surface flex items-center p-3 rounded-xl border-2 border-sky-500/40 cursor-pointer gap-3 mb-3 bg-gradient-to-r from-sky-500/10 to-purple-500/10">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-lg shrink-0">🌐</div>
+          <div class="flex-1 overflow-hidden">
+            <div class="font-bold text-sm flex items-center gap-1.5">Global Lounge <span class="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-full">Public Group</span></div>
+            <div class="text-xs text-gray-400 truncate" id="global-chat-preview">Tap to join live group chat with everyone!</div>
+          </div>
+        </div>
         <div id="chatlist-container" class="space-y-2"></div>
       </div>
 
@@ -143,8 +151,8 @@
 
           <div class="grid grid-cols-4 gap-2 w-full border-y theme-border py-2.5 mb-4 text-xs">
             <div><span class="font-bold text-sm block" id="stat-posts">0</span>Posts</div>
-            <div><span class="font-bold text-sm block" id="stat-followers">0</span>Followers</div>
-            <div><span class="font-bold text-sm block" id="stat-following">0</span>Following</div>
+            <div class="cursor-pointer hover:opacity-80" onclick="window.openFollowListModal('followers')"><span class="font-bold text-sm block theme-accent-text" id="stat-followers">0</span>Followers</div>
+            <div class="cursor-pointer hover:opacity-80" onclick="window.openFollowListModal('following')"><span class="font-bold text-sm block theme-accent-text" id="stat-following">0</span>Following</div>
             <div><span class="font-bold text-sm block" id="stat-Saved">0</span>Saved</div>
           </div>
 
@@ -171,7 +179,7 @@
         <div id="profile-grid" class="grid grid-cols-3 gap-1"></div>
       </div>
 
-      <!-- ACTIVE CHAT VIEW (WITH VOICE NOTES & ONLINE STATUS) -->
+      <!-- ACTIVE CHAT VIEW -->
       <div id="active-chat-view" class="absolute inset-0 bg-black z-30 hidden flex flex-col">
         <div class="h-14 border-b theme-border flex items-center justify-between px-4 theme-surface shrink-0">
           <div class="flex items-center gap-3">
@@ -185,6 +193,11 @@
           </div>
         </div>
         <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar space-y-3 bg-black"></div>
+        <!-- Quote Reply Preview Bar -->
+        <div id="replyPreviewBar" class="hidden px-4 py-1.5 bg-white/10 border-t theme-border flex justify-between items-center text-xs">
+          <div class="truncate text-gray-300"><span class="theme-accent-text font-bold">Replying:</span> <span id="replyPreviewText"></span></div>
+          <button type="button" onclick="window.cancelReply()" class="text-gray-400 ml-2">✕</button>
+        </div>
         <form id="chatForm" class="p-2.5 border-t theme-border theme-surface shrink-0 flex gap-1.5 items-center">
           <label class="p-2 rounded-full bg-white/10 cursor-pointer text-sm shrink-0" title="Send Photo">📷<input type="file" id="chatImageInput" accept="image/*" class="hidden"></label>
           <button type="button" id="voiceRecordBtn" onclick="window.toggleVoiceRecording()" class="p-2 rounded-full bg-white/10 text-sm shrink-0 transition" title="Record Voice Note">🎙️</button>
@@ -206,16 +219,20 @@
     </nav>
   </div>
 
-  <!-- STORY VIEWER MODAL (WITH DIRECT STORY REPLY) -->
+  <!-- STORY VIEWER MODAL -->
   <div id="storyViewerModal" class="hidden fixed inset-0 z-[9999] bg-black flex flex-col justify-between select-none">
     <div class="p-4 z-20 bg-gradient-to-b from-black/90 to-transparent">
       <div class="w-full bg-white/25 h-1 mb-3 rounded-full overflow-hidden"><div id="storyProgressBar" class="bg-white h-full w-0 transition-all duration-100"></div></div>
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div id="storyViewerAvatar" class="w-9 h-9"></div>
-          <div><span id="storyViewerName" class="font-bold text-sm text-white block"></span><span id="storyViewerTime" class="text-[10px] text-gray-300"></span></div>
+          <div>
+            <span id="storyViewerName" class="font-bold text-sm text-white block"></span>
+            <span id="storyViewerTime" class="text-[10px] text-gray-300"></span>
+          </div>
         </div>
         <div class="flex items-center gap-3">
+          <span id="storyMusicBadge" class="hidden bg-white/15 border border-white/20 px-2.5 py-1 rounded-full text-[11px] text-white animate-pulse"></span>
           <button id="deleteStoryBtn" class="hidden text-rose-400 text-xs font-bold bg-black/60 px-2.5 py-1 rounded border border-rose-500/40">Delete</button>
           <button onclick="window.closeStoryViewer()" class="text-white text-3xl leading-none px-2">&times;</button>
         </div>
@@ -237,7 +254,7 @@
     </div>
   </div>
 
-  <!-- UPLOAD MODAL (POST, STORY & INTERACTIVE POLL) -->
+  <!-- UPLOAD MODAL -->
   <div id="uploadModal" class="hidden fixed inset-0 z-[200] bg-black/85 flex flex-col justify-end">
     <div class="theme-surface w-full max-w-md mx-auto rounded-t-2xl p-5 border-t theme-border">
       <div class="flex justify-between items-center mb-3">
@@ -252,12 +269,23 @@
       <form id="uploadForm" class="space-y-3">
         <textarea id="postCaption" rows="2" placeholder="Write caption or poll question..." class="w-full bg-black/40 border theme-border rounded-lg p-2.5 text-sm outline-none text-white"></textarea>
         
-        <!-- Photo Upload Box (For Post & Story) -->
+        <!-- Story Music Vibe Selector -->
+        <div id="storyMusicSection" class="hidden">
+          <select id="storyMusicInput" class="w-full bg-black border theme-border rounded-lg p-2 text-xs text-white">
+            <option value="">🎵 No Music Sticker</option>
+            <option value="🎵 Night Drive - Synthwave">🎵 Night Drive - Synthwave</option>
+            <option value="🔥 Phonky Drift - Bass">🔥 Phonky Drift - Bass</option>
+            <option value="🎸 Midnight Lo-Fi Chill">🎸 Midnight Lo-Fi Chill</option>
+            <option value="⚡ Cyberpunk 2077 Vibe">⚡ Cyberpunk 2077 Vibe</option>
+          </select>
+        </div>
+
         <div id="photoUploadSection">
           <div class="border-2 border-dashed theme-border rounded-xl p-4 text-center relative cursor-pointer bg-black/30">
-            <input type="file" id="postImageInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+            <input type="file" id="postImageInput" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
             <img id="imagePreview" src="" class="hidden max-h-44 mx-auto rounded-lg">
-            <div id="imagePlaceholder" class="text-gray-400 text-xs py-5">📷 Tap to choose photo</div>
+            <div id="multiCountBadge" class="hidden text-[11px] theme-accent-text font-bold mt-1"></div>
+            <div id="imagePlaceholder" class="text-gray-400 text-xs py-5">📷 Tap to choose 1 or multiple photos</div>
           </div>
           <div id="filterBar" class="hidden flex gap-2 overflow-x-auto hide-scrollbar py-2">
             <button type="button" onclick="window.applyImageFilter('none')" class="px-3 py-1 rounded border theme-border bg-black text-xs shrink-0">Normal</button>
@@ -267,16 +295,50 @@
             <button type="button" onclick="window.applyImageFilter('vintage')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-amber-400 shrink-0">🎞️ Vintage</button>
           </div>
         </div>
-
-        <!-- Poll Options Box (For Live Poll) -->
         <div id="pollOptionsSection" class="hidden space-y-2">
-          <input type="text" id="pollOpt1" placeholder="Option 1 (e.g. Yes / React)" class="w-full bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white">
-          <input type="text" id="pollOpt2" placeholder="Option 2 (e.g. No / .NET)" class="w-full bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white">
+          <input type="text" id="pollOpt1" placeholder="Option 1 (e.g. Yes / C#)" class="w-full bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white">
+          <input type="text" id="pollOpt2" placeholder="Option 2 (e.g. No / Python)" class="w-full bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white">
           <input type="text" id="pollOpt3" placeholder="Option 3 (Optional)" class="w-full bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white">
         </div>
-
         <button type="submit" id="submitUploadBtn" class="w-full theme-accent-bg font-bold rounded-lg py-3 text-sm">Publish</button>
       </form>
+    </div>
+  </div>
+
+  <!-- SHARE POST TO DM MODAL -->
+  <div id="sharePostModal" class="hidden fixed inset-0 z-[190] flex flex-col justify-end bg-black/75" onclick="if(event.target===this) document.getElementById('sharePostModal').classList.add('hidden')">
+    <div class="theme-surface border-t theme-border w-full max-w-md mx-auto h-[55vh] flex flex-col rounded-t-2xl p-4">
+      <div class="flex justify-between items-center pb-3 border-b theme-border">
+        <h3 class="font-bold text-sm theme-accent-text">✈️ Share Post to Chat</h3>
+        <button onclick="document.getElementById('sharePostModal').classList.add('hidden')" class="text-gray-400">✕</button>
+      </div>
+      <div id="shareUsersList" class="flex-1 overflow-y-auto py-3 space-y-2 hide-scrollbar"></div>
+    </div>
+  </div>
+
+  <!-- FOLLOWERS / FOLLOWING / LIKES LIST MODAL -->
+  <div id="followListModal" class="hidden fixed inset-0 z-[190] flex flex-col justify-end bg-black/75" onclick="if(event.target===this) document.getElementById('followListModal').classList.add('hidden')">
+    <div class="theme-surface border-t theme-border w-full max-w-md mx-auto h-[55vh] flex flex-col rounded-t-2xl p-4">
+      <div class="flex justify-between items-center pb-3 border-b theme-border">
+        <h3 class="font-bold text-sm theme-accent-text" id="followListTitle">Users</h3>
+        <button onclick="document.getElementById('followListModal').classList.add('hidden')" class="text-gray-400">✕</button>
+      </div>
+      <div id="followListContainer" class="flex-1 overflow-y-auto py-3 space-y-2 hide-scrollbar"></div>
+    </div>
+  </div>
+
+  <!-- SINGLE POST VIEWER MODAL (FROM PROFILE GRID) -->
+  <div id="singlePostModal" class="hidden fixed inset-0 z-[210] bg-black/90 flex items-center justify-center p-4" onclick="if(event.target===this) document.getElementById('singlePostModal').classList.add('hidden')">
+    <div class="theme-surface border theme-border rounded-2xl w-full max-w-sm overflow-hidden">
+      <div class="p-3 border-b theme-border flex justify-between items-center">
+        <span class="font-bold text-xs theme-accent-text" id="sp-author">@user</span>
+        <button onclick="document.getElementById('singlePostModal').classList.add('hidden')" class="text-gray-400">✕</button>
+      </div>
+      <img id="sp-img" src="" class="w-full max-h-80 object-cover bg-black">
+      <div class="p-3 text-xs space-y-1">
+        <div class="font-bold" id="sp-likes">❤️ 0 likes</div>
+        <div id="sp-caption" class="text-gray-300"></div>
+      </div>
     </div>
   </div>
 
@@ -355,7 +417,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // 🔴 PASTE YOUR FIREBASE KEYS HERE 🔴
+    // 🔴 PASTE YOUR FIREBASE KEYS HERE IN CODE 🔴
     const firebaseConfig = {
   apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
   authDomain: "mark-9bc95.firebaseapp.com",
@@ -365,12 +427,12 @@
   messagingSenderId: "417846424762",
   appId: "1:417846424762:web:24573a7abf942dfffefe83"
 };
-
     let app, db, isFirebaseActive = false;
     let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {} };
     let currentUser = localStorage.getItem('viu_auth_user') || null;
     let currentChatTarget = null, activeTab = 'feed', feedFilter = 'all', profileSubTab = 'my', uploadType = 'post';
-    let rawUploadImageBase64 = null, currentImageBase64 = null, activeCommentPostId = null, activeStoryId = null, viewingProfileUser = null;
+    let rawUploadImageBase64 = null, currentImageBase64 = null, multiImagesList = [], carouselIdx = {};
+    let activeCommentPostId = null, activeStoryId = null, viewingProfileUser = null, replyToText = null;
     let storyTimer = null, storyInterval = null, typingTimeout = null;
     let mediaRecorder = null, audioChunks = [], isRecording = false;
 
@@ -413,9 +475,8 @@
     function apiSet(path, data) { setNested(DB, path, data); saveLocalDB(); updateUI(); if(isFirebaseActive) set(ref(db, path), data); }
     function apiRemove(path) { delNested(DB, path); saveLocalDB(); updateUI(); if(isFirebaseActive) remove(ref(db, path)); }
     function apiPush(path, data) { const id = Date.now().toString() + Math.floor(Math.random()*999); apiSet(`${path}/${id}`, { ...data, id }); }
-    function notify(target, text) { if(target && target !== currentUser) apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false }); }
+    function notify(target, text) { if(target && target !== currentUser && target !== 'GLOBAL_GROUP') apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false }); }
 
-    // Online Presence Heartbeat
     setInterval(() => { if(currentUser && DB.users[currentUser]) apiSet(`users/${currentUser}/lastSeen`, Date.now()); }, 25000);
     const isUserOnline = (u) => { const ls = DB.users?.[u]?.lastSeen; return ls && (Date.now() - ls < 120000); };
     const badgeHTML = (u) => DB.users?.[u]?.verified ? `<span class="text-sky-400 text-[11px] ml-0.5" title="Verified">☑️</span>` : '';
@@ -445,6 +506,7 @@
         ctx.filter = map[type] || 'none';
         ctx.drawImage(img, 0, 0);
         currentImageBase64 = c.toDataURL('image/jpeg', 0.7);
+        if(multiImagesList.length > 0) multiImagesList[0] = currentImageBase64;
         document.getElementById('imagePreview').src = currentImageBase64;
       };
       img.src = rawUploadImageBase64;
@@ -455,6 +517,7 @@
 
     function generateAvatar(u, cls = "w-8 h-8", showOnline = false) {
       if(!u) return '';
+      if(u === 'GLOBAL_GROUP') return `<div class="inline-flex ${cls} rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 items-center justify-center text-white font-bold text-xs shrink-0">🌐</div>`;
       const usr = DB.users && DB.users[u];
       const dot = (showOnline && isUserOnline(u)) ? `<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-black rounded-full"></span>` : '';
       if(usr && usr.avatar && usr.avatar.startsWith('data:image')) return `<div class="relative inline-flex ${cls} shrink-0"><img src="${usr.avatar}" class="w-full h-full rounded-full object-cover border border-white/20">${dot}</div>`;
@@ -462,21 +525,115 @@
       return `<div class="relative inline-flex ${cls} rounded-full items-center justify-center text-white font-bold text-xs shrink-0" style="background:${cols[(u.charCodeAt(0)||0)%cols.length]}">${u.charAt(0).toUpperCase()}${dot}</div>`;
     }
 
-    // VOICE NOTE RECORDING IN CHAT
+    // CAROUSEL NAVIGATION & POST LIKES LIST
+    window.stepCarousel = (postId, dir) => {
+      const p = DB.posts[postId]; if(!p || !p.images) return;
+      const cur = carouselIdx[postId] || 0;
+      carouselIdx[postId] = (cur + dir + p.images.length) % p.images.length;
+      renderFeed();
+    };
+
+    window.openLikesModal = (postId) => {
+      const p = DB.posts[postId]; if(!p) return;
+      const listIds = Object.keys(p.likes || {});
+      document.getElementById('followListTitle').innerText = `❤️ Liked By (${listIds.length})`;
+      const box = document.getElementById('followListContainer');
+      box.innerHTML = listIds.length ? listIds.map(uname => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border theme-border">
+          <div class="flex items-center gap-2.5 cursor-pointer" onclick="document.getElementById('followListModal').classList.add('hidden'); window.openUserProfile('${uname}')">
+            ${generateAvatar(uname, "w-9 h-9", true)}<span class="font-bold text-xs">${uname} ${badgeHTML(uname)}</span>
+          </div>
+          <button onclick="document.getElementById('followListModal').classList.add('hidden'); window.openChat('${uname}')" class="bg-white/10 px-3 py-1 rounded-lg text-xs font-bold">Chat</button>
+        </div>`).join('') : `<div class="text-center text-gray-500 text-xs py-8">No likes yet.</div>`;
+      document.getElementById('followListModal').classList.remove('hidden');
+    };
+
+    window.openSinglePost = (postId) => {
+      const p = DB.posts[postId]; if(!p) return;
+      document.getElementById('sp-author').innerText = `@${p.author}`;
+      document.getElementById('sp-img').src = p.image;
+      document.getElementById('sp-likes').innerText = `❤️ ${p.likes ? Object.keys(p.likes).length : 0} likes`;
+      document.getElementById('sp-caption').innerText = p.caption || '';
+      document.getElementById('singlePostModal').classList.remove('hidden');
+    };
+
+    // QUOTE REPLY IN CHAT
+    window.setReplyMsg = (sender, txt) => {
+      replyToText = `@${sender}: ${txt || 'Media'}`;
+      document.getElementById('replyPreviewText').innerText = replyToText;
+      document.getElementById('replyPreviewBar').classList.remove('hidden');
+      document.getElementById('chatInput').focus();
+    };
+    window.cancelReply = () => {
+      replyToText = null;
+      document.getElementById('replyPreviewBar').classList.add('hidden');
+    };
+
+    // SHARE POST TO DM
+    window.openShareModal = (postId) => {
+      const box = document.getElementById('shareUsersList'); box.innerHTML = '';
+      Object.values(DB.users || {}).forEach(u => {
+        if(!u?.username || u.username === currentUser) return;
+        box.innerHTML += `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border theme-border">
+            <div class="flex items-center gap-2.5">${generateAvatar(u.username, "w-9 h-9", true)}<span class="font-bold text-xs">${u.username}</span></div>
+            <button onclick="window.sendPostToUser('${postId}', '${u.username}')" class="theme-accent-bg px-3 py-1.5 rounded-lg text-xs font-bold">Send ✈️</button>
+          </div>`;
+      });
+      document.getElementById('sharePostModal').classList.remove('hidden');
+    };
+
+    window.sendPostToUser = (postId, targetUser) => {
+      const p = DB.posts[postId]; if(!p) return;
+      apiPush('messages', {
+        sender: currentUser,
+        receiver: targetUser,
+        text: `Shared a post by @${p.author}: "${(p.caption || '').slice(0, 40)}"`,
+        image: p.image || null,
+        timestamp: Date.now(),
+        read: false
+      });
+      notify(targetUser, `shared a post with you ✈️`);
+      document.getElementById('sharePostModal').classList.add('hidden');
+      window.openChat(targetUser);
+    };
+
+    window.openFollowListModal = (type) => {
+      const u = DB.users[currentUser] || {};
+      const listIds = Object.keys((type === 'followers' ? u.followers : u.following) || {});
+      document.getElementById('followListTitle').innerText = type === 'followers' ? 'Followers' : 'Following';
+      const box = document.getElementById('followListContainer');
+      box.innerHTML = listIds.length ? listIds.map(uname => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border theme-border">
+          <div class="flex items-center gap-2.5 cursor-pointer" onclick="document.getElementById('followListModal').classList.add('hidden'); window.openUserProfile('${uname}')">
+            ${generateAvatar(uname, "w-9 h-9", true)}<span class="font-bold text-xs">${uname} ${badgeHTML(uname)}</span>
+          </div>
+          <button onclick="document.getElementById('followListModal').classList.add('hidden'); window.openChat('${uname}')" class="bg-white/10 px-3 py-1 rounded-lg text-xs font-bold">Chat</button>
+        </div>`).join('') : `<div class="text-center text-gray-500 text-xs py-8">No users in ${type} list yet.</div>`;
+      document.getElementById('followListModal').classList.remove('hidden');
+    };
+
+    window.editPostCaption = (postId) => {
+      const p = DB.posts[postId]; if(!p) return;
+      const newCap = prompt("Edit your post caption:", p.caption || "");
+      if(newCap !== null) apiSet(`posts/${postId}/caption`, newCap.trim());
+    };
+    window.togglePinPost = (postId) => {
+      const p = DB.posts[postId]; if(!p) return;
+      apiSet(`posts/${postId}/pinned`, !p.pinned);
+    };
+
     window.toggleVoiceRecording = async () => {
       if(!currentChatTarget) return;
       const btn = document.getElementById('voiceRecordBtn');
       if(isRecording && mediaRecorder) {
-        mediaRecorder.stop();
-        isRecording = false;
-        btn.className = "p-2 rounded-full bg-white/10 text-sm shrink-0";
-        btn.innerText = "🎙️";
+        mediaRecorder.stop(); isRecording = false;
+        btn.className = "p-2 rounded-full bg-white/10 text-sm shrink-0"; btn.innerText = "🎙️";
         return;
       }
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
+        mediaRecorder = new MediaRecorder(stream); audioChunks = [];
         mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) audioChunks.push(e.data); };
         mediaRecorder.onstop = () => {
           const blob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -487,36 +644,27 @@
           reader.readAsDataURL(blob);
           stream.getTracks().forEach(t => t.stop());
         };
-        mediaRecorder.start();
-        isRecording = true;
-        btn.className = "p-2 rounded-full bg-rose-600 text-white text-xs font-bold animate-pulse shrink-0";
-        btn.innerText = "⏹ Stop";
-      } catch(err) {
-        alert("Microphone access is required to record a Voice Note.");
-      }
+        mediaRecorder.start(); isRecording = true;
+        btn.className = "p-2 rounded-full bg-rose-600 text-white text-xs font-bold animate-pulse shrink-0"; btn.innerText = "⏹ Stop";
+      } catch(err) { alert("Microphone permission needed for Voice Notes."); }
     };
 
-    // POLL VOTING
     window.votePoll = (postId, optIdx) => {
       const p = DB.posts[postId]; if(!p) return;
       apiSet(`posts/${postId}/pollVotes/${currentUser}`, optIdx);
       notify(p.author, `voted on your poll 📊`);
     };
 
-    // STORY DIRECT REPLY
     window.sendStoryReply = () => {
       if(!activeStoryId || !DB.stories[activeStoryId]) return;
       const inp = document.getElementById('storyReplyInput'), txt = inp.value.trim();
       if(!txt) return;
       const st = DB.stories[activeStoryId];
-      apiPush('messages', { sender: currentUser, receiver: st.author, text: `↪️ Replied to your story: "${txt}"`, timestamp: Date.now(), read: false });
+      apiPush('messages', { sender: currentUser, receiver: st.author, text: `↪️ Replied to story: "${txt}"`, timestamp: Date.now(), read: false });
       notify(st.author, `replied to your story 💬`);
-      inp.value = '';
-      window.closeStoryViewer();
-      window.openChat(st.author);
+      inp.value = ''; window.closeStoryViewer(); window.openChat(st.author);
     };
 
-    // FOLLOW & PROFILE
     window.toggleFollow = (target) => {
       if(!target || target === currentUser) return;
       const isF = DB.users[currentUser]?.following && DB.users[currentUser].following[target];
@@ -526,7 +674,7 @@
     };
 
     window.openUserProfile = (u) => {
-      if(!u || !DB.users[u]) return;
+      if(!u || u === 'GLOBAL_GROUP' || !DB.users[u]) return;
       if(u === currentUser) { window.closeUserProfile(); window.switchTab('profile'); return; }
       viewingProfileUser = u;
       const usr = DB.users[u], posts = Object.values(normMap(DB.posts)).filter(p => p.author === u && p.image);
@@ -540,7 +688,7 @@
       document.getElementById('modal-prof-actions').innerHTML = `
         <button onclick="window.toggleFollow('${u}')" class="flex-1 py-2 rounded-lg text-xs font-bold ${isF ? 'bg-white/15 text-white' : 'theme-accent-bg'}">${isF ? 'Following ✓' : 'Follow'}</button>
         <button onclick="window.closeUserProfile(); window.openChat('${u}')" class="flex-1 py-2 rounded-lg bg-white/10 text-xs font-bold text-white">Message</button>`;
-      document.getElementById('modal-prof-grid').innerHTML = posts.map(p => `<div class="aspect-square bg-gray-900 rounded overflow-hidden"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-6">No photo posts yet.</div>`;
+      document.getElementById('modal-prof-grid').innerHTML = posts.map(p => `<div onclick="window.openSinglePost('${p.id}')" class="aspect-square bg-gray-900 rounded overflow-hidden cursor-pointer"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-6">No photo posts yet.</div>`;
       document.getElementById('userProfileModal').classList.remove('hidden');
     };
     window.closeUserProfile = () => { document.getElementById('userProfileModal').classList.add('hidden'); viewingProfileUser = null; };
@@ -589,10 +737,18 @@
       notify(DB.posts[activeCommentPostId]?.author, `commented: "${txt.slice(0,20)}" 💬`);
       inp.value = '';
     };
+    window.deleteComment = (cId) => {
+      if(!activeCommentPostId || !cId) return;
+      apiRemove(`posts/${activeCommentPostId}/comments/${cId}`);
+    };
     window.renderCommentsList = () => {
       if(!activeCommentPostId || !DB.posts[activeCommentPostId]) return;
-      const cArr = Object.values(DB.posts[activeCommentPostId].comments || {});
-      document.getElementById('commentsList').innerHTML = cArr.map(c => `<div class="flex gap-2.5 text-xs">${generateAvatar(c.author, "w-7 h-7")}<div><b class="mr-1.5">${c.author}</b>${badgeHTML(c.author)} <span class="text-gray-300">${c.text}</span></div></div>`).join('') || `<div class="text-center text-gray-500 text-xs mt-4">No comments yet.</div>`;
+      const cArr = Object.values(normMap(DB.posts[activeCommentPostId].comments));
+      document.getElementById('commentsList').innerHTML = cArr.map(c => `
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex gap-2.5 items-start">${generateAvatar(c.author, "w-7 h-7")}<div><b class="mr-1.5">${c.author}</b>${badgeHTML(c.author)} <span class="text-gray-300">${c.text}</span></div></div>
+          ${c.author === currentUser ? `<button onclick="window.deleteComment('${c.id}')" class="text-[10px] text-rose-400">✕</button>` : ''}
+        </div>`).join('') || `<div class="text-center text-gray-500 text-xs mt-4">No comments yet.</div>`;
     };
 
     window.openUploadModal = (t = 'post') => { document.getElementById('uploadModal').classList.remove('hidden'); window.setUploadType(t); };
@@ -604,6 +760,7 @@
       });
       document.getElementById('photoUploadSection').classList.toggle('hidden', t === 'poll');
       document.getElementById('pollOptionsSection').classList.toggle('hidden', t !== 'poll');
+      document.getElementById('storyMusicSection').classList.toggle('hidden', t !== 'story');
       document.getElementById('postCaption').placeholder = t === 'poll' ? "Ask a poll question..." : "Write caption or story text...";
     };
 
@@ -618,6 +775,8 @@
       document.getElementById('storyViewerImage').src = s.image;
       const cap = document.getElementById('storyViewerCaption');
       if(s.caption) { cap.innerText = s.caption; cap.classList.remove('hidden'); } else cap.classList.add('hidden');
+      const mus = document.getElementById('storyMusicBadge');
+      if(s.music) { mus.innerText = s.music; mus.classList.remove('hidden'); } else mus.classList.add('hidden');
       document.getElementById('storyViewsCount').innerText = `👁️ ${st.views ? Object.keys(st.views).length : 1}`;
       document.getElementById('storyLikesCount').innerText = `❤️ ${st.likes ? Object.keys(st.likes).length : 0}`;
       document.getElementById('storyLikeIcon').innerText = (st.likes && st.likes[currentUser]) ? '❤️' : '🤍';
@@ -670,10 +829,18 @@
 
     window.openChat = (target) => {
       currentChatTarget = target;
-      document.getElementById('active-chat-name').innerHTML = `${target} ${badgeHTML(target)}`;
-      document.getElementById('active-chat-avatar').innerHTML = generateAvatar(target, "w-8 h-8", true);
-      document.getElementById('active-chat-status').innerText = isUserOnline(target) ? '● Online' : '○ Offline';
-      document.getElementById('active-chat-status').className = isUserOnline(target) ? 'text-[10px] text-emerald-400' : 'text-[10px] text-gray-500';
+      window.cancelReply();
+      if(target === 'GLOBAL_GROUP') {
+        document.getElementById('active-chat-name').innerHTML = `🌐 Global Lounge`;
+        document.getElementById('active-chat-avatar').innerHTML = generateAvatar('GLOBAL_GROUP', "w-8 h-8");
+        document.getElementById('active-chat-status').innerText = `${Object.keys(DB.users || {}).length} members`;
+        document.getElementById('active-chat-status').className = 'text-[10px] text-sky-400';
+      } else {
+        document.getElementById('active-chat-name').innerHTML = `${target} ${badgeHTML(target)}`;
+        document.getElementById('active-chat-avatar').innerHTML = generateAvatar(target, "w-8 h-8", true);
+        document.getElementById('active-chat-status').innerText = isUserOnline(target) ? '● Online' : '○ Offline';
+        document.getElementById('active-chat-status').className = isUserOnline(target) ? 'text-[10px] text-emerald-400' : 'text-[10px] text-gray-500';
+      }
       document.getElementById('active-chat-view').classList.remove('hidden');
       renderMessages();
     };
@@ -725,7 +892,7 @@
       document.getElementById('feed-filter-all').className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='all' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
       document.getElementById('feed-filter-following').className = `flex-1 py-2 font-bold border-b-2 ${feedFilter==='following' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
       const c = document.getElementById('feed-container'); c.innerHTML = '';
-      let arr = Object.values(normMap(DB.posts)).sort((a,b) => b.timestamp - a.timestamp);
+      let arr = Object.values(normMap(DB.posts)).sort((a,b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.timestamp - a.timestamp);
       const myF = DB.users[currentUser]?.following || {};
       if(feedFilter === 'following') arr = arr.filter(p => myF[p.author] || p.author === currentUser);
       if(arr.length === 0) { c.innerHTML = `<div class="text-center text-gray-500 text-xs py-12">No posts to show.</div>`; return; }
@@ -735,7 +902,6 @@
         const likes = p.likes ? Object.keys(p.likes) : [], isL = likes.includes(currentUser), isS = !!saved[p.id], cCnt = p.comments ? Object.keys(p.comments).length : 0;
         const uMood = DB.users[p.author]?.mood || '';
         
-        // Render Poll if it's a Poll Post
         let mediaHTML = '';
         if(p.isPoll && p.pollOptions) {
           const votesMap = p.pollVotes || {};
@@ -753,11 +919,20 @@
           }).join('');
           mediaHTML = `<div class="p-4 space-y-2 bg-white/5 border-y theme-border"><div class="font-bold text-sm mb-2">📊 ${p.caption}</div>${optsHTML}<div class="text-[10px] text-gray-400 pt-1">${totalVotes} total votes</div></div>`;
         } else {
-          mediaHTML = `<div id="post-img-${p.id}" class="relative bg-black flex justify-center overflow-hidden" ondblclick="window.doubleTapLike('${p.id}')"><img src="${p.image}" class="w-full object-cover max-h-[460px]"></div>`;
+          const imgs = (p.images && p.images.length) ? p.images : [p.image];
+          const idx = carouselIdx[p.id] || 0;
+          const activeImg = imgs[idx] || p.image;
+          const navBtns = imgs.length > 1 ? `
+            <span class="absolute top-2 right-2 bg-black/75 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${idx+1}/${imgs.length}</span>
+            <button onclick="event.stopPropagation(); window.stepCarousel('${p.id}', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 text-white w-7 h-7 rounded-full font-bold">‹</button>
+            <button onclick="event.stopPropagation(); window.stepCarousel('${p.id}', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 text-white w-7 h-7 rounded-full font-bold">›</button>
+          ` : '';
+          mediaHTML = `<div id="post-img-${p.id}" class="relative bg-black flex justify-center overflow-hidden" ondblclick="window.doubleTapLike('${p.id}')"><img src="${activeImg}" class="w-full object-cover max-h-[460px]">${navBtns}</div>`;
         }
 
         c.insertAdjacentHTML('beforeend', `
           <div class="theme-card border-b theme-border pb-3 fade-in">
+            ${p.pinned ? `<div class="px-3 pt-2 text-[10px] theme-accent-text font-bold">📌 Pinned Post</div>` : ''}
             <div class="flex items-center justify-between p-3">
               <div class="flex items-center gap-2 cursor-pointer" onclick="window.openUserProfile('${p.author}')">
                 ${generateAvatar(p.author, "w-8 h-8", true)}
@@ -766,19 +941,25 @@
                   ${uMood ? `<span class="text-[10px] text-gray-400 block leading-none">${uMood}</span>` : ''}
                 </div>
               </div>
-              <div class="flex gap-2">
-                ${p.author !== currentUser ? `<button onclick="window.toggleFollow('${p.author}')" class="text-xs font-bold px-2 py-0.5 rounded border theme-border ${myF[p.author] ? 'text-gray-400' : 'theme-accent-text'}">${myF[p.author] ? 'Following' : '+ Follow'}</button>` : `<button onclick="window.deletePost('${p.id}')" class="text-xs text-rose-500">Delete</button>`}
+              <div class="flex items-center gap-2">
+                ${p.author !== currentUser ? `<button onclick="window.toggleFollow('${p.author}')" class="text-xs font-bold px-2 py-0.5 rounded border theme-border ${myF[p.author] ? 'text-gray-400' : 'theme-accent-text'}">${myF[p.author] ? 'Following' : '+ Follow'}</button>` : `
+                  <button onclick="window.togglePinPost('${p.id}')" class="text-xs text-gray-400 hover:text-white" title="Pin Post">📌</button>
+                  <button onclick="window.editPostCaption('${p.id}')" class="text-xs text-gray-400 hover:text-white" title="Edit Caption">✏️</button>
+                  <button onclick="window.deletePost('${p.id}')" class="text-xs text-rose-500">Delete</button>
+                `}
               </div>
             </div>
             ${mediaHTML}
             <div class="p-3">
-              <div class="flex justify-between mb-2">
-                <div class="flex gap-4">
-                  <button onclick="window.toggleLike('${p.id}')" class="flex items-center gap-1 text-sm font-bold"><span class="text-lg">${isL ? '❤️' : '🤍'}</span> ${likes.length}</button>
+              <div class="flex justify-between mb-1.5">
+                <div class="flex gap-4 items-center">
+                  <button onclick="window.toggleLike('${p.id}')" class="text-lg">${isL ? '❤️' : '🤍'}</button>
                   <button onclick="window.openComments('${p.id}')" class="flex items-center gap-1 text-sm font-bold">💬 ${cCnt}</button>
+                  <button onclick="window.openShareModal('${p.id}')" class="flex items-center gap-1 text-sm font-bold" title="Share to DM">✈️</button>
                 </div>
                 <button onclick="window.toggleBookmark('${p.id}')" class="text-lg">${isS ? '🔖' : '📑'}</button>
               </div>
+              <button onclick="window.openLikesModal('${p.id}')" class="text-xs font-bold mb-1 block hover:underline">${likes.length} likes</button>
               ${!p.isPoll ? `<div class="text-sm"><b class="mr-1.5 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${p.author}</b>${p.caption || ''}</div>` : ''}
               <div class="text-[10px] text-gray-500 mt-1">${formatTime(p.timestamp)}</div>
             </div>
@@ -826,11 +1007,14 @@
       document.getElementById('prof-tab-my').className = `flex-1 py-2 text-xs font-bold border-b-2 ${profileSubTab==='my' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
       document.getElementById('prof-tab-saved').className = `flex-1 py-2 text-xs font-bold border-b-2 ${profileSubTab==='saved' ? 'border-white text-white' : 'border-transparent text-gray-500'}`;
       const list = profileSubTab === 'my' ? myP : savP;
-      document.getElementById('profile-grid').innerHTML = list.map(p => `<div class="aspect-square bg-gray-900 rounded overflow-hidden relative"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-8">No photo posts here.</div>`;
+      document.getElementById('profile-grid').innerHTML = list.map(p => `<div onclick="window.openSinglePost('${p.id}')" class="aspect-square bg-gray-900 rounded overflow-hidden relative cursor-pointer"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-8">No photo posts here.</div>`;
     }
 
     function renderChatList() {
       const c = document.getElementById('chatlist-container'), allM = Object.values(normMap(DB.messages)); c.innerHTML = '';
+      const gTh = allM.filter(m => m.receiver === 'GLOBAL_GROUP').sort((a,b) => a.timestamp - b.timestamp);
+      if(gTh.length) document.getElementById('global-chat-preview').innerText = `${gTh[gTh.length-1].sender}: ${gTh[gTh.length-1].text || 'Media'}`;
+
       Object.values(DB.users || {}).forEach(u => {
         if(!u?.username || u.username === currentUser) return;
         const th = allM.filter(m => (m.sender === currentUser && m.receiver === u.username) || (m.sender === u.username && m.receiver === currentUser)).sort((a,b) => a.timestamp - b.timestamp);
@@ -842,36 +1026,42 @@
 
     function renderMessages() {
       const c = document.getElementById('chat-messages'), allM = Object.values(normMap(DB.messages)); c.innerHTML = '';
-      const th = allM.filter(m => (m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser)).sort((a,b) => a.timestamp - b.timestamp);
+      const isGroup = currentChatTarget === 'GLOBAL_GROUP';
+      const th = allM.filter(m => isGroup ? m.receiver === 'GLOBAL_GROUP' : ((m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser))).sort((a,b) => a.timestamp - b.timestamp);
       th.forEach(m => {
         const isMe = m.sender === currentUser;
-        if(!isMe && !m.read) { setNested(DB, `messages/${m.id}/read`, true); saveLocalDB(); if(isFirebaseActive) set(ref(db, `messages/${m.id}/read`), true); }
+        if(!isMe && !isGroup && !m.read) { setNested(DB, `messages/${m.id}/read`, true); saveLocalDB(); if(isFirebaseActive) set(ref(db, `messages/${m.id}/read`), true); }
+        const safeTxt = (m.text || '').replace(/'/g, "");
         c.innerHTML += `
           <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} group w-full">
+            ${isGroup && !isMe ? `<span class="text-[10px] text-sky-400 font-bold mb-0.5 ml-1">${m.sender}</span>` : ''}
             <div class="chat-bubble ${isMe ? 'chat-sent' : 'chat-recv'}">
+              ${m.replyTo ? `<div class="text-[10px] bg-black/30 border-l-2 border-white/60 pl-2 py-0.5 mb-1 rounded opacity-85">${m.replyTo}</div>` : ''}
               ${m.image ? `<img src="${m.image}" class="rounded-lg max-h-48 mb-1">` : ''}
               ${m.audio ? `<audio controls src="${m.audio}" class="h-8 w-48 my-1"></audio>` : ''}
               ${m.text ? `<div>${m.text}</div>` : ''}
-              <div class="flex justify-end gap-1 items-center mt-1"><span class="text-[9px] opacity-70">${formatTime(m.timestamp)}</span>${isMe ? `<span class="${m.read ? 'tick-blue' : 'tick-gray'} text-[11px]">✓✓</span>` : ''}</div>
+              <div class="flex justify-end gap-1 items-center mt-1"><span class="text-[9px] opacity-70">${formatTime(m.timestamp)}</span>${isMe && !isGroup ? `<span class="${m.read ? 'tick-blue' : 'tick-gray'} text-[11px]">✓✓</span>` : ''}</div>
               ${m.reaction ? `<span class="absolute -bottom-2 ${isMe ? 'left-2' : 'right-2'} bg-black border border-white/20 rounded-full px-1.5 text-xs">${m.reaction}</span>` : ''}
             </div>
-            <div class="flex gap-1.5 mt-1 opacity-0 group-hover:opacity-100 transition text-xs">
+            <div class="flex gap-2 mt-1 opacity-0 group-hover:opacity-100 transition text-xs items-center">
               <button onclick="window.reactMessage('${m.id}','❤️')">❤️</button><button onclick="window.reactMessage('${m.id}','🔥')">🔥</button><button onclick="window.reactMessage('${m.id}','😂')">😂</button>
-              ${isMe ? `<button onclick="window.deleteMessage('${m.id}')" class="text-[10px] text-rose-400 ml-1">Unsend</button>` : ''}
+              <button onclick="window.setReplyMsg('${m.sender}','${safeTxt}')" class="text-[10px] text-sky-400">↩️ Reply</button>
+              ${isMe ? `<button onclick="window.deleteMessage('${m.id}')" class="text-[10px] text-rose-400">Unsend</button>` : ''}
             </div>
           </div>`;
       });
       c.scrollTop = c.scrollHeight;
-      document.getElementById('typing-indicator').classList.toggle('hidden', !(DB.typing?.[currentChatTarget]?.[currentUser]));
+      document.getElementById('typing-indicator').classList.toggle('hidden', isGroup || !(DB.typing?.[currentChatTarget]?.[currentUser]));
     }
 
     document.getElementById('chatInput').oninput = () => {
-      if(!currentChatTarget) return;
+      if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP') return;
       apiSet(`typing/${currentUser}/${currentChatTarget}`, true);
       clearTimeout(typingTimeout); typingTimeout = setTimeout(() => apiSet(`typing/${currentUser}/${currentChatTarget}`, false), 1600);
     };
     document.getElementById('chatImageInput').onchange = (e) => {
-      if(e.target.files[0] && currentChatTarget) compressImage(e.target.files[0], 500, (b64) => apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: '', image: b64, timestamp: Date.now(), read: false }));
+      if(e.target.files[0] && currentChatTarget) compressImage(e.target.files[0], 500, (b64) => apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: '', image: b64, replyTo: replyToText, timestamp: Date.now(), read: false }));
+      window.cancelReply();
     };
     document.getElementById('searchUsers').oninput = renderExplore;
 
@@ -889,15 +1079,27 @@
     document.getElementById('chatForm').onsubmit = (e) => {
       e.preventDefault();
       const inp = document.getElementById('chatInput'); if(!inp.value.trim() || !currentChatTarget) return;
-      apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: inp.value.trim(), timestamp: Date.now(), read: false });
-      apiSet(`typing/${currentUser}/${currentChatTarget}`, false); inp.value = '';
+      apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: inp.value.trim(), replyTo: replyToText, timestamp: Date.now(), read: false });
+      if(currentChatTarget !== 'GLOBAL_GROUP') apiSet(`typing/${currentUser}/${currentChatTarget}`, false);
+      inp.value = ''; window.cancelReply();
     };
 
     document.getElementById('postImageInput').onchange = (e) => {
-      if(e.target.files[0]) compressImage(e.target.files[0], 600, (b64) => {
-        rawUploadImageBase64 = b64; currentImageBase64 = b64;
-        document.getElementById('imagePreview').src = b64; document.getElementById('imagePreview').classList.remove('hidden');
-        document.getElementById('imagePlaceholder').classList.add('hidden'); document.getElementById('filterBar').classList.remove('hidden');
+      const files = Array.from(e.target.files || []);
+      if(!files.length) return;
+      multiImagesList = [];
+      files.forEach((f, idx) => {
+        compressImage(f, 600, (b64) => {
+          multiImagesList.push(b64);
+          if(idx === 0) {
+            rawUploadImageBase64 = b64; currentImageBase64 = b64;
+            document.getElementById('imagePreview').src = b64; document.getElementById('imagePreview').classList.remove('hidden');
+            document.getElementById('imagePlaceholder').classList.add('hidden'); document.getElementById('filterBar').classList.remove('hidden');
+          }
+          const badge = document.getElementById('multiCountBadge');
+          if(multiImagesList.length > 1) { badge.innerText = `🖼️ ${multiImagesList.length} photos selected for Carousel`; badge.classList.remove('hidden'); }
+          else badge.classList.add('hidden');
+        });
       });
     };
 
@@ -911,13 +1113,15 @@
         apiSet('posts/' + id, { id, author: currentUser, isPoll: true, caption: cap, pollOptions: opts, timestamp: Date.now() });
       } else {
         if(!currentImageBase64) { alert("Please select a photo!"); return; }
-        const payload = { id, author: currentUser, image: currentImageBase64, caption: cap, timestamp: Date.now() };
+        const music = document.getElementById('storyMusicInput').value;
+        const payload = { id, author: currentUser, image: currentImageBase64, images: multiImagesList.length ? multiImagesList : [currentImageBase64], caption: cap, music: uploadType==='story' ? music : '', timestamp: Date.now() };
         apiSet((uploadType === 'post' ? 'posts/' : 'stories/') + id, payload);
       }
       document.getElementById('uploadModal').classList.add('hidden');
       document.getElementById('postCaption').value = ''; document.getElementById('pollOpt1').value = ''; document.getElementById('pollOpt2').value = ''; document.getElementById('pollOpt3').value = '';
       document.getElementById('imagePreview').classList.add('hidden'); document.getElementById('imagePlaceholder').classList.remove('hidden'); document.getElementById('filterBar').classList.add('hidden');
-      currentImageBase64 = null; window.switchTab('feed');
+      document.getElementById('multiCountBadge').classList.add('hidden');
+      currentImageBase64 = null; multiImagesList = []; window.switchTab('feed');
     };
   </script>
 </body>
