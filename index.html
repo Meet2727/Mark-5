@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="ig-dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Viu // Ultimate Social Network v4.0 Ultra</title>
+  <title>Viu // Ultimate Social Network v5.0 Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -71,13 +70,11 @@
     [data-theme="ig-light"] .chat-recv { background-color: #e2e8f0; color: #0f172a; }
     .tick-blue { color: #38bdf8; font-weight: bold; text-shadow: 0 0 5px rgba(56,189,248,0.8); }
     .tick-gray { color: rgba(255,255,255,0.55); }
-    .playing-music { animation: pulseBeat 0.8s infinite alternate; border-color: var(--accent) !important; }
-    @keyframes pulseBeat { from { transform: scale(1); } to { transform: scale(1.05); } }
+    .dnd-dimmed { filter: brightness(0.7) contrast(0.9); }
   </style>
 </head>
 <body>
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
   <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-[10001] flex flex-col gap-2 pointer-events-none w-max max-w-xs"></div>
 
   <!-- LOGIN VIEW -->
@@ -102,20 +99,18 @@
 
   <!-- MAIN APP CONTAINER -->
   <div id="app-container" class="hidden">
-    <header class="h-14 border-b theme-border theme-surface flex items-center justify-between px-3.5 shrink-0 z-20">
-      <div class="flex items-center gap-2">
-        <h1 class="text-xl font-heading font-bold italic tracking-tight theme-accent-text cursor-pointer" onclick="window.setHashtagFilter(null)" id="app-header-title">Viu</h1>
-        <span id="synth-indicator" onclick="window.stopSynthTrack()" class="hidden cursor-pointer text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full animate-pulse">🔊 Playing ✕</span>
-      </div>
+    <header class="h-14 border-b theme-border theme-surface flex items-center justify-between px-3 shrink-0 z-20">
+      <h1 class="text-xl font-heading font-bold italic tracking-tight theme-accent-text cursor-pointer" onclick="window.setHashtagFilter(null)" id="app-header-title">Viu</h1>
       <div class="flex items-center gap-1.5">
+        <button onclick="window.openAdminModal()" title="Admin & Verification" class="p-1.5 rounded-lg border theme-border hover:opacity-80 text-xs">🛡️</button>
         <button onclick="window.openLeaderboard()" title="Leaderboard" class="p-1.5 rounded-lg border theme-border hover:opacity-80 text-xs">🏆</button>
         <button onclick="window.openUploadModal('post')" title="Create" class="p-1.5 rounded-lg border theme-border hover:opacity-80 text-xs">➕</button>
         <button onclick="window.openNotifications()" class="p-1.5 rounded-lg border theme-border hover:opacity-80 relative text-xs">
           🔔<span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
         </button>
-        <div class="flex items-center gap-1.5 bg-black/50 pl-1 pr-2 py-1 rounded-full border theme-border cursor-pointer text-white" onclick="window.switchTab('profile')">
-          <div id="nav-avatar" class="w-6 h-6"></div>
-          <span id="nav-username" class="text-xs font-semibold truncate max-w-[75px]">User</span>
+        <div class="flex items-center gap-1 bg-black/50 pl-1 pr-2 py-1 rounded-full border theme-border cursor-pointer text-white" onclick="window.switchTab('profile')">
+          <div id="nav-avatar" class="w-5 h-5"></div>
+          <span id="nav-username" class="text-xs font-semibold truncate max-w-[65px]">User</span>
         </div>
       </div>
     </header>
@@ -135,6 +130,11 @@
         <div id="feed-container" class="space-y-4 pt-2"></div>
       </div>
 
+      <!-- REELS TAB -->
+      <div id="tab-reels" class="w-full h-full hidden flex flex-col bg-black text-white relative">
+        <div id="reels-container" class="flex-1 overflow-y-scroll snap-y snap-mandatory hide-scrollbar"></div>
+      </div>
+
       <!-- EXPLORE TAB -->
       <div id="tab-explore" class="w-full min-h-full hidden p-4 pb-20">
         <input type="text" id="searchUsers" placeholder="Search users, captions, or mood tags..." class="w-full theme-surface border theme-border rounded-lg px-4 py-2.5 text-sm mb-3 focus:outline-none">
@@ -150,6 +150,18 @@
         <div id="explore-grid-container" class="hidden grid grid-cols-3 gap-1"></div>
       </div>
 
+      <!-- ARCADE GAMES TAB -->
+      <div id="tab-games" class="w-full min-h-full hidden p-4 pb-20 space-y-4">
+        <h2 class="font-heading font-bold text-base theme-accent-text">🎮 Viu Arcade Lounge</h2>
+        <p class="text-xs text-gray-400">Play mini-games inside Viu to relax and earn bonus XP!</p>
+        <div class="theme-surface border theme-border p-4 rounded-2xl space-y-3 text-center">
+          <h3 class="font-bold text-sm text-white">❌ Tic-Tac-Toe (vs AI Bot)</h3>
+          <div id="ttt-board" class="grid grid-cols-3 gap-2 max-w-[220px] mx-auto"></div>
+          <div class="text-xs theme-accent-text font-bold" id="ttt-status">Your turn (X)</div>
+          <button onclick="window.resetTTT()" class="bg-white/10 px-4 py-1.5 rounded-lg text-xs font-semibold">Restart Game</button>
+        </div>
+      </div>
+
       <!-- MESSAGES TAB -->
       <div id="tab-chatlist" class="w-full min-h-full hidden p-4 pb-20">
         <div class="mb-4">
@@ -157,7 +169,6 @@
           <div id="notes-container" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1"></div>
         </div>
         <h2 class="font-heading font-bold text-base mb-3 theme-accent-text">Messages & AI Lounge</h2>
-        <!-- GLOBAL GROUP -->
         <div onclick="window.openChat('GLOBAL_GROUP')" class="theme-surface flex items-center p-3 rounded-xl border-2 border-sky-500/40 cursor-pointer gap-3 mb-2.5 bg-gradient-to-r from-sky-500/10 to-purple-500/10">
           <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-lg shrink-0">🌐</div>
           <div class="flex-1 overflow-hidden">
@@ -165,7 +176,6 @@
             <div class="text-xs text-gray-400 truncate" id="global-chat-preview">Tap to join live group chat!</div>
           </div>
         </div>
-        <!-- VIU AI COMPANION -->
         <div onclick="window.openChat('ViuAI')" class="theme-surface flex items-center p-3 rounded-xl border-2 border-emerald-500/40 cursor-pointer gap-3 mb-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10">
           <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-600 flex items-center justify-center text-lg shrink-0">🤖</div>
           <div class="flex-1 overflow-hidden">
@@ -183,7 +193,6 @@
             <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full">🖼️ Edit Cover</span>
             <input type="file" id="bannerFileInput" accept="image/*" class="hidden">
           </div>
-
           <div class="px-5 pb-5 w-full flex flex-col items-center -mt-12">
             <div class="relative cursor-pointer mb-2" onclick="document.getElementById('avatarFileInput').click()">
               <div class="story-ring w-24 h-24 rounded-full flex items-center justify-center shadow-xl">
@@ -199,14 +208,16 @@
             </div>
             <span id="profile-mood" class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/10 text-gray-400 mt-1">✨ Using Viu</span>
             <p class="text-xs text-gray-400 mt-2 mb-4" id="profile-bio">Tap 'Edit Profile' to customize.</p>
-
             <div class="grid grid-cols-4 gap-2 w-full border-y theme-border py-2.5 mb-4 text-xs">
               <div><span class="font-bold text-sm block" id="stat-posts">0</span>Posts</div>
               <div class="cursor-pointer" onclick="window.openFollowListModal('followers')"><span class="font-bold text-sm block theme-accent-text" id="stat-followers">0</span>Followers</div>
               <div class="cursor-pointer" onclick="window.openFollowListModal('following')"><span class="font-bold text-sm block theme-accent-text" id="stat-following">0</span>Following</div>
               <div><span class="font-bold text-sm block" id="stat-Saved">0</span>Saved</div>
             </div>
-
+            <div class="w-full mb-3 p-3 rounded-xl bg-black/40 border theme-border flex items-center justify-between text-xs">
+              <div class="text-left"><span class="font-bold block">🌙 Focus / DND Mode</span><span class="text-[10px] text-gray-400">Dim screen & pause notifications</span></div>
+              <button onclick="window.toggleDNDMode()" id="dndToggleBtn" class="px-3 py-1.5 rounded-lg font-bold bg-white/10 text-gray-300">OFF</button>
+            </div>
             <div class="w-full mb-4">
               <p class="text-[10px] text-gray-400 mb-2 uppercase tracking-wider font-semibold">Select App Theme</p>
               <div class="grid grid-cols-3 gap-1.5 text-[11px]">
@@ -218,16 +229,14 @@
                 <button onclick="window.setTheme('cyber-gold')" class="py-2 px-1.5 rounded-lg border theme-border bg-[#161103] text-[#facc15] font-semibold">⚡ Gold</button>
               </div>
             </div>
-
             <div class="grid grid-cols-4 gap-1.5 w-full">
               <button onclick="window.openBioModal()" class="bg-white/10 py-2 rounded-lg text-[11px] font-semibold">✏️ Edit</button>
               <button onclick="window.openInsightsModal()" class="bg-sky-500/20 text-sky-400 py-2 rounded-lg text-[11px] font-semibold">📊 Stats</button>
-              <button onclick="window.openIdCardModal()" class="bg-purple-500/20 text-purple-300 py-2 rounded-lg text-[11px] font-semibold">🪪 ID Card</button>
+              <button onclick="window.openIdCardModal()" class="bg-purple-500/20 text-purple-300 py-2 rounded-lg text-[11px] font-semibold">🪪 ID</button>
               <button onclick="window.logoutUser()" class="bg-rose-500/20 text-rose-400 py-2 rounded-lg text-[11px] font-semibold">Exit</button>
             </div>
           </div>
         </div>
-
         <div class="flex border-b theme-border mb-2">
           <button onclick="window.setProfileSubTab('my')" id="prof-tab-my" class="flex-1 py-2 text-xs font-bold border-b-2 theme-accent-text border-current">MY POSTS</button>
           <button onclick="window.setProfileSubTab('saved')" id="prof-tab-saved" class="flex-1 py-2 text-xs font-bold border-b-2 border-transparent text-gray-500">SAVED 🔖</button>
@@ -258,7 +267,6 @@
           <div class="truncate text-gray-300"><span class="theme-accent-text font-bold">Replying:</span> <span id="replyPreviewText"></span></div>
           <button type="button" onclick="window.cancelReply()" class="text-gray-400 ml-2">✕</button>
         </div>
-        <!-- QUICK EMOJI & BURN MODE BAR -->
         <div class="px-3 py-1 bg-black/80 border-t theme-border flex justify-between items-center text-sm">
           <div class="flex gap-3 overflow-x-auto hide-scrollbar">
             <button type="button" onclick="window.insertChatEmoji('❤️')">❤️</button>
@@ -280,14 +288,32 @@
     </main>
 
     <!-- BOTTOM NAV -->
-    <nav class="h-14 border-t theme-border theme-surface flex items-center justify-around shrink-0 absolute bottom-0 w-full z-20">
-      <button onclick="window.switchTab('feed')" id="navbtn-feed" class="p-2 theme-accent-text">🏠</button>
-      <button onclick="window.switchTab('explore')" id="navbtn-explore" class="p-2 text-gray-500">🔍</button>
-      <button onclick="window.switchTab('chatlist')" id="navbtn-chatlist" class="p-2 text-gray-500 relative">
-        💬<span id="unread-badge" class="hidden absolute top-1 right-1 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+    <nav class="h-14 border-t theme-border theme-surface flex items-center justify-around shrink-0 absolute bottom-0 w-full z-20 text-xs">
+      <button onclick="window.switchTab('feed')" id="navbtn-feed" class="p-2 theme-accent-text flex flex-col items-center"><span>🏠</span><span class="text-[9px]">Feed</span></button>
+      <button onclick="window.switchTab('reels')" id="navbtn-reels" class="p-2 text-gray-500 flex flex-col items-center"><span>⚡</span><span class="text-[9px]">Reels</span></button>
+      <button onclick="window.switchTab('explore')" id="navbtn-explore" class="p-2 text-gray-500 flex flex-col items-center"><span>🔍</span><span class="text-[9px]">Explore</span></button>
+      <button onclick="window.switchTab('games')" id="navbtn-games" class="p-2 text-gray-500 flex flex-col items-center"><span>🎮</span><span class="text-[9px]">Arcade</span></button>
+      <button onclick="window.switchTab('chatlist')" id="navbtn-chatlist" class="p-2 text-gray-500 relative flex flex-col items-center">
+        <span>💬</span><span class="text-[9px]">Chat</span><span id="unread-badge" class="hidden absolute top-1 right-2 bg-rose-500 text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">0</span>
       </button>
-      <button onclick="window.switchTab('profile')" id="navbtn-profile" class="p-2 text-gray-500">👤</button>
+      <button onclick="window.switchTab('profile')" id="navbtn-profile" class="p-2 text-gray-500 flex flex-col items-center"><span>👤</span><span class="text-[9px]">Profile</span></button>
     </nav>
+  </div>
+
+  <!-- ADMIN PANEL MODAL -->
+  <div id="adminModal" class="hidden fixed inset-0 z-[210] bg-black/85 flex items-center justify-center p-4" onclick="if(event.target===this) this.classList.add('hidden')">
+    <div class="theme-surface border theme-border rounded-2xl w-full max-w-sm p-5 space-y-4">
+      <div class="flex justify-between items-center border-b theme-border pb-3">
+        <h3 class="font-heading font-bold text-sm theme-accent-text">🛡️ Admin Verification Panel</h3>
+        <button onclick="document.getElementById('adminModal').classList.add('hidden')">✕</button>
+      </div>
+      <p class="text-xs text-gray-400">Enter username to grant or revoke Verified Blue Tick (☑️):</p>
+      <div class="flex gap-2">
+        <input type="text" id="adminTargetUser" placeholder="username" class="flex-1 bg-black border theme-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
+        <button onclick="window.adminToggleVerify()" class="theme-accent-bg px-4 py-2 rounded-lg text-xs font-bold">Toggle Tick</button>
+      </div>
+      <div id="adminUsersList" class="space-y-2 max-h-48 overflow-y-auto hide-scrollbar pt-2"></div>
+    </div>
   </div>
 
   <!-- ACTIVE CALL MODAL -->
@@ -309,7 +335,7 @@
     </div>
   </div>
 
-  <!-- INCOMING CALL RINGING ALERT -->
+  <!-- INCOMING CALL MODAL -->
   <div id="incomingCallModal" class="hidden fixed inset-0 z-[10000] bg-black/90 flex flex-col items-center justify-center p-6 text-center">
     <div class="theme-surface border theme-border p-6 rounded-2xl w-full max-w-xs space-y-4">
       <div id="incomingCallerAvatar" class="w-20 h-20 mx-auto"></div>
@@ -354,7 +380,7 @@
     </div>
   </div>
 
-  <!-- UPLOAD & CANVAS DRAW MODAL -->
+  <!-- UPLOAD MODAL -->
   <div id="uploadModal" class="hidden fixed inset-0 z-[200] bg-black/85 flex flex-col justify-end">
     <div class="theme-surface w-full max-w-md mx-auto rounded-t-2xl p-5 border-t theme-border max-h-[92vh] overflow-y-auto hide-scrollbar">
       <div class="flex justify-between items-center mb-3">
@@ -369,7 +395,7 @@
         <button type="button" onclick="window.setUploadType('poll')" id="type-poll" class="py-1.5 rounded text-[11px] font-bold">📊 POLL</button>
       </div>
       <form id="uploadForm" class="space-y-3">
-        <textarea id="postCaption" rows="2" placeholder="Write caption, quote, or question (use #hashtags or @mentions)..." class="w-full bg-black/40 border theme-border rounded-lg p-2.5 text-sm outline-none text-white"></textarea>
+        <textarea id="postCaption" rows="2" placeholder="Write caption or question (use #hashtags or @mentions)..." class="w-full bg-black/40 border theme-border rounded-lg p-2.5 text-sm outline-none text-white"></textarea>
         <div id="storyMusicSection">
           <select id="storyMusicInput" class="w-full bg-black border theme-border rounded-lg p-2 text-xs text-white">
             <option value="">🎵 No Music Sticker</option>
@@ -388,12 +414,11 @@
             <option value="from-emerald-500 via-teal-600 to-slate-900">🟢 Matrix Emerald</option>
           </select>
         </div>
-        <!-- CANVAS DRAWING STUDIO SECTION -->
         <div id="drawPadSection" class="hidden space-y-2">
           <div class="flex items-center justify-between gap-2 bg-black/60 p-2 rounded-lg border theme-border">
             <input type="color" id="drawColorPicker" value="#00f3ff" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
             <input type="range" id="drawBrushSize" min="2" max="24" value="5" class="w-24 accent-sky-400">
-            <button type="button" onclick="window.fillDrawCanvas()" class="text-[11px] bg-white/10 px-2.5 py-1 rounded text-white">🪣 Fill BG</button>
+            <button type="button" onclick="window.fillDrawCanvas()" class="text-[11px] bg-white/10 px-2.5 py-1 rounded text-white">🪣 Fill</button>
             <button type="button" onclick="window.clearDrawCanvas()" class="text-[11px] bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded">🗑️ Clear</button>
           </div>
           <canvas id="drawCanvas" width="360" height="320" class="w-full bg-black border-2 theme-border rounded-xl cursor-crosshair touch-none"></canvas>
@@ -401,9 +426,19 @@
         <div id="photoUploadSection">
           <div class="border-2 border-dashed theme-border rounded-xl p-4 text-center relative cursor-pointer bg-black/30">
             <input type="file" id="postImageInput" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-            <img id="imagePreview" src="" class="hidden max-h-44 mx-auto rounded-lg">
+            <img id="imagePreview" src="" class="hidden max-h-40 mx-auto rounded-lg">
             <div id="multiCountBadge" class="hidden text-[11px] theme-accent-text font-bold mt-1"></div>
-            <div id="imagePlaceholder" class="text-gray-400 text-xs py-5">📷 Tap to choose 1 or multiple photos</div>
+            <div id="imagePlaceholder" class="text-gray-400 text-xs py-4">📷 Tap to choose photo</div>
+          </div>
+          <div class="mt-2 space-y-1">
+            <p class="text-[10px] text-gray-400">✨ Add AR Face Sticker Overlay:</p>
+            <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+              <button type="button" onclick="window.applyArSticker('👑')" class="px-3 py-1 rounded bg-white/10 text-xs shrink-0">👑 Crown</button>
+              <button type="button" onclick="window.applyArSticker('🕶️')" class="px-3 py-1 rounded bg-white/10 text-xs shrink-0">🕶️ Cyber Shades</button>
+              <button type="button" onclick="window.applyArSticker('⚡')" class="px-3 py-1 rounded bg-white/10 text-xs shrink-0">⚡ Neon Bolt</button>
+              <button type="button" onclick="window.applyArSticker('🔥')" class="px-3 py-1 rounded bg-white/10 text-xs shrink-0">🔥 Fire Aura</button>
+              <button type="button" onclick="window.applyArSticker('')" class="px-3 py-1 rounded bg-rose-500/20 text-rose-400 text-xs shrink-0">✕ Remove</button>
+            </div>
           </div>
           <div id="filterBar" class="hidden flex gap-2 overflow-x-auto hide-scrollbar py-2">
             <button type="button" onclick="window.applyImageFilter('none')" class="px-3 py-1 rounded border theme-border bg-black text-xs text-white shrink-0">Normal</button>
@@ -423,7 +458,7 @@
     </div>
   </div>
 
-  <!-- LEADERBOARD MODAL (NEW) -->
+  <!-- LEADERBOARD MODAL -->
   <div id="leaderboardModal" class="hidden fixed inset-0 z-[210] bg-black/85 flex items-center justify-center p-4" onclick="if(event.target===this) this.classList.add('hidden')">
     <div class="theme-surface border theme-border rounded-2xl w-full max-w-sm p-5 space-y-4">
       <div class="flex justify-between items-center border-b theme-border pb-3">
@@ -434,7 +469,7 @@
     </div>
   </div>
 
-  <!-- DIGITAL CYBER ID CARD MODAL (NEW) -->
+  <!-- DIGITAL CYBER ID CARD MODAL -->
   <div id="idCardModal" class="hidden fixed inset-0 z-[210] bg-black/85 flex items-center justify-center p-4" onclick="if(event.target===this) this.classList.add('hidden')">
     <div class="theme-surface border theme-border rounded-2xl w-full max-w-sm p-5 space-y-4 text-center">
       <div class="flex justify-between items-center border-b theme-border pb-2">
@@ -562,12 +597,11 @@
     </div>
   </div>
 
-<!-- CORE SCRIPT (PART 2) -->
+  <!-- SCRIPT ENGINE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // 🔴 FIREBASE KEYS 🔴
     const firebaseConfig = {
   apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
   authDomain: "mark-9bc95.firebaseapp.com",
@@ -579,19 +613,18 @@
 };
 
     let app, db, isFirebaseActive = false;
-    let DB = JSON.parse(localStorage.getItem('viu_local_db_v4')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {} };
+    let DB = JSON.parse(localStorage.getItem('viu_local_db_v5')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {} };
     let currentUser = localStorage.getItem('viu_auth_user') || null;
     let currentChatTarget = null, activeTab = 'feed', feedFilter = 'all', activeHashtag = null, profileSubTab = 'my', exploreSubTab = 'users', uploadType = 'post';
     let rawUploadImageBase64 = null, currentImageBase64 = null, multiImagesList = [], carouselIdx = {};
     let activeCommentPostId = null, activeStoryId = null, viewingProfileUser = null, replyToText = null;
     let storyTimer = null, storyInterval = null, typingTimeout = null;
     let mediaRecorder = null, audioChunks = [], isRecording = false;
-    let burnModeActive = false;
+    let burnModeActive = false, dndModeActive = false, activeArSticker = '';
 
     let peerConnection = null, localStream = null, activeCallId = null, incomingCallData = null, callTimerInt = null;
     const rtcServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
-    // WEB AUDIO SYNTH MUSIC PLAYER (REAL WORKING BEATS)
     let audioCtx = null, synthInterval = null;
     window.playSynthTrack = (title) => {
       window.stopSynthTrack();
@@ -611,17 +644,82 @@
           osc.start(); osc.stop(audioCtx.currentTime + 0.38);
           idx++;
         }, 280);
-        document.getElementById('synth-indicator').classList.remove('hidden');
         window.showToast(`Now Playing: ${title} 🎵`);
-      } catch(e) { window.showToast("Audio playback not supported", "error"); }
+      } catch(e) {}
     };
     window.stopSynthTrack = () => {
       if(synthInterval) clearInterval(synthInterval);
       if(audioCtx) { audioCtx.close(); audioCtx = null; }
-      document.getElementById('synth-indicator').classList.add('hidden');
     };
 
-    // CANVAS DRAWING PAD LOGIC
+    let tttBoard = ['', '', '', '', '', '', '', '', ''];
+    let tttTurn = 'X';
+    window.renderTTT = () => {
+      const b = document.getElementById('ttt-board');
+      if(!b) return;
+      b.innerHTML = tttBoard.map((cell, idx) => `<button onclick="window.makeTTTMove(${idx})" class="aspect-square bg-black border theme-border text-lg font-bold rounded-xl flex items-center justify-center text-white">${cell}</button>`).join('');
+    };
+    window.makeTTTMove = (idx) => {
+      if(tttBoard[idx] !== '' || tttTurn !== 'X') return;
+      tttBoard[idx] = 'X';
+      window.renderTTT();
+      if(checkTTTWine('X')) { document.getElementById('ttt-status').innerText = "Aap jeet gaye! 🎉 (+50 XP)"; apiSet(`users/${currentUser}/xpBonus`, (DB.users[currentUser]?.xpBonus || 0) + 50); return; }
+      if(!tttBoard.includes('')) { document.getElementById('ttt-status').innerText = "Match Draw!"; return; }
+      tttTurn = 'O';
+      document.getElementById('ttt-status').innerText = "AI thinking...";
+      setTimeout(() => {
+        const emptyIdxs = tttBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+        if(emptyIdxs.length > 0) {
+          const aiMove = emptyIdxs[Math.floor(Math.random() * emptyIdxs.length)];
+          tttBoard[aiMove] = 'O';
+          window.renderTTT();
+          if(checkTTTWine('O')) { document.getElementById('ttt-status').innerText = "AI Bot jeet gaya! 🤖"; tttTurn = 'X'; return; }
+        }
+        tttTurn = 'X';
+        document.getElementById('ttt-status').innerText = "Your turn (X)";
+      }, 400);
+    };
+    function checkTTTWine(p) {
+      const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      return wins.some(w => tttBoard[w[0]] === p && tttBoard[w[1]] === p && tttBoard[w[2]] === p);
+    }
+    window.resetTTT = () => { tttBoard = ['', '', '', '', '', '', '', '', '']; tttTurn = 'X'; document.getElementById('ttt-status').innerText = "Your turn (X)"; window.renderTTT(); };
+
+    window.toggleDNDMode = () => {
+      dndModeActive = !dndModeActive;
+      const btn = document.getElementById('dndToggleBtn');
+      btn.innerText = dndModeActive ? 'ON' : 'OFF';
+      btn.className = dndModeActive ? 'px-3 py-1.5 rounded-lg font-bold bg-amber-500/20 text-amber-400' : 'px-3 py-1.5 rounded-lg font-bold bg-white/10 text-gray-300';
+      document.body.classList.toggle('dnd-dimmed', dndModeActive);
+      window.showToast(dndModeActive ? "Focus DND Mode Enabled 🌙" : "DND Disabled");
+    };
+
+    window.applyArSticker = (sticker) => {
+      activeArSticker = sticker;
+      window.showToast(sticker ? `AR Sticker ${sticker} added!` : "Sticker removed");
+    };
+
+    window.openAdminModal = () => {
+      const box = document.getElementById('adminUsersList');
+      box.innerHTML = Object.values(DB.users || {}).map(u => `
+        <div class="flex items-center justify-between p-2 rounded bg-black/40 border theme-border text-xs">
+          <span>@${u.username} ${badgeHTML(u.username)}</span>
+          <button onclick="window.adminDirectToggle('${u.username}')" class="bg-white/10 px-2.5 py-1 rounded">Toggle Tick</button>
+        </div>`).join('');
+      document.getElementById('adminModal').classList.remove('hidden');
+    };
+    window.adminDirectToggle = (uname) => {
+      const cur = DB.users[uname]?.verified;
+      apiSet(`users/${uname}/verified`, !cur);
+      window.showToast(`Updated verified status for @${uname}`);
+      window.openAdminModal();
+    };
+    window.adminToggleVerify = () => {
+      const uname = document.getElementById('adminTargetUser').value.trim();
+      if(!uname || !DB.users[uname]) { window.showToast("User not found!", "error"); return; }
+      window.adminDirectToggle(uname);
+    };
+
     let isDrawing = false, lastX = 0, lastY = 0;
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas ? canvas.getContext('2d') : null;
@@ -645,17 +743,17 @@
     window.clearDrawCanvas = () => { if(ctx) { ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height); } };
     window.fillDrawCanvas = () => { if(ctx) { ctx.fillStyle = document.getElementById('drawColorPicker').value; ctx.fillRect(0, 0, canvas.width, canvas.height); } };
 
-    // XP & LEVEL CALCULATOR
     function getUserXP(u) {
       const uPosts = Object.values(normMap(DB.posts)).filter(p => p.author === u);
       const uFollowers = Object.keys(DB.users[u]?.followers || {}).length;
       let likesCount = 0;
       uPosts.forEach(p => likesCount += p.likes ? Object.keys(p.likes).length : 0);
-      return (uPosts.length * 50) + (uFollowers * 30) + (likesCount * 10) + 100;
+      return (uPosts.length * 50) + (uFollowers * 30) + (likesCount * 10) + (DB.users[u]?.xpBonus || 0) + 100;
     }
     function getUserLevel(xp) { return Math.floor(Math.sqrt(xp / 150)) + 1; }
 
     window.showToast = (msg, type = 'info') => {
+      if(dndModeActive && type !== 'error') return;
       const box = document.getElementById('toast-container');
       if (!box) return;
       const el = document.createElement('div');
@@ -666,9 +764,9 @@
       setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2600);
     };
 
-    const saveLocalDB = () => localStorage.setItem('viu_local_db_v4', JSON.stringify(DB));
+    const saveLocalDB = () => localStorage.setItem('viu_local_db_v5', JSON.stringify(DB));
     document.documentElement.setAttribute('data-theme', localStorage.getItem('viu_theme') || 'ig-dark');
-    window.setTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('viu_theme', t); window.showToast(`Theme: ${t.toUpperCase()}`); updateUI(); };
+    window.setTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('viu_theme', t); updateUI(); };
     window.getCurrentChatTarget = () => currentChatTarget;
 
     try { if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") { app = initializeApp(firebaseConfig); db = getDatabase(app); } } catch(e) {}
@@ -706,25 +804,17 @@
     function apiSet(path, data) { setNested(DB, path, data); saveLocalDB(); updateUI(); if(isFirebaseActive) set(ref(db, path), data); }
     function apiRemove(path) { delNested(DB, path); saveLocalDB(); updateUI(); if(isFirebaseActive) remove(ref(db, path)); }
     function apiPush(path, data) { const id = Date.now().toString() + Math.floor(Math.random()*999); apiSet(`${path}/${id}`, { ...data, id }); return id; }
-    function notify(target, text) { if(target && target !== currentUser && target !== 'GLOBAL_GROUP' && target !== 'ViuAI') apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false }); }
+    function notify(target, text) {
+      if(dndModeActive) return;
+      if(target && target !== currentUser && target !== 'GLOBAL_GROUP' && target !== 'ViuAI') apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false });
+    }
 
-    // VIU AI ASSISTANT BOT
     function triggerViuAI(userMsg) {
       const q = userMsg.toLowerCase();
-      let reply = "Main Viu AI Assistant hoon! 🤖 Aap mujhse post captions, coding tips, ya app features ke baare me puch sakte hain.";
-      if (q.includes('caption') || q.includes('quote')) {
-        const caps = ["✨ 'Collecting moments, not things. #ViuVibes #Life'", "🔥 'Code, Create, Conquer. 🚀 #TechLife #Viu'"];
-        reply = "Ye lijiye ek mast caption idea:\n" + caps[Math.floor(Math.random() * caps.length)];
-      } else if (q.includes('hello') || q.includes('hi') || q.includes('hey')) {
-        reply = `Hey @${currentUser}! 👋 Main bilkul badhiya hoon. Aaj aap Viu par kya naya post karne wale hain?`;
-      } else if (q.includes('theme') || q.includes('jarvis')) {
-        reply = "🎨 Aap Profile tab me jaakar 6 themes choose kar sakte hain—IG Dark, Light, Jarvis, Crimson, Matrix, aur Cyber Gold!";
-      } else if (q.includes('level') || q.includes('xp')) {
-        reply = `⭐ Aapka XP aur Level aapke posts, followers, aur likes par depend karta hai! Top rankers Leaderboard (🏆) me dikhte hain.`;
-      }
-      setTimeout(() => {
-        apiPush('messages', { sender: 'ViuAI', receiver: currentUser, text: reply, timestamp: Date.now(), read: currentChatTarget === 'ViuAI' });
-      }, 650);
+      let reply = "Main Viu AI Assistant hoon! 🤖 Aap mujhse post captions, coding tips, ya arcade games ke baare me puch sakte hain.";
+      if (q.includes('caption')) reply = "✨ 'Vibe higher. #Viu #Explore'";
+      else if (q.includes('game') || q.includes('arcade')) reply = "🎮 Aap bottom navigation se Arcade tab me jaakar Tic-Tac-Toe khel sakte hain!";
+      setTimeout(() => { apiPush('messages', { sender: 'ViuAI', receiver: currentUser, text: reply, timestamp: Date.now(), read: currentChatTarget === 'ViuAI' }); }, 650);
     }
 
     setInterval(() => { if(currentUser && DB.users[currentUser]) apiSet(`users/${currentUser}/lastSeen`, Date.now()); }, 25000);
@@ -748,11 +838,10 @@
       const cur = DB.notes?.[currentUser]?.text || '';
       const txt = prompt("Share a 24h Thought Note (max 50 chars):", cur);
       if(txt === null) return;
-      if(txt.trim() === '') { apiRemove(`notes/${currentUser}`); window.showToast("Note removed"); }
-      else { apiSet(`notes/${currentUser}`, { author: currentUser, text: txt.trim().slice(0, 50), timestamp: Date.now() }); window.showToast("Thought Note updated! 💭"); }
+      if(txt.trim() === '') apiRemove(`notes/${currentUser}`);
+      else apiSet(`notes/${currentUser}`, { author: currentUser, text: txt.trim().slice(0, 50), timestamp: Date.now() });
     };
 
-    // LEADERBOARD MODAL
     window.openLeaderboard = () => {
       const usersList = Object.keys(DB.users || {});
       const ranked = usersList.map(u => ({ username: u, xp: getUserXP(u), level: getUserLevel(getUserXP(u)) })).sort((a,b) => b.xp - a.xp);
@@ -761,84 +850,62 @@
           <div class="flex items-center gap-3">
             <span class="font-heading font-bold text-sm ${idx===0?'text-amber-400':(idx===1?'text-slate-300':'text-amber-700')}">#${idx+1}</span>
             ${generateAvatar(r.username, "w-9 h-9", true)}
-            <div>
-              <div class="font-bold text-xs">${r.username} ${badgeHTML(r.username)}</div>
-              <div class="text-[10px] text-gray-400">Level ${r.level} • ${r.xp} XP</div>
-            </div>
+            <div><div class="font-bold text-xs">${r.username} ${badgeHTML(r.username)}</div><div class="text-[10px] text-gray-400">Level ${r.level} • ${r.xp} XP</div></div>
           </div>
           <button onclick="document.getElementById('leaderboardModal').classList.add('hidden'); window.openUserProfile('${r.username}')" class="bg-white/10 px-3 py-1 rounded-lg text-xs font-bold">Profile</button>
         </div>`).join('') || `<div class="text-center text-gray-500 text-xs py-6">No users found.</div>`;
       document.getElementById('leaderboardModal').classList.remove('hidden');
     };
 
-    // CYBER ID CARD GENERATOR
     window.openIdCardModal = () => {
       const canvasId = document.getElementById('idCardCanvas');
       const ctxId = canvasId.getContext('2d');
       const xp = getUserXP(currentUser), lvl = getUserLevel(xp);
-      
       ctxId.fillStyle = '#0b0f19'; ctxId.fillRect(0, 0, canvasId.width, canvasId.height);
       ctxId.strokeStyle = '#00f3ff'; ctxId.lineWidth = 3; ctxId.strokeRect(5, 5, canvasId.width - 10, canvasId.height - 10);
-      
       ctxId.fillStyle = '#00f3ff'; ctxId.font = 'bold 16px sans-serif'; ctxId.fillText('VIU CYBER ID PASS', 20, 32);
       ctxId.fillStyle = '#94a3b8'; ctxId.font = '11px sans-serif'; ctxId.fillText('SECURE NETWORK PASSPORT', 20, 50);
-
       ctxId.fillStyle = '#ffffff'; ctxId.font = 'bold 18px sans-serif'; ctxId.fillText(`@${currentUser}`, 20, 95);
       ctxId.fillStyle = '#38bdf8'; ctxId.font = '12px sans-serif'; ctxId.fillText(`Level: ${lvl}  |  XP: ${xp}`, 20, 118);
       ctxId.fillStyle = '#a855f7'; ctxId.font = '11px sans-serif'; ctxId.fillText(`Status: ${DB.users[currentUser]?.mood || 'Active'}`, 20, 142);
-
       ctxId.fillStyle = '#1e293b'; ctxId.fillRect(230, 30, 90, 120);
       ctxId.fillStyle = '#00f3ff'; ctxId.font = 'bold 36px sans-serif'; ctxId.fillText(currentUser.charAt(0).toUpperCase(), 258, 105);
-
       document.getElementById('downloadIdCardBtn').href = canvasId.toDataURL('image/png');
       document.getElementById('idCardModal').classList.remove('hidden');
     };
 
     window.exportBackupJSON = () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(DB));
-      const dlAnchor = document.createElement('a');
-      dlAnchor.setAttribute("href", dataStr);
-      dlAnchor.setAttribute("download", `viu_backup_${Date.now()}.json`);
+      const dlAnchor = document.createElement('a'); dlAnchor.setAttribute("href", dataStr); dlAnchor.setAttribute("download", `viu_backup_${Date.now()}.json`);
       document.body.appendChild(dlAnchor); dlAnchor.click(); dlAnchor.remove();
-      window.showToast("Database JSON backed up successfully! 💾");
+      window.showToast("Database backed up! 💾");
     };
 
-    // SPEECH READER (TTS)
     window.readPostCaption = (text) => {
-      if(!('speechSynthesis' in window)) { window.showToast("Speech synthesis not supported", "error"); return; }
+      if(!('speechSynthesis' in window)) return;
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utterance);
-      window.showToast("Reading caption aloud... 🔊");
+      window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
     };
 
-    // BURN MODE TOGGLE FOR CHAT
     window.toggleBurnMode = () => {
       burnModeActive = !burnModeActive;
       const btn = document.getElementById('burnModeBtn');
       btn.className = burnModeActive ? "text-[10px] px-2 py-0.5 rounded-full border border-rose-500 bg-rose-500/20 text-rose-300 shrink-0 animate-pulse" : "text-[10px] px-2 py-0.5 rounded-full border theme-border text-gray-400 shrink-0";
       btn.innerText = burnModeActive ? "⏱️ 15s Burn: ON" : "⏱️ 15s Burn: OFF";
-      window.showToast(burnModeActive ? "Disappearing 15s chat mode activated!" : "Standard chat mode");
     };
 
     window.editChatMessage = (msgId, oldText) => {
       const newT = prompt("Edit message:", oldText);
-      if(newT !== null && newT.trim() !== '') {
-        apiSet(`messages/${msgId}/text`, newT.trim() + " (edited)");
-        window.showToast("Message updated");
-      }
+      if(newT !== null && newT.trim() !== '') apiSet(`messages/${msgId}/text`, newT.trim() + " (edited)");
     };
 
-    // WEBRTC CALLING SYSTEM
     window.startCall = async (withVideo) => {
-      if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP' || currentChatTarget === 'ViuAI') {
-        window.showToast("Direct P2P call only with real users!", "error"); return;
-      }
+      if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP' || currentChatTarget === 'ViuAI') return;
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: withVideo, audio: true });
         document.getElementById('localCallVideo').srcObject = localStream;
         document.getElementById('localCallVideo').classList.toggle('hidden', !withVideo);
-      } catch(e) { window.showToast("Camera/Mic permission denied", "error"); return; }
+      } catch(e) { return; }
 
       document.getElementById('callModal').classList.remove('hidden');
       document.getElementById('callTypeLabel').innerText = withVideo ? '📹 VIDEO CALL' : '📞 AUDIO CALL';
@@ -848,14 +915,8 @@
 
       peerConnection = new RTCPeerConnection(rtcServers);
       localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-      peerConnection.ontrack = (event) => {
-        document.getElementById('remoteCallVideo').srcObject = event.streams[0];
-        startCallTimer();
-      };
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate && activeCallId) apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON());
-      };
+      peerConnection.ontrack = (event) => { document.getElementById('remoteCallVideo').srcObject = event.streams[0]; startCallTimer(); };
+      peerConnection.onicecandidate = (event) => { if (event.candidate && activeCallId) apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON()); };
 
       const callId = 'call_' + Date.now() + '_' + Math.floor(Math.random()*1000);
       activeCallId = callId;
@@ -927,17 +988,6 @@
 
       apiSet(`calls/${activeCallId}/answer`, { type: answer.type, sdp: answer.sdp });
       apiSet(`calls/${activeCallId}/status`, 'connected');
-
-      if (isFirebaseActive && db) {
-        onValue(ref(db, `calls/${activeCallId}`), async (snapshot) => {
-          const callData = snapshot.val();
-          if (callData && (callData.status === 'ended' || callData.status === 'rejected')) window.endCall();
-        });
-        onValue(ref(db, `calls/${activeCallId}/candidates/${incomingCallData.caller}`), (snapshot) => {
-          const candidates = snapshot.val();
-          if (candidates) Object.values(candidates).forEach(async (cand) => { if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(cand)); });
-        });
-      }
       incomingCallData = null;
     };
 
@@ -957,18 +1007,12 @@
 
     window.toggleCallMic = () => {
       if(localStream && localStream.getAudioTracks()[0]) {
-        const tr = localStream.getAudioTracks()[0];
-        tr.enabled = !tr.enabled;
-        document.getElementById('micToggleBtn').innerText = tr.enabled ? '🎤' : '🔇';
-        window.showToast(tr.enabled ? "Mic Unmuted" : "Mic Muted");
+        localStream.getAudioTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
       }
     };
     window.toggleCallCam = () => { 
       if(localStream && localStream.getVideoTracks()[0]) {
-        const tr = localStream.getVideoTracks()[0];
-        tr.enabled = !tr.enabled;
-        document.getElementById('camToggleBtn').innerText = tr.enabled ? '📷' : '🚫';
-        window.showToast(tr.enabled ? "Camera On" : "Camera Off");
+        localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
       }
     };
     window.endCall = () => {
@@ -984,8 +1028,7 @@
     window.toggleBlockUser = (target) => {
       if(!target || target === currentUser) return;
       const isB = DB.users[currentUser]?.blocked && DB.users[currentUser].blocked[target];
-      if(isB) { apiRemove(`users/${currentUser}/blocked/${target}`); window.showToast(`Unblocked @${target}`); }
-      else { apiSet(`users/${currentUser}/blocked/${target}`, true); window.showToast(`Blocked @${target}`, "error"); }
+      if(isB) apiRemove(`users/${currentUser}/blocked/${target}`); else apiSet(`users/${currentUser}/blocked/${target}`, true);
       window.openUserProfile(target);
     };
 
@@ -996,7 +1039,13 @@
         img.onload = () => {
           const c = document.createElement('canvas'); let w = img.width, h = img.height;
           if(w > maxW) { h = Math.round((maxW/w)*h); w = maxW; }
-          c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h);
+          c.width = w; c.height = h;
+          const ctxImg = c.getContext('2d');
+          ctxImg.drawImage(img, 0, 0, w, h);
+          if(activeArSticker) {
+            ctxImg.font = '48px sans-serif';
+            ctxImg.fillText(activeArSticker, w / 2 - 24, 60);
+          }
           cb(c.toDataURL('image/jpeg', 0.65));
         };
         img.src = e.target.result;
@@ -1012,6 +1061,7 @@
         const ctxImg = c.getContext('2d');
         const map = { vivid: 'contrast(1.25) saturate(1.45)', bw: 'grayscale(100%) contrast(1.15)', cyber: 'hue-rotate(170deg) saturate(1.6)', vintage: 'sepia(65%) contrast(1.1)', none: 'none' };
         ctxImg.filter = map[type] || 'none'; ctxImg.drawImage(img, 0, 0);
+        if(activeArSticker) { ctxImg.font = '48px sans-serif'; ctxImg.fillText(activeArSticker, c.width / 2 - 24, 60); }
         currentImageBase64 = c.toDataURL('image/jpeg', 0.7);
         if(multiImagesList.length > 0) multiImagesList[0] = currentImageBase64;
         document.getElementById('imagePreview').src = currentImageBase64;
@@ -1084,7 +1134,7 @@
 
     window.clearChatHistory = () => {
       if(!currentChatTarget) return;
-      if(!confirm(`Clear chat messages with ${currentChatTarget}?`)) return;
+      if(!confirm(`Clear chat with ${currentChatTarget}?`)) return;
       Object.values(normMap(DB.messages)).forEach(m => {
         if((m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser)) apiRemove(`messages/${m.id}`);
       });
@@ -1118,12 +1168,12 @@
 
     window.editPostCaption = (postId) => {
       const p = DB.posts[postId]; if(!p) return;
-      const newCap = prompt("Edit your post caption:", p.caption || "");
+      const newCap = prompt("Edit caption:", p.caption || "");
       if(newCap !== null) { apiSet(`posts/${postId}/caption`, newCap.trim()); window.showToast("Caption updated!"); }
     };
     window.togglePinPost = (postId) => {
       const p = DB.posts[postId];
-      if(p) { apiSet(`posts/${postId}/pinned`, !p.pinned); window.showToast(p.pinned ? "Pinned" : "Unpinned 📌"); }
+      if(p) { apiSet(`posts/${postId}/pinned`, !p.pinned); window.showToast("Pin toggled 📌"); }
     };
 
     window.toggleVoiceRecording = async () => {
@@ -1142,7 +1192,7 @@
         };
         mediaRecorder.start(); isRecording = true;
         btn.className = "p-2 rounded-full bg-rose-600 text-white text-xs font-bold animate-pulse shrink-0"; btn.innerText = "⏹";
-      } catch(err) { window.showToast("Microphone access needed", "error"); }
+      } catch(err) {}
     };
 
     window.votePoll = (postId, optIdx) => { const p = DB.posts[postId]; if(p) { apiSet(`posts/${postId}/pollVotes/${currentUser}`, optIdx); notify(p.author, `voted on your poll 📊`); } };
@@ -1302,7 +1352,7 @@
       if(e.target.files[0]) compressImage(e.target.files[0], 300, (b64) => { apiSet(`users/${currentUser}/avatar`, b64); window.showToast("Avatar Updated!"); });
     };
     document.getElementById('bannerFileInput').onchange = (e) => {
-      if(e.target.files[0]) compressImage(e.target.files[0], 700, (b64) => { apiSet(`users/${currentUser}/banner`, b64); window.showToast("Cover Banner Updated! 🖼️"); });
+      if(e.target.files[0]) compressImage(e.target.files[0], 700, (b64) => { apiSet(`users/${currentUser}/banner`, b64); window.showToast("Cover Updated! 🖼️"); });
     };
 
     window.openBioModal = () => {
@@ -1325,9 +1375,11 @@
 
     window.switchTab = (t) => {
       activeTab = t;
-      ['feed', 'explore', 'chatlist', 'profile'].forEach(x => {
-        document.getElementById(`tab-${x}`).classList.toggle('hidden', x !== t);
-        document.getElementById(`navbtn-${x}`).className = x === t ? "p-2 theme-accent-text relative" : "p-2 text-gray-500 relative";
+      ['feed', 'reels', 'explore', 'games', 'chatlist', 'profile'].forEach(x => {
+        const el = document.getElementById(`tab-${x}`);
+        if(el) el.classList.toggle('hidden', x !== t);
+        const btn = document.getElementById(`navbtn-${x}`);
+        if(btn) btn.className = x === t ? "p-2 theme-accent-text flex flex-col items-center" : "p-2 text-gray-500 flex flex-col items-center";
       });
       updateUI();
     };
@@ -1355,7 +1407,7 @@
     window.deleteMessage = (id) => apiRemove(`messages/${id}`);
     window.deletePost = (id) => { if(confirm("Delete post?")) { apiRemove(`posts/${id}`); window.showToast("Post deleted"); } };
     window.logoutUser = () => { localStorage.removeItem('viu_auth_user'); location.reload(); };
-// UI RENDERING & EVENT LISTENERS (PART 3)
+
     function updateUI() {
       const box = document.getElementById('existing-users'); box.innerHTML = '';
       Object.values(DB.users || {}).forEach(u => {
@@ -1369,7 +1421,7 @@
 
       if(!currentUser || !DB.users[currentUser]) return;
       document.getElementById('nav-username').innerHTML = `${currentUser} ${badgeHTML(currentUser)}`;
-      document.getElementById('nav-avatar').innerHTML = generateAvatar(currentUser, "w-6 h-6", true);
+      document.getElementById('nav-avatar').innerHTML = generateAvatar(currentUser, "w-5 h-5", true);
       
       const myXP = getUserXP(currentUser), myLv = getUserLevel(myXP);
       const lvlEl = document.getElementById('profile-level-badge');
@@ -1379,10 +1431,12 @@
       const uBadge = document.getElementById('unread-badge'); uBadge.innerText = unreadM; uBadge.classList.toggle('hidden', unreadM === 0);
 
       const unreadN = Object.values(normMap(DB.notifications && DB.notifications[currentUser])).filter(n => !n.read).length;
-      const nBadge = document.getElementById('notif-badge'); nBadge.innerText = unreadN; nBadge.classList.toggle('hidden', unreadN === 0);
+      const nBadge = document.getElementById('notif-badge'); nBadge.innerText = unreadN; nBadge.classList.toggle('hidden', nBadge === 0);
 
       if(activeTab === 'feed') { renderStories(); renderFeed(); }
+      if(activeTab === 'reels') renderReels();
       if(activeTab === 'explore') renderExplore();
+      if(activeTab === 'games') window.renderTTT();
       if(activeTab === 'chatlist') renderChatList();
       if(activeTab === 'profile') renderProfile();
       if(currentChatTarget) renderMessages();
@@ -1395,6 +1449,34 @@
       Object.values(normMap(DB.stories)).sort((a,b) => b.timestamp - a.timestamp).forEach(s => {
         if((Date.now() - s.timestamp) > 86400000) return;
         c.insertAdjacentHTML('beforeend', `<div class="flex flex-col items-center gap-1 cursor-pointer shrink-0" onclick="window.viewStory('${s.id}')"><div class="story-ring w-16 h-16 rounded-full"><img src="${s.image}" class="w-full h-full rounded-full object-cover border-2 border-black"></div><span class="text-[11px] truncate w-16 text-center">${s.author}</span></div>`);
+      });
+    }
+
+    function renderReels() {
+      const c = document.getElementById('reels-container');
+      const postsArr = Object.values(normMap(DB.posts)).filter(p => p.image).sort((a,b) => b.timestamp - a.timestamp);
+      c.innerHTML = '';
+      if(postsArr.length === 0) { c.innerHTML = `<div class="flex items-center justify-center h-full text-xs text-gray-400">No reels available.</div>`; return; }
+      postsArr.forEach(p => {
+        const likes = p.likes ? Object.keys(p.likes) : [], isL = likes.includes(currentUser);
+        c.insertAdjacentHTML('beforeend', `
+          <div class="w-full h-full snap-start relative flex items-center justify-center bg-black overflow-hidden">
+            <img src="${p.image}" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
+            <div class="absolute bottom-16 left-4 right-16 z-10 space-y-2 pointer-events-auto">
+              <div class="flex items-center gap-2 cursor-pointer" onclick="window.openUserProfile('${p.author}')">
+                ${generateAvatar(p.author, "w-9 h-9", true)}
+                <span class="font-bold text-sm text-white">${p.author}</span> ${badgeHTML(p.author)}
+              </div>
+              <div class="text-xs text-gray-200">${formatRichText(p.caption || '')}</div>
+            </div>
+            <div class="absolute bottom-16 right-3 z-10 flex flex-col items-center gap-4">
+              <button onclick="window.toggleLike('${p.id}')" class="text-2xl">${isL ? '❤️' : '🤍'}</button>
+              <span class="text-xs font-bold text-white">${likes.length}</span>
+              <button onclick="window.openComments('${p.id}')" class="text-2xl">💬</button>
+              <button onclick="window.openShareModal('${p.id}')" class="text-2xl">✈️</button>
+            </div>
+          </div>`);
       });
     }
 
@@ -1437,7 +1519,6 @@
         const reactionCounts = {};
         Object.values(reactionsMap).forEach(emoji => { reactionCounts[emoji] = (reactionCounts[emoji] || 0) + 1; });
         const reactionsHTML = Object.entries(reactionCounts).map(([em, cnt]) => `<span class="bg-white/10 px-2 py-0.5 rounded-full text-[10px] mr-1">${em} ${cnt}</span>`).join('');
-
         const safeCapForSpeech = (p.caption || '').replace(/['"]/g, '');
 
         c.insertAdjacentHTML('beforeend', `
@@ -1608,6 +1689,11 @@
       currentUser = u; localStorage.setItem('viu_auth_user', u);
       apiSet(`users/${u}/lastSeen`, Date.now());
       document.getElementById('login-view').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden');
+      
+      if('Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission();
+      }
+
       window.showToast(`Welcome back, @${u}!`);
       updateUI();
     };
@@ -1620,6 +1706,10 @@
       
       if(burnModeActive && currentChatTarget !== 'GLOBAL_GROUP' && currentChatTarget !== 'ViuAI') {
         setTimeout(() => { apiRemove(`messages/${msgId}`); }, 15000);
+      }
+
+      if('Notification' in window && Notification.permission === 'granted' && currentChatTarget !== 'GLOBAL_GROUP' && currentChatTarget !== 'ViuAI') {
+        try { new Notification(`New message from @${currentUser}`, { body: txt }); } catch(err) {}
       }
 
       if(currentChatTarget === 'ViuAI') triggerViuAI(txt);
@@ -1674,7 +1764,7 @@
       document.getElementById('postCaption').value = ''; document.getElementById('pollOpt1').value = ''; document.getElementById('pollOpt2').value = ''; document.getElementById('pollOpt3').value = '';
       document.getElementById('imagePreview').classList.add('hidden'); document.getElementById('imagePlaceholder').classList.remove('hidden'); document.getElementById('filterBar').classList.add('hidden');
       document.getElementById('multiCountBadge').classList.add('hidden');
-      currentImageBase64 = null; multiImagesList = []; window.switchTab('feed');
+      currentImageBase64 = null; multiImagesList = []; activeArSticker = ''; window.switchTab('feed');
     };
   </script>
 </body>
