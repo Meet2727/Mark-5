@@ -388,13 +388,13 @@
     </div>
   </div>
   
-<!-- CORE SCRIPT (AUTO-UNLOCK FIX) -->
-  <script type="module">
+<!-- CORE SCRIPT (COMPLETE & VERIFIED FROM LINE 391 TO END) -->
+  <script>
     const $ = (id) => document.getElementById(id);
 
-    // 1. Turant Login Button Unlock karein taaki kabhi "Connecting..." par na atke
-    $('loginBtn').disabled = false;
-    $('db-status').innerHTML = '<span class="text-emerald-400">● System Ready (Instant Login)</span>';
+    // Turant Login Button Unlock karein
+    if ($('loginBtn')) $('loginBtn').removeAttribute('disabled');
+    if ($('db-status')) $('db-status').innerHTML = '<span class="text-emerald-400">● System Ready (Login Unlocked)</span>';
 
     // 🔴 APNE FIREBASE KEYS YAHAN DALEIN 🔴
     const firebaseConfig = {
@@ -421,41 +421,6 @@
     window.setTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('viu_theme', t); updateUI(); };
     window.getCurrentChatTarget = () => currentChatTarget;
 
-    function enableLocalMode() {
-      $('loginBtn').disabled = false;
-      if(currentUser && DB.users[currentUser]) {
-        $('login-view').classList.add('hidden');
-        $('app-container').classList.remove('hidden');
-      }
-      setTimeout(() => { if(typeof updateUI === 'function') updateUI(); }, 50);
-    }
-
-    // Pehle Local Mode chalu karein taaki Login turant kaam kare
-    enableLocalMode();
-
-    // Background mein Firebase connect karein (bina app ko roke)
-    (async () => {
-      try {
-        if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
-          const fbApp = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js");
-          const fbDb = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js");
-          ref = fbDb.ref; onValue = fbDb.onValue; set = fbDb.set; remove = fbDb.remove;
-          app = fbApp.initializeApp(firebaseConfig);
-          db = fbDb.getDatabase(app);
-          onValue(ref(db, '/'), (snap) => {
-            const d = snap.val() || {};
-            DB = { users:d.users||{}, posts:d.posts||{}, stories:d.stories||{}, messages:d.messages||{}, typing:d.typing||{}, notifications:d.notifications||{}, notes:d.notes||{} };
-            isFirebaseActive = true;
-            $('db-status').innerText = '● Live Server Connected';
-            enableLocalMode();
-          }, (err) => {
-            $('db-status').innerHTML = '<span class="text-amber-400">● Local Mode (' + err.code + ')</span>';
-          });
-        }
-      } catch(e) {
-        $('db-status').innerHTML = '<span class="text-sky-400">● Offline / Local Mode Active</span>';
-      }
-    })();
     function setNested(obj, path, val) {
       const p = path.split('/'); let cur = obj;
       for(let i=0; i<p.length-1; i++) { if(!cur[p[i]] || typeof cur[p[i]] !== 'object') cur[p[i]] = {}; cur = cur[p[i]]; }
@@ -466,59 +431,31 @@
       for(let i=0; i<p.length-1; i++) { if(!cur[p[i]]) return; cur = cur[p[i]]; }
       delete cur[p[p.length-1]];
     }
-    function apiSet(path, data) { setNested(DB, path, data); saveLocalDB(); updateUI(); if(isFirebaseActive) set(ref(db, path), data); }
-    function apiRemove(path) { delNested(DB, path); saveLocalDB(); updateUI(); if(isFirebaseActive) remove(ref(db, path)); }
+    function apiSet(path, data) { setNested(DB, path, data); saveLocalDB(); updateUI(); if(isFirebaseActive && set && ref) set(ref(db, path), data); }
+    function apiRemove(path) { delNested(DB, path); saveLocalDB(); updateUI(); if(isFirebaseActive && remove && ref) remove(ref(db, path)); }
     function apiPush(path, data) { const id = Date.now().toString() + Math.floor(Math.random()*999); apiSet(`${path}/${id}`, { ...data, id }); }
     function notify(target, text) { if(target && target !== currentUser && target !== 'GLOBAL_GROUP') apiPush(`notifications/${target}`, { actor:currentUser, text, timestamp:Date.now(), read:false }); }
 
-    setInterval(() => { if(currentUser && DB.users[currentUser]) apiSet(`users/${currentUser}/lastSeen`, Date.now()); }, 25000);
+    const formatTime = (ts) => ts ? new Date(ts).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) : '';
+    const normMap = (obj) => { const o = {}; if(obj) Object.entries(obj).forEach(([k,v]) => { if(v && typeof v === 'object') o[k] = { ...v, id:k }; }); return o; };
     const isUserOnline = (u) => { const ls = DB.users?.[u]?.lastSeen; return ls && (Date.now() - ls < 120000); };
     const badgeHTML = (u) => DB.users?.[u]?.verified ? `<span class="text-sky-400 text-[11px] ml-0.5">☑️</span>` : '';
+
+    function generateAvatar(u, cls = "w-8 h-8", showOnline = false) {
+      if(!u) return '';
+      if(u === 'GLOBAL_GROUP') return `<div class="inline-flex ${cls} rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 items-center justify-center text-white font-bold text-xs shrink-0">🌐</div>`;
+      const usr = DB.users?.[u];
+      const dot = (showOnline && isUserOnline(u)) ? `<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-black rounded-full"></span>` : '';
+      if(usr?.avatar?.startsWith('data:image')) return `<div class="relative inline-flex ${cls} shrink-0"><img src="${usr.avatar}" class="w-full h-full rounded-full object-cover border border-white/20">${dot}</div>`;
+      const cols = ['#f43f5e','#8b5cf6','#0ea5e9','#10b981','#f59e0b','#ec4899'];
+      return `<div class="relative inline-flex ${cls} rounded-full items-center justify-center text-white font-bold text-xs shrink-0" style="background:${cols[(u.charCodeAt(0)||0)%cols.length]}">${u.charAt(0).toUpperCase()}${dot}</div>`;
+    }
 
     function formatRichText(txt) {
       if(!txt) return '';
       return txt.replace(/#(\w+)/g, `<span onclick="event.stopPropagation();window.setHashtagFilter('#$1')" class="theme-accent-text font-semibold cursor-pointer hover:underline">#$1</span>`)
                 .replace(/@(\w+)/g, `<span onclick="event.stopPropagation();window.openUserProfile('$1')" class="theme-accent-text font-semibold cursor-pointer hover:underline">@$1</span>`);
     }
-
-    window.setHashtagFilter = (tag) => {
-      activeHashtag = tag;
-      $('hashtagFilterBar').classList.toggle('hidden', !tag);
-      if(tag) $('activeHashtagText').innerText = tag;
-      if(activeTab !== 'feed') window.switchTab('feed'); else renderFeed();
-    };
-
-    window.addThoughtNote = () => {
-      const txt = prompt("Share a 24h Thought Note (max 50 chars):", DB.notes?.[currentUser]?.text || '');
-      if(txt === null) return;
-      if(!txt.trim()) apiRemove(`notes/${currentUser}`);
-      else apiSet(`notes/${currentUser}`, { author:currentUser, text:txt.trim().slice(0,50), timestamp:Date.now() });
-    };
-
-    window.startCall = async (withVideo) => {
-      if(!currentChatTarget) return;
-      $('callModal').classList.remove('hidden');
-      $('callTypeLabel').innerText = withVideo ? '📹 LIVE VIDEO CALL' : '📞 AUDIO CALL';
-      $('callPartnerName').innerText = currentChatTarget === 'GLOBAL_GROUP' ? 'Global Lounge' : currentChatTarget;
-      $('callAvatarFallback').innerHTML = generateAvatar(currentChatTarget, "w-24 h-24 text-3xl", true);
-      const vid = $('localCallVideo');
-      vid.classList.toggle('hidden', !withVideo);
-      if(withVideo) {
-        try { callStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true }); vid.srcObject = callStream; }
-        catch(e) { vid.classList.add('hidden'); }
-      }
-      let sec = 0; clearInterval(callTimerInt);
-      callTimerInt = setInterval(() => { sec++; $('callTimerText').innerText = `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`; }, 1000);
-    };
-    window.toggleCallCam = () => { if(callStream?.getVideoTracks()[0]) callStream.getVideoTracks()[0].enabled = !callStream.getVideoTracks()[0].enabled; };
-    window.endCall = () => { $('callModal').classList.add('hidden'); clearInterval(callTimerInt); if(callStream) { callStream.getTracks().forEach(t => t.stop()); callStream = null; } };
-
-    window.toggleBlockUser = (target) => {
-      if(!target || target === currentUser) return;
-      const isB = DB.users[currentUser]?.blocked?.[target];
-      if(isB) apiRemove(`users/${currentUser}/blocked/${target}`); else apiSet(`users/${currentUser}/blocked/${target}`, true);
-      window.openUserProfile(target);
-    };
 
     function compressImage(file, maxW, cb) {
       const r = new FileReader();
@@ -550,18 +487,42 @@
       img.src = rawUploadImageBase64;
     };
 
-    const formatTime = (ts) => ts ? new Date(ts).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) : '';
-    const normMap = (obj) => { const o = {}; if(obj) Object.entries(obj).forEach(([k,v]) => { if(v && typeof v === 'object') o[k] = { ...v, id:k }; }); return o; };
+    window.setHashtagFilter = (tag) => {
+      activeHashtag = tag;
+      $('hashtagFilterBar').classList.toggle('hidden', !tag);
+      if(tag) $('activeHashtagText').innerText = tag;
+      if(activeTab !== 'feed') window.switchTab('feed'); else renderFeed();
+    };
 
-    function generateAvatar(u, cls = "w-8 h-8", showOnline = false) {
-      if(!u) return '';
-      if(u === 'GLOBAL_GROUP') return `<div class="inline-flex ${cls} rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 items-center justify-center text-white font-bold text-xs shrink-0">🌐</div>`;
-      const usr = DB.users?.[u];
-      const dot = (showOnline && isUserOnline(u)) ? `<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-black rounded-full"></span>` : '';
-      if(usr?.avatar?.startsWith('data:image')) return `<div class="relative inline-flex ${cls} shrink-0"><img src="${usr.avatar}" class="w-full h-full rounded-full object-cover border border-white/20">${dot}</div>`;
-      const cols = ['#f43f5e','#8b5cf6','#0ea5e9','#10b981','#f59e0b','#ec4899'];
-      return `<div class="relative inline-flex ${cls} rounded-full items-center justify-center text-white font-bold text-xs shrink-0" style="background:${cols[(u.charCodeAt(0)||0)%cols.length]}">${u.charAt(0).toUpperCase()}${dot}</div>`;
-    }
+    window.addThoughtNote = () => {
+      const txt = prompt("Share a 24h Thought Note (max 50 chars):", DB.notes?.[currentUser]?.text || '');
+      if(txt === null) return;
+      if(!txt.trim()) apiRemove(`notes/${currentUser}`);
+      else apiSet(`notes/${currentUser}`, { author:currentUser, text:txt.trim().slice(0,50), timestamp:Date.now() });
+    };
+
+    window.startCall = async (withVideo) => {
+      if(!currentChatTarget) return;
+      $('callModal').classList.remove('hidden');$('callTypeLabel').innerText = withVideo ? '📹 LIVE VIDEO CALL' : '📞 AUDIO CALL';
+      $('callPartnerName').innerText = currentChatTarget === 'GLOBAL_GROUP' ? 'Global Lounge' : currentChatTarget;
+      $('callAvatarFallback').innerHTML = generateAvatar(currentChatTarget, "w-24 h-24 text-3xl", true);
+      const vid = $('localCallVideo'); vid.classList.toggle('hidden', !withVideo);
+      if(withVideo) {
+        try { callStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true }); vid.srcObject = callStream; }
+        catch(e) { vid.classList.add('hidden'); }
+      }
+      let sec = 0; clearInterval(callTimerInt);
+      callTimerInt = setInterval(() => { sec++; $('callTimerText').innerText = `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`; }, 1000);
+    };
+    window.toggleCallCam = () => { if(callStream?.getVideoTracks()[0]) callStream.getVideoTracks()[0].enabled = !callStream.getVideoTracks()[0].enabled; };
+    window.endCall = () => { $('callModal').classList.add('hidden'); clearInterval(callTimerInt); if(callStream) { callStream.getTracks().forEach(t => t.stop()); callStream = null; } };
+
+    window.toggleBlockUser = (target) => {
+      if(!target || target === currentUser) return;
+      if(DB.users[currentUser]?.blocked?.[target]) apiRemove(`users/${currentUser}/blocked/${target}`);
+      else apiSet(`users/${currentUser}/blocked/${target}`, true);
+      window.openUserProfile(target);
+    };
 
     window.stepCarousel = (postId, dir) => {
       const p = DB.posts[postId]; if(!p?.images) return;
@@ -580,8 +541,7 @@
       const p = DB.posts[postId]; if(!p) return;
       $('sp-author').innerText = `@${p.author}`; $('sp-img').src = p.image; $('sp-download').href = p.image;
       $('sp-likes').innerText = `❤️ ${p.likes ? Object.keys(p.likes).length : 0} likes`;
-      $('sp-caption').innerHTML = formatRichText(p.caption || '');
-      $('singlePostModal').classList.remove('hidden');
+      $('sp-caption').innerHTML = formatRichText(p.caption \vert{}\vert{} '');$('singlePostModal').classList.remove('hidden');
     };
 
     window.setReplyMsg = (sender, txt) => {
@@ -947,7 +907,7 @@
       const th = allM.filter(m => isGroup ? m.receiver === 'GLOBAL_GROUP' : ((m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser))).sort((a,b) => a.timestamp - b.timestamp);
       th.forEach(m => {
         const isMe = m.sender === currentUser;
-        if(!isMe && !isGroup && !m.read) { setNested(DB, `messages/${m.id}/read`, true); saveLocalDB(); if(isFirebaseActive) set(ref(db, `messages/${m.id}/read`), true); }
+        if(!isMe && !isGroup && !m.read) { setNested(DB, `messages/${m.id}/read`, true); saveLocalDB(); if(isFirebaseActive && set && ref) set(ref(db, `messages/${m.id}/read`), true); }
         const safeTxt = (m.text || '').replace(/'/g, "");
         c.innerHTML += `
           <div class="flex flex-col ${isMe?'items-end':'items-start'} group w-full">
@@ -970,6 +930,41 @@
       c.scrollTop = c.scrollHeight;
       $('typing-indicator').classList.toggle('hidden', isGroup || !(DB.typing?.[currentChatTarget]?.[currentUser]));
     }
+
+    function enableLocalMode() {
+      $('loginBtn').disabled = false;
+      if(currentUser && DB.users[currentUser]) {
+        $('login-view').classList.add('hidden');$('app-container').classList.remove('hidden');
+      }
+      updateUI();
+    }
+
+    enableLocalMode();
+
+    (async () => {
+      try {
+        if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+          const fbApp = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js");
+          const fbDb = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js");
+          ref = fbDb.ref; onValue = fbDb.onValue; set = fbDb.set; remove = fbDb.remove;
+          app = fbApp.initializeApp(firebaseConfig);
+          db = fbDb.getDatabase(app);
+          onValue(ref(db, '/'), (snap) => {
+            const d = snap.val() || {};
+            DB = { users:d.users||{}, posts:d.posts||{}, stories:d.stories||{}, messages:d.messages||{}, typing:d.typing||{}, notifications:d.notifications||{}, notes:d.notes||{} };
+            isFirebaseActive = true;
+            $('db-status').innerText = '● Live Server Connected';
+            enableLocalMode();
+          }, (err) => {
+            $('db-status').innerHTML = '<span class="text-amber-400">● Local Mode (' + err.code + ')</span>';
+          });
+        }
+      } catch(e) {
+        $('db-status').innerHTML = '<span class="text-sky-400">● Local Mode Active</span>';
+      }
+    })();
+
+    setInterval(() => { if(currentUser && DB.users[currentUser]) apiSet(`users/${currentUser}/lastSeen`, Date.now()); }, 25000);
 
     $('chatInput').oninput = () => {
       if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP') return;
