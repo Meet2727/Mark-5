@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Vu Network</title>
+  <title>Viu // Ultimate Social Network</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -248,9 +248,9 @@
     </div>
   </div>
 
-  <!-- INCOMING CALL RINGING ALERT -->
+  <!-- INCOMING CALL RINGING ALERT (STABLE FIXED POPUP) -->
   <div id="incomingCallModal" class="hidden fixed inset-0 z-[10000] bg-black/90 flex flex-col items-center justify-center p-6 text-center">
-    <div class="theme-surface border theme-border p-6 rounded-2xl w-full max-w-xs space-y-4 animate-bounce">
+    <div class="theme-surface border theme-border p-6 rounded-2xl w-full max-w-xs space-y-4">
       <div id="incomingCallerAvatar" class="w-20 h-20 mx-auto"></div>
       <h3 class="text-lg font-bold text-white" id="incomingCallerName">Caller</h3>
       <p class="text-xs theme-accent-text">Incoming Video/Audio Call...</p>
@@ -423,7 +423,7 @@
     </div>
   </div>
 
-  <!-- CORE SCRIPT WITH WEB_RTC P2P CALLS -->
+  <!-- CORE SCRIPT WITH FIXED CALL LIFECYCLE & MODALS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -569,8 +569,17 @@
         timestamp: Date.now()
       });
 
-      // Listen for answer
+      // Listen for call state updates (answer & status)
       if (isFirebaseActive && db) {
+        onValue(ref(db, `calls/${callId}`), async (snapshot) => {
+          const callData = snapshot.val();
+          if (callData) {
+            if (callData.status === 'ended' || callData.status === 'rejected') {
+              window.endCall();
+            }
+          }
+        });
+
         onValue(ref(db, `calls/${callId}/answer`), async (snapshot) => {
           const answer = snapshot.val();
           if (answer && peerConnection && !peerConnection.currentRemoteDescription) {
@@ -578,6 +587,7 @@
             startCallTimer();
           }
         });
+
         onValue(ref(db, `calls/${callId}/candidates/${currentChatTarget}`), (snapshot) => {
           const candidates = snapshot.val();
           if (candidates) {
@@ -590,16 +600,32 @@
     };
 
     function checkIncomingCalls() {
-      if (!currentUser || activeCallId) return;
+      if (!currentUser) return;
       const calls = DB.calls || {};
+      let foundActive = false;
+
       for (const [cId, cData] of Object.entries(calls)) {
-        if (cData.receiver === currentUser && cData.status === 'ringing' && (!incomingCallData || incomingCallData.id !== cId)) {
-          incomingCallData = { id: cId, ...cData };
-          document.getElementById('incomingCallerName').innerText = cData.caller;
-          document.getElementById('incomingCallerAvatar').innerHTML = generateAvatar(cData.caller, "w-20 h-20 text-2xl", true);
-          document.getElementById('incomingCallModal').classList.remove('hidden');
+        // Check if status is ended or rejected globally for current active call
+        if (activeCallId === cId && (cData.status === 'ended' || cData.status === 'rejected')) {
+          window.endCall();
+          return;
+        }
+
+        if (cData.receiver === currentUser && cData.status === 'ringing') {
+          foundActive = true;
+          if (!incomingCallData || incomingCallData.id !== cId) {
+            incomingCallData = { id: cId, ...cData };
+            document.getElementById('incomingCallerName').innerText = cData.caller;
+            document.getElementById('incomingCallerAvatar').innerHTML = generateAvatar(cData.caller, "w-20 h-20 text-2xl", true);
+            document.getElementById('incomingCallModal').classList.remove('hidden');
+          }
           break;
         }
+      }
+
+      // If no ringing call found from database, clear incoming modal if it was closed
+      if (!foundActive && incomingCallData) {
+        document.getElementById('incomingCallModal').classList.add('hidden');
       }
     }
 
@@ -639,8 +665,15 @@
       apiSet(`calls/${activeCallId}/answer`, { type: answer.type, sdp: answer.sdp });
       apiSet(`calls/${activeCallId}/status`, 'connected');
 
-      // Listen for caller candidates
+      // Listen for updates and caller candidates
       if (isFirebaseActive && db) {
+        onValue(ref(db, `calls/${activeCallId}`), async (snapshot) => {
+          const callData = snapshot.val();
+          if (callData && (callData.status === 'ended' || callData.status === 'rejected')) {
+            window.endCall();
+          }
+        });
+
         onValue(ref(db, `calls/${activeCallId}/candidates/${incomingCallData.caller}`), (snapshot) => {
           const candidates = snapshot.val();
           if (candidates) {
@@ -650,6 +683,7 @@
           }
         });
       }
+      incomingCallData = null;
     };
 
     window.rejectIncomingCall = () => {
@@ -675,11 +709,19 @@
     };
 
     window.endCall = () => {
+      // Forcefully hide all call modals
       document.getElementById('callModal').classList.add('hidden');
       document.getElementById('incomingCallModal').classList.add('hidden');
       clearInterval(callTimerInt);
-      if(localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-      if(peerConnection) { peerConnection.close(); peerConnection = null; }
+
+      if(localStream) { 
+        localStream.getTracks().forEach(t => t.stop()); 
+        localStream = null; 
+      }
+      if(peerConnection) { 
+        peerConnection.close(); 
+        peerConnection = null; 
+      }
       if(activeCallId) {
         apiSet(`calls/${activeCallId}/status`, 'ended');
         activeCallId = null;
@@ -870,7 +912,6 @@
     window.closeNotifications = () => document.getElementById('notificationsDrawer').classList.add('hidden');
     window.clearNotifications = () => { apiRemove(`notifications/${currentUser}`); window.openNotifications(); };
 
-    // NEW FEATURE: Multi Emoji Reactions for Posts
     window.togglePostReaction = (postId, emoji) => {
       const p = DB.posts[postId]; if(!p) return;
       const curUserReaction = p.reactions?.[currentUser];
@@ -1071,7 +1112,6 @@
           mediaHTML = `<div id="post-img-${p.id}" class="relative bg-black flex justify-center overflow-hidden" ondblclick="window.doubleTapLike('${p.id}')"><img src="${activeImg}" class="w-full object-cover max-h-[460px]">${navBtns}</div>`;
         }
 
-        // Aggregate reactions
         const reactionsMap = p.reactions || {};
         const reactionCounts = {};
         Object.values(reactionsMap).forEach(emoji => { reactionCounts[emoji] = (reactionCounts[emoji] || 0) + 1; });
@@ -1094,7 +1134,6 @@
                   <button onclick="window.openComments('${p.id}')" class="flex items-center gap-1 text-sm font-bold">💬 ${cCnt}</button>
                   <button onclick="window.openShareModal('${p.id}')" class="text-sm font-bold">✈️</button>
                 </div>
-                <!-- Emoji Reaction Bar -->
                 <div class="flex gap-1 text-xs">
                   <button onclick="window.togglePostReaction('${p.id}', '🔥')" title="Fire">🔥</button>
                   <button onclick="window.togglePostReaction('${p.id}', '👏')" title="Clap">👏</button>
