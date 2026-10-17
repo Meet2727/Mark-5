@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="ig-dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Viu // Ultimate Social Network v3.0</title>
+  <title>Viu // Ultimate Social Network v4.0 Ultra</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -70,6 +71,8 @@
     [data-theme="ig-light"] .chat-recv { background-color: #e2e8f0; color: #0f172a; }
     .tick-blue { color: #38bdf8; font-weight: bold; text-shadow: 0 0 5px rgba(56,189,248,0.8); }
     .tick-gray { color: rgba(255,255,255,0.55); }
+    .playing-music { animation: pulseBeat 0.8s infinite alternate; border-color: var(--accent) !important; }
+    @keyframes pulseBeat { from { transform: scale(1); } to { transform: scale(1.05); } }
   </style>
 </head>
 <body>
@@ -99,16 +102,20 @@
 
   <!-- MAIN APP CONTAINER -->
   <div id="app-container" class="hidden">
-    <header class="h-14 border-b theme-border theme-surface flex items-center justify-between px-4 shrink-0 z-20">
-      <h1 class="text-xl font-heading font-bold italic tracking-tight theme-accent-text cursor-pointer" onclick="window.setHashtagFilter(null)" id="app-header-title">Viu</h1>
+    <header class="h-14 border-b theme-border theme-surface flex items-center justify-between px-3.5 shrink-0 z-20">
       <div class="flex items-center gap-2">
-        <button onclick="window.openUploadModal('post')" title="Create" class="p-1.5 rounded-lg border theme-border hover:opacity-80">➕</button>
-        <button onclick="window.openNotifications()" class="p-1.5 rounded-lg border theme-border hover:opacity-80 relative">
+        <h1 class="text-xl font-heading font-bold italic tracking-tight theme-accent-text cursor-pointer" onclick="window.setHashtagFilter(null)" id="app-header-title">Viu</h1>
+        <span id="synth-indicator" onclick="window.stopSynthTrack()" class="hidden cursor-pointer text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full animate-pulse">🔊 Playing ✕</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button onclick="window.openLeaderboard()" title="Leaderboard" class="p-1.5 rounded-lg border theme-border hover:opacity-80 text-xs">🏆</button>
+        <button onclick="window.openUploadModal('post')" title="Create" class="p-1.5 rounded-lg border theme-border hover:opacity-80 text-xs">➕</button>
+        <button onclick="window.openNotifications()" class="p-1.5 rounded-lg border theme-border hover:opacity-80 relative text-xs">
           🔔<span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
         </button>
-        <div class="flex items-center gap-1.5 bg-black/50 pl-1 pr-2.5 py-1 rounded-full border theme-border cursor-pointer text-white" onclick="window.switchTab('profile')">
+        <div class="flex items-center gap-1.5 bg-black/50 pl-1 pr-2 py-1 rounded-full border theme-border cursor-pointer text-white" onclick="window.switchTab('profile')">
           <div id="nav-avatar" class="w-6 h-6"></div>
-          <span id="nav-username" class="text-xs font-semibold truncate max-w-[85px]">User</span>
+          <span id="nav-username" class="text-xs font-semibold truncate max-w-[75px]">User</span>
         </div>
       </div>
     </header>
@@ -172,7 +179,6 @@
       <!-- PROFILE TAB -->
       <div id="tab-profile" class="w-full min-h-full hidden p-4 pb-20">
         <div class="theme-surface border theme-border rounded-2xl overflow-hidden flex flex-col items-center text-center mb-4">
-          <!-- PROFILE COVER BANNER -->
           <div id="profile-banner" onclick="document.getElementById('bannerFileInput').click()" class="w-full h-28 bg-gradient-to-r from-sky-600 via-indigo-600 to-purple-700 relative cursor-pointer bg-cover bg-center">
             <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full">🖼️ Edit Cover</span>
             <input type="file" id="bannerFileInput" accept="image/*" class="hidden">
@@ -186,9 +192,10 @@
               <div class="absolute bottom-0 right-0 theme-accent-bg p-1.5 rounded-full border-2 border-black text-xs">📷</div>
               <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
             </div>
-            <div class="flex items-center gap-1 justify-center">
+            <div class="flex items-center gap-1.5 justify-center">
               <h2 class="text-lg font-heading font-bold" id="profile-username">User</h2>
               <span id="profile-verified" class="hidden text-sky-400 text-sm">☑️</span>
+              <span id="profile-level-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full theme-accent-bg">Lv.1</span>
             </div>
             <span id="profile-mood" class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/10 text-gray-400 mt-1">✨ Using Viu</span>
             <p class="text-xs text-gray-400 mt-2 mb-4" id="profile-bio">Tap 'Edit Profile' to customize.</p>
@@ -212,10 +219,11 @@
               </div>
             </div>
 
-            <div class="flex gap-2 w-full">
-              <button onclick="window.openBioModal()" class="flex-1 bg-white/10 py-2 rounded-lg text-xs font-semibold">✏️ Edit Profile</button>
-              <button onclick="window.openInsightsModal()" class="flex-1 bg-sky-500/20 text-sky-400 py-2 rounded-lg text-xs font-semibold">📊 Insights</button>
-              <button onclick="window.logoutUser()" class="px-3 bg-rose-500/20 text-rose-400 py-2 rounded-lg text-xs font-semibold">Exit</button>
+            <div class="grid grid-cols-4 gap-1.5 w-full">
+              <button onclick="window.openBioModal()" class="bg-white/10 py-2 rounded-lg text-[11px] font-semibold">✏️ Edit</button>
+              <button onclick="window.openInsightsModal()" class="bg-sky-500/20 text-sky-400 py-2 rounded-lg text-[11px] font-semibold">📊 Stats</button>
+              <button onclick="window.openIdCardModal()" class="bg-purple-500/20 text-purple-300 py-2 rounded-lg text-[11px] font-semibold">🪪 ID Card</button>
+              <button onclick="window.logoutUser()" class="bg-rose-500/20 text-rose-400 py-2 rounded-lg text-[11px] font-semibold">Exit</button>
             </div>
           </div>
         </div>
@@ -250,16 +258,17 @@
           <div class="truncate text-gray-300"><span class="theme-accent-text font-bold">Replying:</span> <span id="replyPreviewText"></span></div>
           <button type="button" onclick="window.cancelReply()" class="text-gray-400 ml-2">✕</button>
         </div>
-        <!-- QUICK EMOJI BAR -->
-        <div class="px-3 py-1 bg-black/80 border-t theme-border flex gap-3 overflow-x-auto hide-scrollbar text-sm">
-          <button type="button" onclick="window.insertChatEmoji('❤️')">❤️</button>
-          <button type="button" onclick="window.insertChatEmoji('🔥')">🔥</button>
-          <button type="button" onclick="window.insertChatEmoji('😂')">😂</button>
-          <button type="button" onclick="window.insertChatEmoji('😍')">😍</button>
-          <button type="button" onclick="window.insertChatEmoji('🙌')">🙌</button>
-          <button type="button" onclick="window.insertChatEmoji('🚀')">🚀</button>
-          <button type="button" onclick="window.insertChatEmoji('✨')">✨</button>
-          <button type="button" onclick="window.insertChatEmoji('💯')">💯</button>
+        <!-- QUICK EMOJI & BURN MODE BAR -->
+        <div class="px-3 py-1 bg-black/80 border-t theme-border flex justify-between items-center text-sm">
+          <div class="flex gap-3 overflow-x-auto hide-scrollbar">
+            <button type="button" onclick="window.insertChatEmoji('❤️')">❤️</button>
+            <button type="button" onclick="window.insertChatEmoji('🔥')">🔥</button>
+            <button type="button" onclick="window.insertChatEmoji('😂')">😂</button>
+            <button type="button" onclick="window.insertChatEmoji('😍')">😍</button>
+            <button type="button" onclick="window.insertChatEmoji('🚀')">🚀</button>
+            <button type="button" onclick="window.insertChatEmoji('💯')">💯</button>
+          </div>
+          <button type="button" id="burnModeBtn" onclick="window.toggleBurnMode()" class="text-[10px] px-2 py-0.5 rounded-full border theme-border text-gray-400 shrink-0">⏱️ 15s Burn: OFF</button>
         </div>
         <form id="chatForm" class="p-2.5 border-t theme-border theme-surface shrink-0 flex gap-1.5 items-center">
           <label class="p-2 rounded-full bg-white/10 cursor-pointer text-sm shrink-0">📷<input type="file" id="chatImageInput" accept="image/*" class="hidden"></label>
@@ -288,13 +297,11 @@
       <h2 class="text-2xl font-heading font-bold text-white" id="callPartnerName">User</h2>
       <p class="text-xs text-emerald-400 mt-1 font-mono" id="callTimerText">Connecting...</p>
     </div>
-    
     <div class="relative w-full max-w-xs aspect-[3/4] rounded-2xl overflow-hidden border-2 theme-border bg-gray-900 flex items-center justify-center">
       <video id="remoteCallVideo" autoplay playsinline class="absolute inset-0 w-full h-full object-cover"></video>
       <video id="localCallVideo" autoplay playsinline muted class="absolute bottom-3 right-3 w-24 h-32 object-cover rounded-lg border border-white/40 shadow-lg z-10"></video>
       <div id="callAvatarFallback" class="flex flex-col items-center"></div>
     </div>
-
     <div class="flex gap-5 mb-6 items-center">
       <button id="micToggleBtn" onclick="window.toggleCallMic()" class="w-12 h-12 rounded-full bg-white/15 text-white flex items-center justify-center text-lg">🎤</button>
       <button onclick="window.endCall()" class="w-14 h-14 rounded-full bg-rose-600 text-white flex items-center justify-center text-xl font-bold shadow-lg">📴</button>
@@ -325,7 +332,7 @@
           <div><span id="storyViewerName" class="font-bold text-sm text-white block"></span><span id="storyViewerTime" class="text-[10px] text-gray-300"></span></div>
         </div>
         <div class="flex items-center gap-2">
-          <span id="storyMusicBadge" class="hidden bg-white/15 border border-white/20 px-2.5 py-1 rounded-full text-[11px] text-white animate-pulse"></span>
+          <span id="storyMusicBadge" onclick="event.stopPropagation(); window.playSynthTrack(this.innerText)" class="hidden cursor-pointer bg-white/15 border border-white/20 px-2.5 py-1 rounded-full text-[11px] text-white animate-pulse"></span>
           <button id="deleteStoryBtn" class="hidden text-rose-400 text-xs font-bold bg-black/60 px-2.5 py-1 rounded border border-rose-500/40">Delete</button>
           <button onclick="window.closeStoryViewer()" class="text-white text-3xl leading-none px-2">&times;</button>
         </div>
@@ -347,28 +354,29 @@
     </div>
   </div>
 
-  <!-- UPLOAD MODAL -->
+  <!-- UPLOAD & CANVAS DRAW MODAL -->
   <div id="uploadModal" class="hidden fixed inset-0 z-[200] bg-black/85 flex flex-col justify-end">
-    <div class="theme-surface w-full max-w-md mx-auto rounded-t-2xl p-5 border-t theme-border">
+    <div class="theme-surface w-full max-w-md mx-auto rounded-t-2xl p-5 border-t theme-border max-h-[92vh] overflow-y-auto hide-scrollbar">
       <div class="flex justify-between items-center mb-3">
         <h2 class="font-heading font-bold text-base">Create Content</h2>
         <button onclick="window.closeUploadModal()" class="text-gray-400">✕</button>
       </div>
-      <div class="grid grid-cols-4 gap-1 mb-3 bg-black/50 p-1 rounded-lg border theme-border">
-        <button type="button" onclick="window.setUploadType('post')" id="type-post" class="py-1.5 rounded text-xs font-bold">📷 PHOTO</button>
-        <button type="button" onclick="window.setUploadType('quote')" id="type-quote" class="py-1.5 rounded text-xs font-bold">📝 QUOTE</button>
-        <button type="button" onclick="window.setUploadType('story')" id="type-story" class="py-1.5 rounded text-xs font-bold">⚡ STORY</button>
-        <button type="button" onclick="window.setUploadType('poll')" id="type-poll" class="py-1.5 rounded text-xs font-bold">📊 POLL</button>
+      <div class="grid grid-cols-5 gap-1 mb-3 bg-black/50 p-1 rounded-lg border theme-border">
+        <button type="button" onclick="window.setUploadType('post')" id="type-post" class="py-1.5 rounded text-[11px] font-bold">📷 PHOTO</button>
+        <button type="button" onclick="window.setUploadType('draw')" id="type-draw" class="py-1.5 rounded text-[11px] font-bold">🎨 DRAW</button>
+        <button type="button" onclick="window.setUploadType('quote')" id="type-quote" class="py-1.5 rounded text-[11px] font-bold">📝 QUOTE</button>
+        <button type="button" onclick="window.setUploadType('story')" id="type-story" class="py-1.5 rounded text-[11px] font-bold">⚡ STORY</button>
+        <button type="button" onclick="window.setUploadType('poll')" id="type-poll" class="py-1.5 rounded text-[11px] font-bold">📊 POLL</button>
       </div>
       <form id="uploadForm" class="space-y-3">
         <textarea id="postCaption" rows="2" placeholder="Write caption, quote, or question (use #hashtags or @mentions)..." class="w-full bg-black/40 border theme-border rounded-lg p-2.5 text-sm outline-none text-white"></textarea>
         <div id="storyMusicSection">
           <select id="storyMusicInput" class="w-full bg-black border theme-border rounded-lg p-2 text-xs text-white">
             <option value="">🎵 No Music Sticker</option>
-            <option value="🎵 Night Drive - Synthwave">🎵 Night Drive - Synthwave</option>
-            <option value="🔥 Phonky Drift - Bass">🔥 Phonky Drift - Bass</option>
-            <option value="🎸 Midnight Lo-Fi Chill">🎸 Midnight Lo-Fi Chill</option>
-            <option value="⚡ Cyberpunk 2077 Vibes">⚡ Cyberpunk 2077 Vibes</option>
+            <option value="🎵 Night Drive - Synthwave">🎵 Night Drive - Synthwave (Tap to Play)</option>
+            <option value="🔥 Phonky Drift - Bass">🔥 Phonky Drift - Bass (Tap to Play)</option>
+            <option value="🎸 Midnight Lo-Fi Chill">🎸 Midnight Lo-Fi Chill (Tap to Play)</option>
+            <option value="⚡ Cyberpunk 2077 Vibes">⚡ Cyberpunk 2077 Vibes (Tap to Play)</option>
           </select>
         </div>
         <div id="quoteBgSection" class="hidden">
@@ -379,6 +387,16 @@
             <option value="from-rose-600 via-orange-500 to-amber-500">🔥 Sunset Blaze</option>
             <option value="from-emerald-500 via-teal-600 to-slate-900">🟢 Matrix Emerald</option>
           </select>
+        </div>
+        <!-- CANVAS DRAWING STUDIO SECTION -->
+        <div id="drawPadSection" class="hidden space-y-2">
+          <div class="flex items-center justify-between gap-2 bg-black/60 p-2 rounded-lg border theme-border">
+            <input type="color" id="drawColorPicker" value="#00f3ff" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
+            <input type="range" id="drawBrushSize" min="2" max="24" value="5" class="w-24 accent-sky-400">
+            <button type="button" onclick="window.fillDrawCanvas()" class="text-[11px] bg-white/10 px-2.5 py-1 rounded text-white">🪣 Fill BG</button>
+            <button type="button" onclick="window.clearDrawCanvas()" class="text-[11px] bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded">🗑️ Clear</button>
+          </div>
+          <canvas id="drawCanvas" width="360" height="320" class="w-full bg-black border-2 theme-border rounded-xl cursor-crosshair touch-none"></canvas>
         </div>
         <div id="photoUploadSection">
           <div class="border-2 border-dashed theme-border rounded-xl p-4 text-center relative cursor-pointer bg-black/30">
@@ -405,7 +423,33 @@
     </div>
   </div>
 
-  <!-- CREATOR INSIGHTS MODAL (NEW) -->
+  <!-- LEADERBOARD MODAL (NEW) -->
+  <div id="leaderboardModal" class="hidden fixed inset-0 z-[210] bg-black/85 flex items-center justify-center p-4" onclick="if(event.target===this) this.classList.add('hidden')">
+    <div class="theme-surface border theme-border rounded-2xl w-full max-w-sm p-5 space-y-4">
+      <div class="flex justify-between items-center border-b theme-border pb-3">
+        <h3 class="font-heading font-bold text-sm theme-accent-text">🏆 Top Viu Creators (XP Rank)</h3>
+        <button onclick="document.getElementById('leaderboardModal').classList.add('hidden')">✕</button>
+      </div>
+      <div id="leaderboardList" class="space-y-2.5 max-h-80 overflow-y-auto hide-scrollbar"></div>
+    </div>
+  </div>
+
+  <!-- DIGITAL CYBER ID CARD MODAL (NEW) -->
+  <div id="idCardModal" class="hidden fixed inset-0 z-[210] bg-black/85 flex items-center justify-center p-4" onclick="if(event.target===this) this.classList.add('hidden')">
+    <div class="theme-surface border theme-border rounded-2xl w-full max-w-sm p-5 space-y-4 text-center">
+      <div class="flex justify-between items-center border-b theme-border pb-2">
+        <h3 class="font-heading font-bold text-sm theme-accent-text">🪪 Viu Cyber ID Pass</h3>
+        <button onclick="document.getElementById('idCardModal').classList.add('hidden')">✕</button>
+      </div>
+      <canvas id="idCardCanvas" width="340" height="200" class="w-full rounded-xl border theme-border mx-auto shadow-lg"></canvas>
+      <div class="flex gap-2">
+        <a id="downloadIdCardBtn" href="#" download="viu-id-pass.png" class="flex-1 theme-accent-bg py-2.5 rounded-xl text-xs font-bold block">⬇️ Download Pass</a>
+        <button onclick="window.exportBackupJSON()" class="flex-1 bg-white/10 py-2.5 rounded-xl text-xs font-bold">💾 Backup DB</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATOR INSIGHTS MODAL -->
   <div id="insightsModal" class="hidden fixed inset-0 z-[210] bg-black/85 flex items-center justify-center p-4" onclick="if(event.target===this) this.classList.add('hidden')">
     <div class="theme-surface border theme-border rounded-2xl w-full max-w-sm p-5 space-y-4">
       <div class="flex justify-between items-center border-b theme-border pb-3">
@@ -427,7 +471,7 @@
         </div>
         <div class="p-3 rounded-xl bg-black/40 border theme-border">
           <span class="text-xl font-bold text-amber-400 block" id="ins-score">100%</span>
-          <span class="text-[11px] text-gray-400">Engagement Score</span>
+          <span class="text-[11px] text-gray-400">Total XP Earned</span>
         </div>
       </div>
       <button onclick="document.getElementById('insightsModal').classList.add('hidden')" class="w-full theme-accent-bg py-2.5 rounded-xl text-xs font-bold">Done</button>
@@ -517,12 +561,13 @@
       </div>
     </div>
   </div>
+
 <!-- CORE SCRIPT (PART 2) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // 🔴 PLACE YOUR FIREBASE KEYS HERE 🔴
+    // 🔴 FIREBASE KEYS 🔴
     const firebaseConfig = {
   apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
   authDomain: "mark-9bc95.firebaseapp.com",
@@ -534,23 +579,82 @@
 };
 
     let app, db, isFirebaseActive = false;
-    let DB = JSON.parse(localStorage.getItem('viu_local_db')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {} };
+    let DB = JSON.parse(localStorage.getItem('viu_local_db_v4')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {} };
     let currentUser = localStorage.getItem('viu_auth_user') || null;
     let currentChatTarget = null, activeTab = 'feed', feedFilter = 'all', activeHashtag = null, profileSubTab = 'my', exploreSubTab = 'users', uploadType = 'post';
     let rawUploadImageBase64 = null, currentImageBase64 = null, multiImagesList = [], carouselIdx = {};
     let activeCommentPostId = null, activeStoryId = null, viewingProfileUser = null, replyToText = null;
     let storyTimer = null, storyInterval = null, typingTimeout = null;
     let mediaRecorder = null, audioChunks = [], isRecording = false;
+    let burnModeActive = false;
 
-    let peerConnection = null;
-    let localStream = null;
-    let activeCallId = null;
-    let incomingCallData = null;
-    let callTimerInt = null;
-
+    let peerConnection = null, localStream = null, activeCallId = null, incomingCallData = null, callTimerInt = null;
     const rtcServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
-    // CUSTOM TOAST NOTIFICATION
+    // WEB AUDIO SYNTH MUSIC PLAYER (REAL WORKING BEATS)
+    let audioCtx = null, synthInterval = null;
+    window.playSynthTrack = (title) => {
+      window.stopSynthTrack();
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = title.includes('Phonky') ? [110, 130.81, 146.83, 164.81] : (title.includes('Lo-Fi') ? [220, 261.63, 329.63, 392.00] : [146.83, 196.00, 220.00, 261.63]);
+        let idx = 0;
+        synthInterval = setInterval(() => {
+          if(!audioCtx) return;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = title.includes('Phonky') ? 'sawtooth' : 'sine';
+          osc.frequency.setValueAtTime(notes[idx % notes.length], audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(); osc.stop(audioCtx.currentTime + 0.38);
+          idx++;
+        }, 280);
+        document.getElementById('synth-indicator').classList.remove('hidden');
+        window.showToast(`Now Playing: ${title} 🎵`);
+      } catch(e) { window.showToast("Audio playback not supported", "error"); }
+    };
+    window.stopSynthTrack = () => {
+      if(synthInterval) clearInterval(synthInterval);
+      if(audioCtx) { audioCtx.close(); audioCtx = null; }
+      document.getElementById('synth-indicator').classList.add('hidden');
+    };
+
+    // CANVAS DRAWING PAD LOGIC
+    let isDrawing = false, lastX = 0, lastY = 0;
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas ? canvas.getContext('2d') : null;
+    if(ctx) {
+      ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      canvas.addEventListener('mousedown', (e) => startDraw(e.offsetX, e.offsetY));
+      canvas.addEventListener('mousemove', (e) => drawLine(e.offsetX, e.offsetY));
+      window.addEventListener('mouseup', () => isDrawing = false);
+      canvas.addEventListener('touchstart', (e) => { const r = canvas.getBoundingClientRect(); startDraw(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top); e.preventDefault(); });
+      canvas.addEventListener('touchmove', (e) => { const r = canvas.getBoundingClientRect(); drawLine(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top); e.preventDefault(); });
+    }
+    function startDraw(x, y) { isDrawing = true; lastX = x; lastY = y; }
+    function drawLine(x, y) {
+      if(!isDrawing || !ctx) return;
+      ctx.strokeStyle = document.getElementById('drawColorPicker').value;
+      ctx.lineWidth = document.getElementById('drawBrushSize').value;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+      lastX = x; lastY = y;
+    }
+    window.clearDrawCanvas = () => { if(ctx) { ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height); } };
+    window.fillDrawCanvas = () => { if(ctx) { ctx.fillStyle = document.getElementById('drawColorPicker').value; ctx.fillRect(0, 0, canvas.width, canvas.height); } };
+
+    // XP & LEVEL CALCULATOR
+    function getUserXP(u) {
+      const uPosts = Object.values(normMap(DB.posts)).filter(p => p.author === u);
+      const uFollowers = Object.keys(DB.users[u]?.followers || {}).length;
+      let likesCount = 0;
+      uPosts.forEach(p => likesCount += p.likes ? Object.keys(p.likes).length : 0);
+      return (uPosts.length * 50) + (uFollowers * 30) + (likesCount * 10) + 100;
+    }
+    function getUserLevel(xp) { return Math.floor(Math.sqrt(xp / 150)) + 1; }
+
     window.showToast = (msg, type = 'info') => {
       const box = document.getElementById('toast-container');
       if (!box) return;
@@ -562,14 +666,9 @@
       setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2600);
     };
 
-    const saveLocalDB = () => localStorage.setItem('viu_local_db', JSON.stringify(DB));
+    const saveLocalDB = () => localStorage.setItem('viu_local_db_v4', JSON.stringify(DB));
     document.documentElement.setAttribute('data-theme', localStorage.getItem('viu_theme') || 'ig-dark');
-    window.setTheme = (t) => {
-      document.documentElement.setAttribute('data-theme', t);
-      localStorage.setItem('viu_theme', t);
-      window.showToast(`Theme switched to ${t.toUpperCase()}`);
-      updateUI();
-    };
+    window.setTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('viu_theme', t); window.showToast(`Theme: ${t.toUpperCase()}`); updateUI(); };
     window.getCurrentChatTarget = () => currentChatTarget;
 
     try { if(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") { app = initializeApp(firebaseConfig); db = getDatabase(app); } } catch(e) {}
@@ -609,23 +708,19 @@
     function apiPush(path, data) { const id = Date.now().toString() + Math.floor(Math.random()*999); apiSet(`${path}/${id}`, { ...data, id }); return id; }
     function notify(target, text) { if(target && target !== currentUser && target !== 'GLOBAL_GROUP' && target !== 'ViuAI') apiPush(`notifications/${target}`, { actor: currentUser, text, timestamp: Date.now(), read: false }); }
 
-    // SMART VIU AI BOT ENGINE
+    // VIU AI ASSISTANT BOT
     function triggerViuAI(userMsg) {
       const q = userMsg.toLowerCase();
       let reply = "Main Viu AI Assistant hoon! 🤖 Aap mujhse post captions, coding tips, ya app features ke baare me puch sakte hain.";
       if (q.includes('caption') || q.includes('quote')) {
-        const caps = [
-          "✨ 'Collecting moments, not things. #ViuVibes #Life'",
-          "🔥 'Code, Create, Conquer. 🚀 #TechLife #Viu'",
-          "🌌 'Lost in the right direction. 💫 #NightVibes'"
-        ];
+        const caps = ["✨ 'Collecting moments, not things. #ViuVibes #Life'", "🔥 'Code, Create, Conquer. 🚀 #TechLife #Viu'"];
         reply = "Ye lijiye ek mast caption idea:\n" + caps[Math.floor(Math.random() * caps.length)];
-      } else if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('kaise')) {
+      } else if (q.includes('hello') || q.includes('hi') || q.includes('hey')) {
         reply = `Hey @${currentUser}! 👋 Main bilkul badhiya hoon. Aaj aap Viu par kya naya post karne wale hain?`;
       } else if (q.includes('theme') || q.includes('jarvis')) {
-        reply = "🎨 Aap Profile tab me jaakar 6 themes choose kar sakte hain—Instagram Dark, Clean Light, Jarvis HUD, Crimson, Matrix, aur Cyber Gold!";
-      } else if (q.includes('joke')) {
-        reply = "😂 Programmer ka favourite hangout place konsa hota hai? ... 'Foo Bar'!";
+        reply = "🎨 Aap Profile tab me jaakar 6 themes choose kar sakte hain—IG Dark, Light, Jarvis, Crimson, Matrix, aur Cyber Gold!";
+      } else if (q.includes('level') || q.includes('xp')) {
+        reply = `⭐ Aapka XP aur Level aapke posts, followers, aur likes par depend karta hai! Top rankers Leaderboard (🏆) me dikhte hain.`;
       }
       setTimeout(() => {
         apiPush('messages', { sender: 'ViuAI', receiver: currentUser, text: reply, timestamp: Date.now(), read: currentChatTarget === 'ViuAI' });
@@ -657,20 +752,93 @@
       else { apiSet(`notes/${currentUser}`, { author: currentUser, text: txt.trim().slice(0, 50), timestamp: Date.now() }); window.showToast("Thought Note updated! 💭"); }
     };
 
-    // WEBRTC CALLING SYSTEM (WITH MIC & CAM CONTROLS)
+    // LEADERBOARD MODAL
+    window.openLeaderboard = () => {
+      const usersList = Object.keys(DB.users || {});
+      const ranked = usersList.map(u => ({ username: u, xp: getUserXP(u), level: getUserLevel(getUserXP(u)) })).sort((a,b) => b.xp - a.xp);
+      document.getElementById('leaderboardList').innerHTML = ranked.map((r, idx) => `
+        <div class="flex items-center justify-between p-3 rounded-xl bg-black/40 border theme-border">
+          <div class="flex items-center gap-3">
+            <span class="font-heading font-bold text-sm ${idx===0?'text-amber-400':(idx===1?'text-slate-300':'text-amber-700')}">#${idx+1}</span>
+            ${generateAvatar(r.username, "w-9 h-9", true)}
+            <div>
+              <div class="font-bold text-xs">${r.username} ${badgeHTML(r.username)}</div>
+              <div class="text-[10px] text-gray-400">Level ${r.level} • ${r.xp} XP</div>
+            </div>
+          </div>
+          <button onclick="document.getElementById('leaderboardModal').classList.add('hidden'); window.openUserProfile('${r.username}')" class="bg-white/10 px-3 py-1 rounded-lg text-xs font-bold">Profile</button>
+        </div>`).join('') || `<div class="text-center text-gray-500 text-xs py-6">No users found.</div>`;
+      document.getElementById('leaderboardModal').classList.remove('hidden');
+    };
+
+    // CYBER ID CARD GENERATOR
+    window.openIdCardModal = () => {
+      const canvasId = document.getElementById('idCardCanvas');
+      const ctxId = canvasId.getContext('2d');
+      const xp = getUserXP(currentUser), lvl = getUserLevel(xp);
+      
+      ctxId.fillStyle = '#0b0f19'; ctxId.fillRect(0, 0, canvasId.width, canvasId.height);
+      ctxId.strokeStyle = '#00f3ff'; ctxId.lineWidth = 3; ctxId.strokeRect(5, 5, canvasId.width - 10, canvasId.height - 10);
+      
+      ctxId.fillStyle = '#00f3ff'; ctxId.font = 'bold 16px sans-serif'; ctxId.fillText('VIU CYBER ID PASS', 20, 32);
+      ctxId.fillStyle = '#94a3b8'; ctxId.font = '11px sans-serif'; ctxId.fillText('SECURE NETWORK PASSPORT', 20, 50);
+
+      ctxId.fillStyle = '#ffffff'; ctxId.font = 'bold 18px sans-serif'; ctxId.fillText(`@${currentUser}`, 20, 95);
+      ctxId.fillStyle = '#38bdf8'; ctxId.font = '12px sans-serif'; ctxId.fillText(`Level: ${lvl}  |  XP: ${xp}`, 20, 118);
+      ctxId.fillStyle = '#a855f7'; ctxId.font = '11px sans-serif'; ctxId.fillText(`Status: ${DB.users[currentUser]?.mood || 'Active'}`, 20, 142);
+
+      ctxId.fillStyle = '#1e293b'; ctxId.fillRect(230, 30, 90, 120);
+      ctxId.fillStyle = '#00f3ff'; ctxId.font = 'bold 36px sans-serif'; ctxId.fillText(currentUser.charAt(0).toUpperCase(), 258, 105);
+
+      document.getElementById('downloadIdCardBtn').href = canvasId.toDataURL('image/png');
+      document.getElementById('idCardModal').classList.remove('hidden');
+    };
+
+    window.exportBackupJSON = () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(DB));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", `viu_backup_${Date.now()}.json`);
+      document.body.appendChild(dlAnchor); dlAnchor.click(); dlAnchor.remove();
+      window.showToast("Database JSON backed up successfully! 💾");
+    };
+
+    // SPEECH READER (TTS)
+    window.readPostCaption = (text) => {
+      if(!('speechSynthesis' in window)) { window.showToast("Speech synthesis not supported", "error"); return; }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+      window.showToast("Reading caption aloud... 🔊");
+    };
+
+    // BURN MODE TOGGLE FOR CHAT
+    window.toggleBurnMode = () => {
+      burnModeActive = !burnModeActive;
+      const btn = document.getElementById('burnModeBtn');
+      btn.className = burnModeActive ? "text-[10px] px-2 py-0.5 rounded-full border border-rose-500 bg-rose-500/20 text-rose-300 shrink-0 animate-pulse" : "text-[10px] px-2 py-0.5 rounded-full border theme-border text-gray-400 shrink-0";
+      btn.innerText = burnModeActive ? "⏱️ 15s Burn: ON" : "⏱️ 15s Burn: OFF";
+      window.showToast(burnModeActive ? "Disappearing 15s chat mode activated!" : "Standard chat mode");
+    };
+
+    window.editChatMessage = (msgId, oldText) => {
+      const newT = prompt("Edit message:", oldText);
+      if(newT !== null && newT.trim() !== '') {
+        apiSet(`messages/${msgId}/text`, newT.trim() + " (edited)");
+        window.showToast("Message updated");
+      }
+    };
+
+    // WEBRTC CALLING SYSTEM
     window.startCall = async (withVideo) => {
       if(!currentChatTarget || currentChatTarget === 'GLOBAL_GROUP' || currentChatTarget === 'ViuAI') {
-        window.showToast("Direct P2P call sirf real users ke sath available hai!", "error");
-        return;
+        window.showToast("Direct P2P call only with real users!", "error"); return;
       }
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: withVideo, audio: true });
         document.getElementById('localCallVideo').srcObject = localStream;
         document.getElementById('localCallVideo').classList.toggle('hidden', !withVideo);
-      } catch(e) {
-        window.showToast("Camera/Microphone permission denied!", "error");
-        return;
-      }
+      } catch(e) { window.showToast("Camera/Mic permission denied", "error"); return; }
 
       document.getElementById('callModal').classList.remove('hidden');
       document.getElementById('callTypeLabel').innerText = withVideo ? '📹 VIDEO CALL' : '📞 AUDIO CALL';
@@ -685,33 +853,22 @@
         document.getElementById('remoteCallVideo').srcObject = event.streams[0];
         startCallTimer();
       };
-
       peerConnection.onicecandidate = (event) => {
-        if (event.candidate && activeCallId) {
-          apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON());
-        }
+        if (event.candidate && activeCallId) apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON());
       };
 
       const callId = 'call_' + Date.now() + '_' + Math.floor(Math.random()*1000);
       activeCallId = callId;
-
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
 
-      apiSet(`calls/${callId}`, {
-        caller: currentUser,
-        receiver: currentChatTarget,
-        offer: { type: offer.type, sdp: offer.sdp },
-        status: 'ringing',
-        timestamp: Date.now()
-      });
+      apiSet(`calls/${callId}`, { caller: currentUser, receiver: currentChatTarget, offer: { type: offer.type, sdp: offer.sdp }, status: 'ringing', timestamp: Date.now() });
 
       if (isFirebaseActive && db) {
         onValue(ref(db, `calls/${callId}`), async (snapshot) => {
           const callData = snapshot.val();
           if (callData && (callData.status === 'ended' || callData.status === 'rejected')) window.endCall();
         });
-
         onValue(ref(db, `calls/${callId}/answer`), async (snapshot) => {
           const answer = snapshot.val();
           if (answer && peerConnection && !peerConnection.currentRemoteDescription) {
@@ -719,14 +876,9 @@
             startCallTimer();
           }
         });
-
         onValue(ref(db, `calls/${callId}/candidates/${currentChatTarget}`), (snapshot) => {
           const candidates = snapshot.val();
-          if (candidates) {
-            Object.values(candidates).forEach(async (cand) => {
-              if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(cand));
-            });
-          }
+          if (candidates) Object.values(candidates).forEach(async (cand) => { if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(cand)); });
         });
       }
     };
@@ -735,12 +887,8 @@
       if (!currentUser) return;
       const calls = DB.calls || {};
       let foundActive = false;
-
       for (const [cId, cData] of Object.entries(calls)) {
-        if (activeCallId === cId && (cData.status === 'ended' || cData.status === 'rejected')) {
-          window.endCall();
-          return;
-        }
+        if (activeCallId === cId && (cData.status === 'ended' || cData.status === 'rejected')) { window.endCall(); return; }
         if (cData.receiver === currentUser && cData.status === 'ringing') {
           foundActive = true;
           if (!incomingCallData || incomingCallData.id !== cId) {
@@ -752,9 +900,7 @@
           break;
         }
       }
-      if (!foundActive && incomingCallData) {
-        document.getElementById('incomingCallModal').classList.add('hidden');
-      }
+      if (!foundActive && incomingCallData) document.getElementById('incomingCallModal').classList.add('hidden');
     }
 
     window.acceptIncomingCall = async () => {
@@ -768,23 +914,12 @@
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         document.getElementById('localCallVideo').srcObject = localStream;
-      } catch(e) {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-      }
+      } catch(e) { localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true }); }
 
       peerConnection = new RTCPeerConnection(rtcServers);
       localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-      peerConnection.ontrack = (event) => {
-        document.getElementById('remoteCallVideo').srcObject = event.streams[0];
-        startCallTimer();
-      };
-
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate && activeCallId) {
-          apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON());
-        }
-      };
+      peerConnection.ontrack = (event) => { document.getElementById('remoteCallVideo').srcObject = event.streams[0]; startCallTimer(); };
+      peerConnection.onicecandidate = (event) => { if (event.candidate && activeCallId) apiPush(`calls/${activeCallId}/candidates/${currentUser}`, event.candidate.toJSON()); };
 
       await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
       const answer = await peerConnection.createAnswer();
@@ -798,14 +933,9 @@
           const callData = snapshot.val();
           if (callData && (callData.status === 'ended' || callData.status === 'rejected')) window.endCall();
         });
-
         onValue(ref(db, `calls/${activeCallId}/candidates/${incomingCallData.caller}`), (snapshot) => {
           const candidates = snapshot.val();
-          if (candidates) {
-            Object.values(candidates).forEach(async (cand) => {
-              if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(cand));
-            });
-          }
+          if (candidates) Object.values(candidates).forEach(async (cand) => { if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(cand)); });
         });
       }
       incomingCallData = null;
@@ -827,22 +957,20 @@
 
     window.toggleCallMic = () => {
       if(localStream && localStream.getAudioTracks()[0]) {
-        const track = localStream.getAudioTracks()[0];
-        track.enabled = !track.enabled;
-        document.getElementById('micToggleBtn').innerText = track.enabled ? '🎤' : '🔇';
-        window.showToast(track.enabled ? "Microphone Unmuted" : "Microphone Muted");
+        const tr = localStream.getAudioTracks()[0];
+        tr.enabled = !tr.enabled;
+        document.getElementById('micToggleBtn').innerText = tr.enabled ? '🎤' : '🔇';
+        window.showToast(tr.enabled ? "Mic Unmuted" : "Mic Muted");
       }
     };
-
     window.toggleCallCam = () => { 
       if(localStream && localStream.getVideoTracks()[0]) {
-        const track = localStream.getVideoTracks()[0];
-        track.enabled = !track.enabled;
-        document.getElementById('camToggleBtn').innerText = track.enabled ? '📷' : '🚫';
-        window.showToast(track.enabled ? "Camera On" : "Camera Off");
+        const tr = localStream.getVideoTracks()[0];
+        tr.enabled = !tr.enabled;
+        document.getElementById('camToggleBtn').innerText = tr.enabled ? '📷' : '🚫';
+        window.showToast(tr.enabled ? "Camera On" : "Camera Off");
       }
     };
-
     window.endCall = () => {
       document.getElementById('callModal').classList.add('hidden');
       document.getElementById('incomingCallModal').classList.add('hidden');
@@ -881,9 +1009,9 @@
       const img = new Image();
       img.onload = () => {
         const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
-        const ctx = c.getContext('2d');
+        const ctxImg = c.getContext('2d');
         const map = { vivid: 'contrast(1.25) saturate(1.45)', bw: 'grayscale(100%) contrast(1.15)', cyber: 'hue-rotate(170deg) saturate(1.6)', vintage: 'sepia(65%) contrast(1.1)', none: 'none' };
-        ctx.filter = map[type] || 'none'; ctx.drawImage(img, 0, 0);
+        ctxImg.filter = map[type] || 'none'; ctxImg.drawImage(img, 0, 0);
         currentImageBase64 = c.toDataURL('image/jpeg', 0.7);
         if(multiImagesList.length > 0) multiImagesList[0] = currentImageBase64;
         document.getElementById('imagePreview').src = currentImageBase64;
@@ -929,24 +1057,16 @@
       document.getElementById('singlePostModal').classList.remove('hidden');
     };
 
-    // CREATOR INSIGHTS MODAL
     window.openInsightsModal = () => {
       const myPosts = Object.values(normMap(DB.posts)).filter(p => p.author === currentUser);
       const myStories = Object.values(normMap(DB.stories)).filter(s => s.author === currentUser);
       let totalLikes = 0, totalComments = 0, totalViews = 0;
-      myPosts.forEach(p => {
-        totalLikes += p.likes ? Object.keys(p.likes).length : 0;
-        totalComments += p.comments ? Object.keys(p.comments).length : 0;
-      });
-      myStories.forEach(s => {
-        totalViews += s.views ? Object.keys(s.views).length : 0;
-      });
+      myPosts.forEach(p => { totalLikes += p.likes ? Object.keys(p.likes).length : 0; totalComments += p.comments ? Object.keys(p.comments).length : 0; });
+      myStories.forEach(s => { totalViews += s.views ? Object.keys(s.views).length : 0; });
       document.getElementById('ins-likes').innerText = totalLikes;
       document.getElementById('ins-comments').innerText = totalComments;
       document.getElementById('ins-views').innerText = totalViews;
-      const followersCnt = Object.keys(DB.users[currentUser]?.followers || {}).length || 1;
-      const score = Math.min(100, Math.round(((totalLikes + totalComments * 2 + totalViews) / followersCnt) * 25) + 40);
-      document.getElementById('ins-score').innerText = `${score}%`;
+      document.getElementById('ins-score').innerText = `${getUserXP(currentUser)} XP`;
       document.getElementById('insightsModal').classList.remove('hidden');
     };
 
@@ -959,20 +1079,16 @@
     window.cancelReply = () => { replyToText = null; document.getElementById('replyPreviewBar').classList.add('hidden'); };
 
     window.insertChatEmoji = (em) => {
-      const inp = document.getElementById('chatInput');
-      inp.value += em;
-      inp.focus();
+      const inp = document.getElementById('chatInput'); inp.value += em; inp.focus();
     };
 
     window.clearChatHistory = () => {
       if(!currentChatTarget) return;
       if(!confirm(`Clear chat messages with ${currentChatTarget}?`)) return;
       Object.values(normMap(DB.messages)).forEach(m => {
-        if((m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser)) {
-          apiRemove(`messages/${m.id}`);
-        }
+        if((m.sender === currentUser && m.receiver === currentChatTarget) || (m.sender === currentChatTarget && m.receiver === currentUser)) apiRemove(`messages/${m.id}`);
       });
-      window.showToast("Chat history cleared! 🗑️");
+      window.showToast("Chat cleared 🗑️");
     };
 
     window.openShareModal = (postId) => {
@@ -1003,11 +1119,11 @@
     window.editPostCaption = (postId) => {
       const p = DB.posts[postId]; if(!p) return;
       const newCap = prompt("Edit your post caption:", p.caption || "");
-      if(newCap !== null) { apiSet(`posts/${postId}/caption`, newCap.trim()); window.showToast("Caption updated! ✏️"); }
+      if(newCap !== null) { apiSet(`posts/${postId}/caption`, newCap.trim()); window.showToast("Caption updated!"); }
     };
     window.togglePinPost = (postId) => {
       const p = DB.posts[postId];
-      if(p) { apiSet(`posts/${postId}/pinned`, !p.pinned); window.showToast(p.pinned ? "Post Unpinned" : "Post Pinned to Top 📌"); }
+      if(p) { apiSet(`posts/${postId}/pinned`, !p.pinned); window.showToast(p.pinned ? "Pinned" : "Unpinned 📌"); }
     };
 
     window.toggleVoiceRecording = async () => {
@@ -1026,7 +1142,7 @@
         };
         mediaRecorder.start(); isRecording = true;
         btn.className = "p-2 rounded-full bg-rose-600 text-white text-xs font-bold animate-pulse shrink-0"; btn.innerText = "⏹";
-      } catch(err) { window.showToast("Microphone permission needed!", "error"); }
+      } catch(err) { window.showToast("Microphone access needed", "error"); }
     };
 
     window.votePoll = (postId, optIdx) => { const p = DB.posts[postId]; if(p) { apiSet(`posts/${postId}/pollVotes/${currentUser}`, optIdx); notify(p.author, `voted on your poll 📊`); } };
@@ -1054,7 +1170,7 @@
       const usr = DB.users[u], posts = Object.values(normMap(DB.posts)).filter(p => p.author === u && p.image);
       const isF = !!(DB.users[currentUser]?.following && DB.users[currentUser].following[u]);
       const isB = !!(DB.users[currentUser]?.blocked && DB.users[currentUser].blocked[u]);
-      document.getElementById('modal-prof-header').innerHTML = `@${u} ${badgeHTML(u)} <span class="text-[10px] text-gray-400 ml-1">${usr.mood || ''}</span>`;
+      document.getElementById('modal-prof-header').innerHTML = `@${u} ${badgeHTML(u)} <span class="text-[10px] text-gray-400 ml-1">Lv.${getUserLevel(getUserXP(u))}</span>`;
       document.getElementById('modal-prof-avatar').innerHTML = generateAvatar(u, "w-16 h-16 text-xl", true);
       document.getElementById('modal-prof-posts').innerText = posts.length;
       document.getElementById('modal-prof-followers').innerText = usr.followers ? Object.keys(usr.followers).length : 0;
@@ -1063,7 +1179,7 @@
       document.getElementById('modal-prof-actions').innerHTML = `
         <button onclick="window.toggleFollow('${u}')" class="flex-1 py-2 rounded-lg text-xs font-bold ${isF ? 'bg-white/15 text-white' : 'theme-accent-bg'}">${isF ? 'Following ✓' : 'Follow'}</button>
         <button onclick="window.closeUserProfile(); window.openChat('${u}')" class="flex-1 py-2 rounded-lg bg-white/10 text-xs font-bold">Message</button>
-        <button onclick="window.toggleBlockUser('${u}')" class="px-3 py-2 rounded-lg bg-rose-500/20 text-rose-400 text-xs font-bold">${isB ? 'Unblock' : '🚫 Block'}</button>`;
+        <button onclick="window.toggleBlockUser('${u}')" class="px-3 py-2 rounded-lg bg-rose-500/20 text-rose-400 text-xs font-bold">${isB ? 'Unblock' : '🚫'}</button>`;
       document.getElementById('modal-prof-grid').innerHTML = posts.map(p => `<div onclick="window.openSinglePost('${p.id}')" class="aspect-square bg-gray-900 rounded overflow-hidden cursor-pointer"><img src="${p.image}" class="w-full h-full object-cover"></div>`).join('') || `<div class="col-span-3 text-center text-gray-500 text-xs py-6">No photo posts yet.</div>`;
       document.getElementById('userProfileModal').classList.remove('hidden');
     };
@@ -1080,8 +1196,7 @@
 
     window.togglePostReaction = (postId, emoji) => {
       const p = DB.posts[postId]; if(!p) return;
-      const curUserReaction = p.reactions?.[currentUser];
-      if (curUserReaction === emoji) apiRemove(`posts/${postId}/reactions/${currentUser}`);
+      if (p.reactions?.[currentUser] === emoji) apiRemove(`posts/${postId}/reactions/${currentUser}`);
       else { apiSet(`posts/${postId}/reactions/${currentUser}`, emoji); notify(p.author, `reacted ${emoji} to your post`); }
     };
 
@@ -1101,7 +1216,7 @@
     window.toggleBookmark = (id) => {
       const s = DB.users[currentUser]?.saved && DB.users[currentUser].saved[id];
       if(s) { apiRemove(`users/${currentUser}/saved/${id}`); window.showToast("Removed from Saved"); }
-      else { apiSet(`users/${currentUser}/saved/${id}`, true); window.showToast("Post Saved 🔖"); }
+      else { apiSet(`users/${currentUser}/saved/${id}`, true); window.showToast("Saved 🔖"); }
     };
 
     window.openComments = (id) => { activeCommentPostId = id; document.getElementById('commentsDrawer').classList.remove('hidden'); window.renderCommentsList(); };
@@ -1112,18 +1227,39 @@
       notify(DB.posts[activeCommentPostId]?.author, `commented: "${txt.slice(0,20)}" 💬`); inp.value = '';
     };
     window.deleteComment = (cId) => { if(activeCommentPostId && cId) apiRemove(`posts/${activeCommentPostId}/comments/${cId}`); };
+    window.toggleCommentLike = (cId) => {
+      if(!activeCommentPostId) return;
+      const comm = DB.posts[activeCommentPostId]?.comments?.[cId];
+      if(!comm) return;
+      const isL = comm.likes && comm.likes[currentUser];
+      if(isL) apiRemove(`posts/${activeCommentPostId}/comments/${cId}/likes/${currentUser}`);
+      else apiSet(`posts/${activeCommentPostId}/comments/${cId}/likes/${currentUser}`, true);
+      window.renderCommentsList();
+    };
+
     window.renderCommentsList = () => {
       if(!activeCommentPostId || !DB.posts[activeCommentPostId]) return;
       const cArr = Object.values(normMap(DB.posts[activeCommentPostId].comments));
-      document.getElementById('commentsList').innerHTML = cArr.map(c => `<div class="flex items-center justify-between text-xs"><div class="flex gap-2.5 items-start">${generateAvatar(c.author, "w-7 h-7")}<div><b class="mr-1.5">${c.author}</b>${badgeHTML(c.author)} <span class="text-gray-300">${formatRichText(c.text)}</span></div></div>${c.author === currentUser ? `<button onclick="window.deleteComment('${c.id}')" class="text-[10px] text-rose-400">✕</button>` : ''}</div>`).join('') || `<div class="text-center text-gray-500 text-xs mt-4">No comments yet.</div>`;
+      document.getElementById('commentsList').innerHTML = cArr.map(c => {
+        const lCnt = c.likes ? Object.keys(c.likes).length : 0;
+        const isLiked = c.likes && c.likes[currentUser];
+        return `<div class="flex items-center justify-between text-xs">
+          <div class="flex gap-2.5 items-start">${generateAvatar(c.author, "w-7 h-7")}<div><b class="mr-1.5">${c.author}</b>${badgeHTML(c.author)} <span class="text-gray-300">${formatRichText(c.text)}</span></div></div>
+          <div class="flex items-center gap-2">
+            <button onclick="window.toggleCommentLike('${c.id}')" class="text-[11px]">${isLiked ? '❤️' : '🤍'} ${lCnt}</button>
+            ${c.author === currentUser ? `<button onclick="window.deleteComment('${c.id}')" class="text-[10px] text-rose-400">✕</button>` : ''}
+          </div>
+        </div>`;
+      }).join('') || `<div class="text-center text-gray-500 text-xs mt-4">No comments yet.</div>`;
     };
 
     window.openUploadModal = (t = 'post') => { document.getElementById('uploadModal').classList.remove('hidden'); window.setUploadType(t); };
     window.closeUploadModal = () => document.getElementById('uploadModal').classList.add('hidden');
     window.setUploadType = (t) => {
       uploadType = t;
-      ['post', 'quote', 'story', 'poll'].forEach(k => document.getElementById(`type-${k}`).className = `py-1.5 rounded text-xs font-bold ${t===k ? 'theme-accent-bg' : 'text-gray-400'}`);
-      document.getElementById('photoUploadSection').classList.toggle('hidden', t === 'poll' || t === 'quote');
+      ['post', 'draw', 'quote', 'story', 'poll'].forEach(k => document.getElementById(`type-${k}`).className = `py-1.5 rounded text-[11px] font-bold ${t===k ? 'theme-accent-bg' : 'text-gray-400'}`);
+      document.getElementById('photoUploadSection').classList.toggle('hidden', t === 'poll' || t === 'quote' || t === 'draw');
+      document.getElementById('drawPadSection').classList.toggle('hidden', t !== 'draw');
       document.getElementById('pollOptionsSection').classList.toggle('hidden', t !== 'poll');
       document.getElementById('quoteBgSection').classList.toggle('hidden', t !== 'quote');
       document.getElementById('storyMusicSection').classList.toggle('hidden', t === 'poll');
@@ -1163,10 +1299,10 @@
     window.closeStoryViewer = () => { document.getElementById('storyViewerModal').classList.add('hidden'); activeStoryId = null; clearInterval(storyInterval); clearTimeout(storyTimer); };
 
     document.getElementById('avatarFileInput').onchange = (e) => {
-      if(e.target.files[0]) compressImage(e.target.files[0], 300, (b64) => { apiSet(`users/${currentUser}/avatar`, b64); window.showToast("Profile Photo Updated!"); });
+      if(e.target.files[0]) compressImage(e.target.files[0], 300, (b64) => { apiSet(`users/${currentUser}/avatar`, b64); window.showToast("Avatar Updated!"); });
     };
     document.getElementById('bannerFileInput').onchange = (e) => {
-      if(e.target.files[0]) compressImage(e.target.files[0], 700, (b64) => { apiSet(`users/${currentUser}/banner`, b64); window.showToast("Profile Cover Updated! 🖼️"); });
+      if(e.target.files[0]) compressImage(e.target.files[0], 700, (b64) => { apiSet(`users/${currentUser}/banner`, b64); window.showToast("Cover Banner Updated! 🖼️"); });
     };
 
     window.openBioModal = () => {
@@ -1181,7 +1317,7 @@
       apiSet(`users/${currentUser}/mood`, document.getElementById('moodInput').value);
       apiSet(`users/${currentUser}/verified`, document.getElementById('verifiedInput').checked);
       document.getElementById('bioModal').classList.add('hidden');
-      window.showToast("Profile Saved!");
+      window.showToast("Profile Updated!");
     };
     window.setProfileSubTab = (sub) => { profileSubTab = sub; renderProfile(); };
     window.setExploreSubTab = (sub) => { exploreSubTab = sub; renderExplore(); };
@@ -1234,6 +1370,10 @@
       if(!currentUser || !DB.users[currentUser]) return;
       document.getElementById('nav-username').innerHTML = `${currentUser} ${badgeHTML(currentUser)}`;
       document.getElementById('nav-avatar').innerHTML = generateAvatar(currentUser, "w-6 h-6", true);
+      
+      const myXP = getUserXP(currentUser), myLv = getUserLevel(myXP);
+      const lvlEl = document.getElementById('profile-level-badge');
+      if(lvlEl) lvlEl.innerText = `Lv.${myLv}`;
 
       const unreadM = Object.values(normMap(DB.messages)).filter(m => m.receiver === currentUser && !m.read).length;
       const uBadge = document.getElementById('unread-badge'); uBadge.innerText = unreadM; uBadge.classList.toggle('hidden', unreadM === 0);
@@ -1273,7 +1413,7 @@
       arr.forEach(p => {
         const likes = p.likes ? Object.keys(p.likes) : [], isL = likes.includes(currentUser), isS = !!saved[p.id], cCnt = p.comments ? Object.keys(p.comments).length : 0;
         const uMood = DB.users[p.author]?.mood || '';
-        const musicTag = p.music ? `<div class="px-3 pb-2 text-[11px] theme-accent-text flex items-center gap-1 font-semibold"><span>${p.music}</span></div>` : '';
+        const musicTag = p.music ? `<div onclick="window.playSynthTrack('${p.music}')" class="px-3 pb-2 text-[11px] theme-accent-text flex items-center gap-1 font-semibold cursor-pointer hover:underline"><span>▶ ${p.music}</span></div>` : '';
         let mediaHTML = '';
 
         if(p.isPoll && p.pollOptions) {
@@ -1298,12 +1438,15 @@
         Object.values(reactionsMap).forEach(emoji => { reactionCounts[emoji] = (reactionCounts[emoji] || 0) + 1; });
         const reactionsHTML = Object.entries(reactionCounts).map(([em, cnt]) => `<span class="bg-white/10 px-2 py-0.5 rounded-full text-[10px] mr-1">${em} ${cnt}</span>`).join('');
 
+        const safeCapForSpeech = (p.caption || '').replace(/['"]/g, '');
+
         c.insertAdjacentHTML('beforeend', `
           <div class="theme-card border-b theme-border pb-3 fade-in">
             ${p.pinned ? `<div class="px-3 pt-2 text-[10px] theme-accent-text font-bold">📌 Pinned Post</div>` : ''}
             <div class="flex items-center justify-between p-3">
               <div class="flex items-center gap-2 cursor-pointer" onclick="window.openUserProfile('${p.author}')">${generateAvatar(p.author, "w-8 h-8", true)}<div><span class="font-bold text-sm">${p.author}</span>${badgeHTML(p.author)}${uMood ? `<span class="text-[10px] text-gray-400 block leading-none">${uMood}</span>` : ''}</div></div>
               <div class="flex items-center gap-2">
+                <button onclick="window.readPostCaption('${safeCapForSpeech}')" class="text-xs" title="Read Aloud">🔊</button>
                 ${p.author !== currentUser ? `<button onclick="window.toggleFollow('${p.author}')" class="text-xs font-bold px-2 py-0.5 rounded border theme-border ${myF[p.author] ? 'text-gray-400' : 'theme-accent-text'}">${myF[p.author] ? 'Following' : '+ Follow'}</button>` : `<button onclick="window.togglePinPost('${p.id}')" class="text-xs" title="Pin">📌</button><button onclick="window.editPostCaption('${p.id}')" class="text-xs" title="Edit">✏️</button><button onclick="window.deletePost('${p.id}')" class="text-xs text-rose-500">Delete</button>`}
               </div>
             </div>
@@ -1360,7 +1503,8 @@
           if(!u?.username || u.username === currentUser) return;
           const match = u.username.toLowerCase().includes(q) || (u.mood && u.mood.toLowerCase().includes(q));
           if(q && !match) return;
-          uCont.innerHTML += `<div class="theme-surface p-3 flex items-center justify-between rounded-xl border theme-border"><div class="flex items-center gap-3 cursor-pointer" onclick="window.openUserProfile('${u.username}')">${generateAvatar(u.username, "w-10 h-10", true)}<div><div class="font-bold text-sm">${u.username} ${badgeHTML(u.username)}</div><div class="text-[11px] text-gray-400">${u.mood || '✨ Using Viu'} • ${u.followers ? Object.keys(u.followers).length : 0} followers</div></div></div><div class="flex gap-1.5"><button onclick="window.toggleFollow('${u.username}')" class="px-3 py-1.5 rounded-lg text-xs font-bold ${myF[u.username] ? 'bg-white/10' : 'theme-accent-bg'}">${myF[u.username] ? 'Following' : 'Follow'}</button><button onclick="window.openChat('${u.username}')" class="px-3 py-1.5 rounded-lg bg-white/10 text-xs font-bold">Chat</button></div></div>`;
+          const uXp = getUserXP(u.username), uLv = getUserLevel(uXp);
+          uCont.innerHTML += `<div class="theme-surface p-3 flex items-center justify-between rounded-xl border theme-border"><div class="flex items-center gap-3 cursor-pointer" onclick="window.openUserProfile('${u.username}')">${generateAvatar(u.username, "w-10 h-10", true)}<div><div class="font-bold text-sm">${u.username} ${badgeHTML(u.username)} <span class="text-[10px] text-sky-400">Lv.${uLv}</span></div><div class="text-[11px] text-gray-400">${u.mood || '✨ Using Viu'} • ${u.followers ? Object.keys(u.followers).length : 0} followers</div></div></div><div class="flex gap-1.5"><button onclick="window.toggleFollow('${u.username}')" class="px-3 py-1.5 rounded-lg text-xs font-bold ${myF[u.username] ? 'bg-white/10' : 'theme-accent-bg'}">${myF[u.username] ? 'Following' : 'Follow'}</button><button onclick="window.openChat('${u.username}')" class="px-3 py-1.5 rounded-lg bg-white/10 text-xs font-bold">Chat</button></div></div>`;
         });
       } else {
         const photoPosts = Object.values(normMap(DB.posts)).filter(p => p.image && (!q || (p.caption||'').toLowerCase().includes(q) || p.author.toLowerCase().includes(q))).sort((a,b) => b.timestamp - a.timestamp);
@@ -1437,7 +1581,7 @@
             <div class="flex gap-2 mt-1 opacity-0 group-hover:opacity-100 transition text-xs items-center">
               <button onclick="window.reactMessage('${m.id}','❤️')">❤️</button><button onclick="window.reactMessage('${m.id}','🔥')">🔥</button><button onclick="window.reactMessage('${m.id}','😂')">😂</button>
               <button onclick="window.setReplyMsg('${m.sender}','${safeTxt}')" class="text-[10px] text-sky-400">↩️ Reply</button>
-              ${isMe ? `<button onclick="window.deleteMessage('${m.id}')" class="text-[10px] text-rose-400">Unsend</button>` : ''}
+              ${isMe ? `<button onclick="window.editChatMessage('${m.id}','${safeTxt}')" class="text-[10px] text-amber-400">Edit</button><button onclick="window.deleteMessage('${m.id}')" class="text-[10px] text-rose-400">Unsend</button>` : ''}
             </div>
           </div>`;
       });
@@ -1472,7 +1616,12 @@
       e.preventDefault();
       const inp = document.getElementById('chatInput'), txt = inp.value.trim();
       if(!txt || !currentChatTarget) return;
-      apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: txt, replyTo: replyToText, timestamp: Date.now(), read: currentChatTarget === 'ViuAI' });
+      const msgId = apiPush('messages', { sender: currentUser, receiver: currentChatTarget, text: txt, replyTo: replyToText, timestamp: Date.now(), read: currentChatTarget === 'ViuAI' });
+      
+      if(burnModeActive && currentChatTarget !== 'GLOBAL_GROUP' && currentChatTarget !== 'ViuAI') {
+        setTimeout(() => { apiRemove(`messages/${msgId}`); }, 15000);
+      }
+
       if(currentChatTarget === 'ViuAI') triggerViuAI(txt);
       else if(currentChatTarget !== 'GLOBAL_GROUP') apiSet(`typing/${currentUser}/${currentChatTarget}`, false);
       inp.value = ''; window.cancelReply();
@@ -1499,6 +1648,7 @@
       e.preventDefault();
       const id = Date.now().toString(), cap = document.getElementById('postCaption').value.trim();
       const music = document.getElementById('storyMusicInput').value;
+
       if(uploadType === 'poll') {
         const o1 = document.getElementById('pollOpt1').value.trim(), o2 = document.getElementById('pollOpt2').value.trim(), o3 = document.getElementById('pollOpt3').value.trim();
         if(!cap || !o1 || !o2) { window.showToast("Enter question and 2 options!", "error"); return; }
@@ -1506,10 +1656,14 @@
         apiSet('posts/' + id, { id, author: currentUser, isPoll: true, caption: cap, pollOptions: opts, timestamp: Date.now() });
         window.showToast("Poll Published! 📊");
       } else if(uploadType === 'quote') {
-        if(!cap) { window.showToast("Write a quote or status first!", "error"); return; }
+        if(!cap) { window.showToast("Write a quote first!", "error"); return; }
         const quoteBg = document.getElementById('quoteBgInput').value;
         apiSet('posts/' + id, { id, author: currentUser, isQuote: true, quoteBg, caption: cap, music, timestamp: Date.now() });
         window.showToast("Quote Card Published! 📝");
+      } else if(uploadType === 'draw') {
+        const drawImg = canvas.toDataURL('image/jpeg', 0.8);
+        apiSet('posts/' + id, { id, author: currentUser, image: drawImg, images: [drawImg], caption: cap || 'Doodle Masterpiece 🎨', music, timestamp: Date.now() });
+        window.showToast("Drawing Published! 🎨");
       } else {
         if(!currentImageBase64) { window.showToast("Select a photo first!", "error"); return; }
         const payload = { id, author: currentUser, image: currentImageBase64, images: multiImagesList.length ? multiImagesList : [currentImageBase64], caption: cap, music, timestamp: Date.now() };
