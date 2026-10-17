@@ -456,15 +456,6 @@
         $('db-status').innerHTML = '<span class="text-sky-400">● Offline / Local Mode Active</span>';
       }
     })();
-
-
-    function enableLocalMode() {
-      $('db-status').innerHTML = '<span class="text-sky-400">● Local Mode Active</span>';
-      $('loginBtn').disabled = false;
-      if(currentUser && DB.users[currentUser]) { $('login-view').classList.add('hidden'); $('app-container').classList.remove('hidden'); }
-      updateUI();
-    }
-
     function setNested(obj, path, val) {
       const p = path.split('/'); let cur = obj;
       for(let i=0; i<p.length-1; i++) { if(!cur[p[i]] || typeof cur[p[i]] !== 'object') cur[p[i]] = {}; cur = cur[p[i]]; }
