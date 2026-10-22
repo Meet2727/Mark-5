@@ -2,16 +2,16 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // 🔴 PLACE YOUR FIREBASE KEYS HERE 🔴
+   // 🔴 PLACE YOUR FIREBASE KEYS HERE 🔴
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+  apiKey: "AIzaSyCogcY1Kss3-2QGhRWMaVvbfEgAnS4v_MQ",
+  authDomain: "mark-9bc95.firebaseapp.com",
+  databaseURL: "https://mark-9bc95-default-rtdb.firebaseio.com",
+  projectId: "mark-9bc95",
+  storageBucket: "mark-9bc95.firebasestorage.app",
+  messagingSenderId: "417846424762",
+  appId: "1:417846424762:web:24573a7abf942dfffefe83"
+};
 
     let app, db, isFirebaseActive = false;
     let DB = JSON.parse(localStorage.getItem('viu_local_db_v5')) || { users: {}, posts: {}, stories: {}, messages: {}, typing: {}, notifications: {}, notes: {}, calls: {}, callHistory: {} };
